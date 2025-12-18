@@ -2,6 +2,20 @@
 
 Official Miro AI developer tools and integrations. Connect AI agents to your Miro boards using the Model Context Protocol (MCP).
 
+---
+
+> ## ⚠️ Enterprise Users: Admin Approval Required
+>
+> **If your organization is on a Miro Enterprise plan, your admin must enable the MCP Server before you can connect.**
+>
+> 1. Ask your Miro admin to enable MCP Server for your organization
+> 2. Admins: Follow the [Miro MCP Server Admin Guide](https://help.miro.com/hc/en-us/articles/31625761037202-Miro-MCP-Server-admin-guide) to enable it
+> 3. Review the [Beta Acknowledgement](https://help.miro.com/hc/en-us/articles/31621611644306-Miro-MCP-Server-Beta-Acknowledgement) for terms and conditions
+>
+> **Not on Enterprise?** You can connect directly — skip to [Quick Start](#quick-start).
+
+---
+
 > **Beta Release**: Miro's MCP Server is currently in beta. Features and user experience may change in future releases. [Share your feedback](https://forms.gle/feedback).
 
 ## What is Miro MCP?
