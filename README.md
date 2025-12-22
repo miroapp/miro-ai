@@ -136,6 +136,22 @@ Add to your Gemini CLI configuration:
 
 </details>
 
+## Claude Code Plugin Installation
+
+For streamlined setup, you can install Miro MCP as a Claude Code plugin instead of manual configuration:
+
+```bash
+# Add the Miro plugin marketplace
+/plugin marketplace add miroapp/miro-ai
+
+# Install the Miro plugin
+/plugin install miro@miro-ai
+```
+
+This automatically configures the MCP server connection. After installation, restart Claude Code and authenticate via OAuth when prompted.
+
+**Manual Configuration**: If you prefer manual setup, see the [Claude Code section above](#claude-code).
+
 ## Available Tools & Prompts
 
 Once connected, you'll have access to Miro MCP tools and prompts. See the full list in our documentation:
