@@ -4,7 +4,7 @@
 
 Official Miro AI developer tools and integrations. Connect AI agents to your Miro boards using the Model Context Protocol (MCP).
 
-![Miro MCP Demo](https://files.readme.io/c19a5d466d272ffb9f7e8f5c86963ac6e7b3d85fa84a2d2ddcfeb4202f02623e-Cursor-prompts.gif)
+![Miro MCP Demo](assets/miro-mcp-demo.gif)
 
 ---
 
