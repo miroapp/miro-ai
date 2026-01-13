@@ -16,11 +16,11 @@ Official Miro AI developer tools and integrations. Connect AI agents to your Mir
 > 2. Admins: Follow the [Miro MCP Server Admin Guide](https://help.miro.com/hc/en-us/articles/31625761037202-Miro-MCP-Server-admin-guide?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb) to enable it
 > 3. Review the [Beta Acknowledgement](https://help.miro.com/hc/en-us/articles/31621611644306-Miro-MCP-Server-Beta-Acknowledgement?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb) for terms and conditions
 >
-> **Not on Enterprise?** You can connect directly — skip to [Quick Start](https://github.com/miroapp/miro-ai#quick-start?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb).
+> **Not on Enterprise?** You can connect directly — skip to [Quick Start](https://github.com/miroapp/miro-ai?tab=readme-ov-file#quick-start?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb).
 
 ---
 
-> **Beta Release**: Miro's MCP Server is currently in beta. Features and user experience may change in future releases. [Share your feedback](https://q2oeb0jrhgi.typeform.com/to/YATmJPVx?typeform-source=developers.miro.com).
+> **Beta Release**: Miro's MCP Server is currently in beta. Features and user experience may change in future releases. [Share your feedback](https://q2oeb0jrhgi.typeform.com/to/YATmJPVx?typeform-source=developers.miro.com?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb).
 
 ## What is Miro MCP?
 
