@@ -182,9 +182,9 @@ Learn how to use Miro MCP with these step-by-step tutorials:
 
 | Tutorial | Description |
 |----------|-------------|
-| [Generate Diagrams from Code](https://developers.miro.com/docs/tutorial-how-to-generate-diagrams-from-code-w-miro-mcp-vscode-github-copilot?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb) | VSCode + GitHub Copilot |
+| [Generate Diagrams from Code](https://developers.miro.com/docs/guided-tutorial-generating-code-diagrams-with-miro-mcp-vs-code?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb) | VSCode + GitHub Copilot |
 | [Build a Node.js App from Miro](https://developers.miro.com/docs/tutorial-build-a-nodejs-app-from-a-miro-board-with-miro-mcp-cursor?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb) | Cursor |
-| [Build a Landing Page](https://developers.miro.com/docs/tutorial-build-a-nodejs-app-from-a-miro-board-with-miro-mcp-cursor?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb) | Lovable |
+| [Build a Landing Page](https://developers.miro.com/docs/tutorial-how-to-build-a-lovable-landing-page-based-on-miro-board-context?utm_campaign=glb-27q1-nsp-pn-c2_akc-miro-mcp-launch-no-sl&utm_source=partner-sourced&utm_medium=partner&utm_term=github-oss-mcp-registry&src=-partner_glb) | Lovable |
 
 ### Video Tutorials
 
