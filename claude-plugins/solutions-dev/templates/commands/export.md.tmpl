@@ -1,0 +1,113 @@
+---
+description: Export Miro board content to {{DATA_SOURCE}}
+argument-hint: [board-url] [target?]
+---
+
+# Export Miro Content to {{DATA_SOURCE}}
+
+Extract content from a Miro board and push it to {{DATA_SOURCE}}.
+
+## Arguments
+
+Parse the user's input to extract:
+1. **board-url** (required): Miro board URL (can include frame focus)
+2. **target** (optional): Specific destination in {{DATA_SOURCE}} (e.g., project, folder)
+
+## Exportable Content
+
+| Miro Content | {{DATA_SOURCE}} Destination |
+|--------------|----------------------------|
+| Cards | Issues/Tasks |
+| Table rows | Records/Items |
+| Sticky notes | Comments/Notes |
+| Documents | Documentation |
+| Diagrams | Attachments/Images |
+
+## Workflow
+
+1. If board URL is missing, ask the user for it
+2. Read board content using Miro MCP tools:
+   - `miro__board_get_items` to list items
+   - `miro__context_get_board_docs` for structured extraction
+   - `miro__table_list_rows` for table data
+3. Transform content to {{DATA_SOURCE}} format
+4. Push to {{DATA_SOURCE}} using its MCP
+5. Report what was exported with links to created items
+
+## Examples
+
+**Export entire board:**
+```
+/{{CUSTOMER_SLUG}}:export https://miro.com/app/board/abc=
+```
+→ Exports all exportable content from the board
+
+**Export specific frame:**
+```
+/{{CUSTOMER_SLUG}}:export https://miro.com/app/board/abc=/?moveToWidget=123
+```
+→ Exports content from the focused frame only
+
+**Export to specific destination:**
+```
+/{{CUSTOMER_SLUG}}:export https://miro.com/app/board/abc= project:beta
+```
+→ Exports to the specified project/folder in {{DATA_SOURCE}}
+
+## Content Transformation
+
+### Cards to Issues
+```
+Miro Card:
+- Title: "Implement login"
+- Description: "Add OAuth support"
+- Tags: ["priority:high", "sprint:1"]
+
+{{DATA_SOURCE}} Issue:
+- Title: "Implement login"
+- Description: "Add OAuth support"
+- Priority: High
+- Sprint: 1
+```
+
+### Tables to Records
+```
+Miro Table Row:
+| Task | Status | Assignee |
+| Fix bug | Done | Alice |
+
+{{DATA_SOURCE}} Record:
+- Task: "Fix bug"
+- Status: "Done"
+- Assignee: "Alice"
+```
+
+### Documents to Docs
+```
+Miro Document:
+# Sprint Goals
+- Complete auth module
+- Fix critical bugs
+
+{{DATA_SOURCE}} Doc:
+Title: "Sprint Goals"
+Content: (formatted markdown)
+```
+
+## Duplicate Handling
+
+- Check for existing items before creating
+- Update existing items if found (match by title or ID)
+- Report created vs. updated counts
+
+## Error Handling
+
+- If {{DATA_SOURCE}} credentials not configured, guide user to set them up
+- If board is empty or has no exportable content, report clearly
+- If export fails for specific items, continue with others and report failures
+
+## Tips
+
+- Use frame-focused URLs to export specific sections
+- Filter by item type if you only want certain content
+- Review board content before export to ensure data quality

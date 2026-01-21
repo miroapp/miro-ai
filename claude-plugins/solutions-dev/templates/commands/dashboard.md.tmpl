@@ -1,0 +1,119 @@
+---
+description: Create a visual dashboard on Miro from {{DATA_SOURCE}} data
+argument-hint: [board-url] [dashboard-type?]
+---
+
+# Create Dashboard from {{DATA_SOURCE}}
+
+Build a visual dashboard on a Miro board using data from {{DATA_SOURCE}}.
+
+## Arguments
+
+Parse the user's input to extract:
+1. **board-url** (required): Miro board URL
+2. **dashboard-type** (optional): Type of dashboard to create
+
+## Dashboard Types
+
+| Type | Components | Best For |
+|------|------------|----------|
+| **overview** | Key metrics, status summary, recent items | Executive updates |
+| **project** | Task breakdown, timeline, blockers | Project management |
+| **sprint** | Velocity, burndown data, sprint goals | Agile teams |
+| **team** | Workload, assignments, availability | Resource planning |
+| **custom** | User-specified components | Specific needs |
+
+## Workflow
+
+1. If board URL is missing, ask the user for it
+2. Determine dashboard type (auto-detect or use specified)
+3. Fetch relevant data from {{DATA_SOURCE}}
+4. Create dashboard layout on Miro:
+   - Create containing frame for the dashboard
+   - Add header with title and date
+   - Create component frames for each section
+   - Populate with tables, diagrams, and text
+5. Report success with board link
+
+## Dashboard Layout
+
+```
++------------------------------------------+
+|          {{CUSTOMER_NAME}} Dashboard     |
+|          Updated: {date}                 |
++------------------------------------------+
+|                    |                     |
+|   Key Metrics      |   Status Summary    |
+|   (text/numbers)   |   (diagram/chart)   |
+|                    |                     |
++--------------------+---------------------+
+|                    |                     |
+|   Recent Items     |   Action Items      |
+|   (table)          |   (cards/stickies)  |
+|                    |                     |
++--------------------+---------------------+
+```
+
+## Examples
+
+**Auto-detect dashboard:**
+```
+/{{CUSTOMER_SLUG}}:dashboard https://miro.com/app/board/abc=
+```
+→ Creates overview dashboard based on available data
+
+**Specific dashboard:**
+```
+/{{CUSTOMER_SLUG}}:dashboard https://miro.com/app/board/abc= project
+```
+→ Creates project-focused dashboard
+
+**Custom dashboard:**
+```
+/{{CUSTOMER_SLUG}}:dashboard https://miro.com/app/board/abc= custom "show tasks by assignee and blocked items"
+```
+→ Creates custom dashboard with specified components
+
+## Components
+
+### Key Metrics (Text/Numbers)
+```
++------------------+
+| Open Issues: 42  |
+| Completed: 128   |
+| In Progress: 15  |
++------------------+
+```
+
+### Status Summary (Diagram)
+```
+Flowchart showing:
+To Do (12) -> In Progress (15) -> Review (8) -> Done (128)
+```
+
+### Recent Items (Table)
+| Item | Status | Assignee | Updated |
+|------|--------|----------|---------|
+| Task 1 | In Progress | Alice | 2h ago |
+| Task 2 | Review | Bob | 1d ago |
+
+### Action Items (Cards)
+Sticky notes or cards for items needing attention:
+- Blocked items
+- Overdue tasks
+- Unassigned high-priority items
+
+## Refresh Strategy
+
+Dashboards can be refreshed by re-running the command:
+- New data updates existing components
+- Layout is preserved
+- Historical data is archived in a separate frame
+
+## Tips
+
+- Create dashboards in dedicated frames for easy navigation
+- Use consistent color coding across components
+- Add a legend for status colors
+- Include data timestamp for freshness awareness
+- Link to detailed views for drill-down

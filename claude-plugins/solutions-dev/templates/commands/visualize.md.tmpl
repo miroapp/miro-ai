@@ -1,0 +1,92 @@
+---
+description: Create diagrams from {{DATA_SOURCE}} data on a Miro board
+argument-hint: [board-url] [visualization-type?]
+---
+
+# Visualize {{DATA_SOURCE}} Data on Miro
+
+Create visual diagrams from {{DATA_SOURCE}} data on a Miro board.
+
+## Arguments
+
+Parse the user's input to extract:
+1. **board-url** (required): Miro board URL
+2. **visualization-type** (optional): Type of diagram to create
+
+## Visualization Types
+
+| Type | Best For | Data Requirements |
+|------|----------|-------------------|
+| **flowchart** | Processes, workflows | Status transitions, steps |
+| **hierarchy** | Org charts, dependencies | Parent-child relationships |
+| **timeline** | Roadmaps, milestones | Date fields |
+| **kanban** | Task boards | Status field |
+| **mindmap** | Categories, groupings | Tags, labels |
+
+## Workflow
+
+1. If board URL is missing, ask the user for it
+2. Fetch data from {{DATA_SOURCE}}
+3. Analyze data structure to determine best visualization (or use specified type)
+4. Generate diagram description for Miro
+5. Create diagram using `miro__draft_diagram_new`
+6. Report success with board link
+
+## Examples
+
+**Auto-detect visualization:**
+```
+/{{CUSTOMER_SLUG}}:visualize https://miro.com/app/board/abc=
+```
+→ Analyzes data and creates appropriate diagram
+
+**Specific visualization:**
+```
+/{{CUSTOMER_SLUG}}:visualize https://miro.com/app/board/abc= flowchart
+```
+→ Creates a flowchart from the data
+
+**With data filter:**
+```
+/{{CUSTOMER_SLUG}}:visualize https://miro.com/app/board/abc= timeline sprint:current
+```
+→ Creates timeline for current sprint items
+
+## Diagram Generation
+
+Transform {{DATA_SOURCE}} data into Miro diagrams:
+
+### Flowchart (from status transitions)
+```
+Start -> In Progress -> Review -> Done
+        |-> Blocked -> In Progress
+```
+
+### Hierarchy (from dependencies)
+```
+Epic
+├── Story 1
+│   ├── Task 1.1
+│   └── Task 1.2
+└── Story 2
+```
+
+### Timeline (from dates)
+```
+Jan: [Milestone 1] [Feature A]
+Feb: [Feature B]
+Mar: [Milestone 2]
+```
+
+## Positioning
+
+When creating multiple diagrams, offset positions to prevent overlap:
+- First diagram: x=0, y=0
+- Second diagram: x=2500, y=0
+- Third diagram: x=0, y=2000
+
+## Tips
+
+- Use frames to contain related visualizations
+- Combine with sync command to keep diagrams updated
+- Add context documents near diagrams to explain the data

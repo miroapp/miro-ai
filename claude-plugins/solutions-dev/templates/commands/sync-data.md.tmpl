@@ -1,0 +1,65 @@
+---
+description: Sync data from {{DATA_SOURCE}} to a Miro board
+argument-hint: [board-url] [query?]
+---
+
+# Sync {{DATA_SOURCE}} Data to Miro
+
+Pull data from {{DATA_SOURCE}} and visualize it on a Miro board.
+
+## Arguments
+
+Parse the user's input to extract:
+1. **board-url** (required): Miro board URL
+2. **query** (optional): Filter or query for the data (e.g., project name, date range)
+
+## Workflow
+
+1. If board URL is missing, ask the user for it
+2. Connect to {{DATA_SOURCE}} using the configured MCP
+3. Fetch data based on the query (or get recent/relevant items)
+4. Determine the best visualization:
+   - **Table** - For structured list data (issues, records, items)
+   - **Diagram** - For relational data (dependencies, hierarchies)
+   - **Cards** - For individual work items with metadata
+5. Create the visualization on the Miro board
+6. Report what was synced with a link to the board
+
+## Data Mapping
+
+Map {{DATA_SOURCE}} fields to Miro content:
+
+| {{DATA_SOURCE}} Field | Miro Representation |
+|----------------------|---------------------|
+| Title/Name | Card title or table column |
+| Status | Select column with color coding |
+| Assignee | Text column |
+| Priority | Select column with colors |
+| Description | Card description or document |
+| Dates | Text column |
+
+## Examples
+
+**Sync recent items:**
+```
+/{{CUSTOMER_SLUG}}:sync https://miro.com/app/board/abc=
+```
+→ Syncs recent items from {{DATA_SOURCE}} to the board
+
+**Sync with filter:**
+```
+/{{CUSTOMER_SLUG}}:sync https://miro.com/app/board/abc= project:alpha
+```
+→ Syncs items matching the filter
+
+## Error Handling
+
+- If {{DATA_SOURCE}} credentials not configured, guide user to set them up
+- If no data matches the query, report this clearly
+- If board URL is invalid, ask for a valid URL
+
+## Tips
+
+- For large datasets, consider filtering to recent or high-priority items
+- Use frames to organize synced data on the board
+- Set up regular syncs by saving the board URL
