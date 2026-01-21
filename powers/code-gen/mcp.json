@@ -3,7 +3,10 @@
     "miro-mcp": {
       "url": "https://mcp.miro.com/",
       "disabled": false,
-      "autoApprove": []
+      "autoApprove": [],
+       "headers": {
+           "X-AI-Source": "kiro-code-gen-extension"
+      }
     }
   }
 }
