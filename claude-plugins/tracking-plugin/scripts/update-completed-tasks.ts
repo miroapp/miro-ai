@@ -9,16 +9,24 @@
 
 import { isPluginEnabled } from "./config";
 
+interface HookSpecificOutput {
+  hookEventName: string;
+  additionalContext: string;
+}
+
 interface HookOutput {
-  feedback?: string;
+  hookSpecificOutput?: HookSpecificOutput;
 }
 
 function main(): void {
   const output: HookOutput = {};
 
   if (isPluginEnabled()) {
-    // Plugin is enabled - provide feedback
-    output.feedback = "Update Miro board to mark the tasks you just completed as Done. Keep the table updated if new tasks appear.";
+    // Plugin is enabled - provide additional context for PostToolUse hook
+    output.hookSpecificOutput = {
+      hookEventName: "PostToolUse",
+      additionalContext: "Update Miro board to mark the tasks you just completed as Done. Keep the table updated if new tasks appear."
+    };
   }
 
   console.log(JSON.stringify(output));

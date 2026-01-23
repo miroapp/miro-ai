@@ -10,17 +10,15 @@
 import { isPluginEnabled } from "./config";
 
 interface HookOutput {
-  async?: boolean;
-  feedback?: string;
+  systemMessage?: string;
 }
 
 function main(): void {
   const output: HookOutput = {};
 
   if (isPluginEnabled()) {
-    // Plugin is enabled - provide feedback
-    output.async = true;  // Force feedback injection
-    output.feedback = "Check the miro data table to find tasks with status in progress or to do. Continue working until all the tasks are Done.";
+    // Plugin is enabled - provide system message for Stop hook
+    output.systemMessage = "Check the miro data table to find tasks with status in progress or to do. Continue working until all the tasks are Done.";
   }
 
   console.log(JSON.stringify(output));
