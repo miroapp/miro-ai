@@ -1,0 +1,38 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__miro__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/plugins/visualize-workflow/scripts/auto-approve-miro.ts"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "TodoWrite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/plugins/visualize-workflow/scripts/update-completed-tasks.ts",
+            "parseJson": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/plugins/visualize-workflow/scripts/check-completed-tasks.ts",
+            "parseJson": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "Miro": {
+      "url": "https://mcp.miro.com",
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

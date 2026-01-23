@@ -1,0 +1,15 @@
+{
+  "name": "visualize-workflow",
+  "description": "Your progress should live on a Miro board",
+  "version": "1.0.0",
+  "author": {
+    "name": "Elena",
+    "email": "elena@miro.com"
+  },
+  "hooks": "./hooks/hooks.json",
+  "commands": [
+    "./commands/enable.md",
+    "./commands/disable.md",
+    "./commands/status.md"
+  ]
+}
