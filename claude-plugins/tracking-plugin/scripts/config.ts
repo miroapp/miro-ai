@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * Configuration module for visualize-workflow plugin.
+ * Configuration module for tracking-plugin plugin.
  * Manages reading/writing configuration from .miro/config.json
  */
 

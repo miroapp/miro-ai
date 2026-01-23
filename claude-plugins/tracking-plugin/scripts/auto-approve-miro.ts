@@ -31,7 +31,7 @@ function main(): void {
     output.hookSpecificOutput = {
       hookEventName: "PreToolUse",
       permissionDecision: "allow",
-      permissionDecisionReason: "Auto-approved MCP Miro tools by visualize-workflow plugin",
+      permissionDecisionReason: "Auto-approved MCP Miro tools by tracking-plugin plugin",
     };
   }
 

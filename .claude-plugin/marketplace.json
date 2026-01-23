@@ -46,6 +46,12 @@
         "mcp",
         "workspace"
       ]
+    },
+    {
+      "name": "tracking-plugin",
+      "description": "Your progress should live on a Miro board",
+      "source": "./claude-plugins/tracking-plugin",
+      "category": "development"
     }
   ]
 }

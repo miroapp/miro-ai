@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * Plugin configuration manager for visualize-workflow
+ * Plugin configuration manager for tracking-plugin
  *
  * Manages enable/disable/status functionality for the plugin.
  *
@@ -31,7 +31,7 @@ function enablePlugin(boardUrl?: string): void {
 
   writeConfig(config);
 
-  console.log("✅ Enabled visualize-workflow plugin");
+  console.log("✅ Enabled tracking-plugin plugin");
   if (boardUrl) {
     console.log(`📋 Board URL: ${boardUrl}`);
   }
@@ -51,7 +51,7 @@ function disablePlugin(): void {
   removeConfig();
 
   if (wasEnabled) {
-    console.log("✅ Disabled visualize-workflow plugin");
+    console.log("✅ Disabled tracking-plugin plugin");
     console.log(`📝 Removed config: ${getConfigPath()}`);
     console.log("\nPlugin hooks will no longer execute");
   } else {
@@ -66,7 +66,7 @@ function checkStatus(): void {
   if (!isPluginEnabled()) {
     console.log("ℹ️  Plugin is disabled");
     console.log("\nTo enable the plugin, run:");
-    console.log("  /visualize-workflow:enable [board-url]");
+    console.log("  /tracking-plugin:enable [board-url]");
     return;
   }
 
@@ -93,7 +93,7 @@ function checkStatus(): void {
  */
 function showHelp(): void {
   console.log(`
-Visualize Workflow Plugin Configuration
+Tracking Plugin Configuration
 
 Usage:
   bun scripts/plugin-config.ts <command> [arguments]

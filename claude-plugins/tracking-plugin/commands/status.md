@@ -1,9 +1,9 @@
 ---
-description: Show current visualize-workflow plugin configuration and status
+description: Show current tracking-plugin plugin configuration and status
 allowed-tools: Bash(bun:*)
 ---
 
-Display the current status of the visualize-workflow plugin and its configuration.
+Display the current status of the tracking-plugin plugin and its configuration.
 
 **Information shown**:
 
