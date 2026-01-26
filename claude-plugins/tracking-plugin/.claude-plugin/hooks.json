@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun ${CLAUDE_PLUGIN_ROOT}/scripts/hooks-stop.ts",
+            "command": "sh ${CLAUDE_PLUGIN_ROOT}/scripts/hooks-stop.sh",
             "parseJson": true
           }
         ]

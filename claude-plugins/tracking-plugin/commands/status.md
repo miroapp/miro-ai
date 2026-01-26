@@ -1,9 +1,9 @@
 ---
 description: Show current tracking-plugin plugin configuration and status
-allowed-tools: Bash(bun:*), mcp__plugin_miro_miro__board_get_items
+allowed-tools: Bash(sh:*), mcp__plugin_miro_miro__board_get_items
 ---
 
 Display the current status of the task tracking in Miro.
 
-1. Run script ${CLAUDE_PLUGIN_ROOT}/scripts/command-status.ts  (use bun)
+1. Run script ${CLAUDE_PLUGIN_ROOT}/scripts/command-status.sh
 2. When enabled - provide the status and URL of the table where we track tasks

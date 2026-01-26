@@ -1,7 +1,7 @@
 ---
 description: Enable tracking-plugin plugin with optional board URL
 argument-hint: [table-url]
-allowed-tools: Bash(bun:*), AskUserQuestion
+allowed-tools: Bash(sh:*), AskUserQuestion
 ---
 
 # Enable task tracking in Miro
@@ -18,7 +18,7 @@ This command enables tracking of tasks execution in a Miro table.
 Follow this logic to determine the table URL:
 
 1. **If `$ARGUMENTS` contains a URL** → use it directly (user explicitly provided it)
-   - Runs script ${CLAUDE_PLUGIN_ROOT}/scripts/command-enable.ts <TABLE_URL>  (use bun)
+   - Runs script ${CLAUDE_PLUGIN_ROOT}/scripts/command-enable.sh <TABLE_URL>
    - Replace `<TABLE_URL>` with the actual table deep link URL.
 2. **If no argument provided**, check the conversation context for a recently created or referenced table:
    - Look for Miro table URLs with `moveToWidget=` or `focusWidget=` parameter
