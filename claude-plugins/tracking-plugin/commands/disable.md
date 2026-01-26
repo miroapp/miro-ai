@@ -3,19 +3,8 @@ description: Disable tracking-plugin plugin and stop automatic task tracking
 allowed-tools: Bash(bun:*)
 ---
 
-Disable the tracking-plugin plugin to stop automatic task tracking and Miro board updates.
+# Disable task tracking in Miro
 
-**What it does**:
+This command disables tracking of tasks execution in Miro.
 
-1. Disables all plugin hooks
-2. Updates configuration file to set `"enabled": false`
-3. Stops automatic Miro board updates
-4. Stops task completion validation
-
-**Command**:
-
-```bash
-bun ${CLAUDE_PLUGIN_ROOT}/scripts/plugin-config.ts disable
-```
-
-Use this when you want to temporarily disable the plugin or when you no longer need automatic task tracking. You can re-enable it anytime with `/tracking-plugin:enable`.
+Run script ${CLAUDE_PLUGIN_ROOT}/scripts/command-disable.ts (use bun)

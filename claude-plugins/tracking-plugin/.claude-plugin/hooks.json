@@ -1,44 +1,11 @@
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "mcp__miro__.*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun ${CLAUDE_PLUGIN_ROOT}/scripts/auto-approve-miro.ts"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "TaskUpdate",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun ${CLAUDE_PLUGIN_ROOT}/scripts/update-completed-tasks.ts",
-            "parseJson": true
-          }
-        ]
-      },
-      {
-        "matcher": "ExitPlanMode",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun ${CLAUDE_PLUGIN_ROOT}/scripts/create-tasks.ts",
-            "parseJson": true
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "bun ${CLAUDE_PLUGIN_ROOT}/scripts/check-completed-tasks.ts",
+            "command": "bun ${CLAUDE_PLUGIN_ROOT}/scripts/hooks-stop.ts",
             "parseJson": true
           }
         ]

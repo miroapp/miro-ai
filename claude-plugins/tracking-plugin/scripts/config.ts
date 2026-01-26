@@ -1,17 +1,14 @@
-#!/usr/bin/env bun
-
-/**
- * Configuration module for tracking-plugin plugin.
- * Manages reading/writing configuration from .miro/config.json
- */
-
-import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  unlinkSync,
+  writeFileSync,
+} from "fs";
 import { join } from "path";
 
 export interface PluginConfig {
-  enabled?: boolean;
-  boardUrl?: string | null;
-  enabledAt?: string;
+  tableUrl: string;
 }
 
 export function getConfigPath(): string {
@@ -22,18 +19,18 @@ export function getConfigDir(): string {
   return join(process.cwd(), ".miro");
 }
 
-export function readConfig(): PluginConfig {
+export function readConfig(): PluginConfig | null {
   const configPath = getConfigPath();
   if (!existsSync(configPath)) {
-    return {};
+    return null;
   }
 
   try {
     const content = readFileSync(configPath, "utf-8");
     return JSON.parse(content);
   } catch (error) {
-    console.error(`❌ Error reading config: ${error}`);
-    return {};
+    console.error(`Error reading config: ${error}`);
+    return null;
   }
 }
 
@@ -47,20 +44,12 @@ export function writeConfig(config: PluginConfig): void {
     writeFileSync(
       getConfigPath(),
       JSON.stringify(config, null, 2) + "\n",
-      "utf-8"
+      "utf-8",
     );
   } catch (error) {
-    console.error(`❌ Error writing config: ${error}`);
+    console.error(`Error writing config: ${error}`);
     throw error;
   }
-}
-
-export function isPluginEnabled(): boolean {
-  return readConfig().enabled ?? false;
-}
-
-export function getPluginConfig(): PluginConfig {
-  return readConfig();
 }
 
 export function removeConfig(): void {
@@ -69,7 +58,7 @@ export function removeConfig(): void {
     try {
       unlinkSync(configPath);
     } catch (error) {
-      console.error(`❌ Error removing config: ${error}`);
+      console.error(`Error removing config: ${error}`);
       throw error;
     }
   }

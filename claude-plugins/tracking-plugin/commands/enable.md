@@ -1,45 +1,31 @@
 ---
 description: Enable tracking-plugin plugin with optional board URL
-argument-hint: [board-url]
-allowed-tools: Bash(bun:*)
+argument-hint: [table-url]
+allowed-tools: Bash(bun:*), AskUserQuestion
 ---
 
-Enable the tracking-plugin plugin to automatically manage task visualization on Miro boards.
-DO NOT SKIP THIS STEP:
-1. FIRST, check your available tools list for any tools starting with "mcp__miro"
-    - Look at the tools you have access to in THIS session
-    - DO NOT run bash commands like `ls` or check file systems
-    - DO NOT use any other tools at this step - just verify Miro MCP tools exist
+# Enable task tracking in Miro
 
-2. If NO Miro MCP tools exist, IMMEDIATELY STOP and notify the user that Miro MCP is not configured
-    - Do not proceed with ANY other steps
-    - DO not provide any extra information unless the user asks
+This command enables tracking of tasks execution in a Miro table.
 
-3. If Miro MCP tools DO exist, test the connection by calling board_get_items with limit 1
-    - This is the FIRST tool call you should make
+## Prerequisites
 
-4. Only proceed with enabling the plugin if Miro MCP is working
-    - DO NOT use any other MCP servers or make assumptions
-    - DO NOT check file systems or run bash commands before verifying Miro MCP
+1. Make sure that Miro MCP is enabled. If it's not enabled there is nothing you can do to track tasks in Miro. Ask User to install Miro MCP server.
+2. You need a **deep link to a Miro table** (URL with `moveToWidget` or `focusWidget` parameter).
 
-**What it does**:
+## Finding the Table URL
 
-1. Enables plugin hooks for automatic task tracking
-2. Auto-approves Miro MCP calls for seamless board updates
-3. Monitors TodoWrite tool usage to sync completed tasks
-4. Validates task completion on session stop
+Follow this logic to determine the table URL:
 
-**Board URL**:
-
-You have to provide a Miro board id that you will use for tracking:
-- Example: `https://miro.com/app/board/cde123=` or just `cde123=`
-- The plugin will track your progress on this board
-
-**Command**:
-
-```bash
-bun ${CLAUDE_PLUGIN_ROOT}/scripts/plugin-config.ts enable $ARGUMENTS
-```
-
-If there's no miro board in .miro/config.json, ask a user to provide a board id before enabling it.
-After enabling, use `/tracking-plugin:status` to check plugin status.
+1. **If `$ARGUMENTS` contains a URL** → use it directly (user explicitly provided it)
+   - Runs script ${CLAUDE_PLUGIN_ROOT}/scripts/command-enable.ts <TABLE_URL>  (use bun)
+   - Replace `<TABLE_URL>` with the actual table deep link URL.
+2. **If no argument provided**, check the conversation context for a recently created or referenced table:
+   - Look for Miro table URLs with `moveToWidget=` or `focusWidget=` parameter
+   - If found, **ask user to confirm** using AskUserQuestion before enabling:
+     - Question: "Should I use this table for task tracking?"
+     - Show the table URL you found
+     - Options: "Yes, use this table" / "No, I'll provide a different URL"
+3. **If no URL found anywhere** → ask the user using AskUserQuestion:
+   - Question: "Which Miro table should I use for task tracking?"
+   - Explain they need to provide a deep link URL (with moveToWidget or focusWidget parameter)
