@@ -10,7 +10,7 @@ SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 config=$(read_config)
 
 if [ -z "$config" ]; then
-  echo "Task tracking in Miro is disabled. Run: /tracking-plugin:enable <table-url> to enable it."
+  echo "Task tracking in Miro is disabled. Run: /miro-tasks:enable <table-url> to enable it."
 else
   echo "$config"
 fi

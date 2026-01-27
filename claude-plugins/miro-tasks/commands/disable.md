@@ -1,5 +1,5 @@
 ---
-description: Disable tracking-plugin plugin and stop automatic task tracking
+description: Disable miro-tasks plugin and stop automatic task tracking
 allowed-tools: Bash(sh:*)
 ---
 

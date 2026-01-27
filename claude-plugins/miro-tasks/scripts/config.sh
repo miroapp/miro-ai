@@ -1,5 +1,5 @@
 #!/bin/sh
-# Shared configuration functions for tracking-plugin
+# Shared configuration functions for miro-tasks
 # This file is sourced by other scripts
 
 # Get the config directory path (relative to current working directory)

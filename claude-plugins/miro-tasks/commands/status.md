@@ -1,5 +1,5 @@
 ---
-description: Show current tracking-plugin plugin configuration and status
+description: Show current miro-tasks plugin configuration and status
 allowed-tools: Bash(sh:*), mcp__plugin_miro_miro__board_get_items
 ---
 

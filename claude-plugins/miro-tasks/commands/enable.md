@@ -1,5 +1,5 @@
 ---
-description: Enable tracking-plugin plugin with optional board URL
+description: Enable miro-tasks plugin with optional board URL
 argument-hint: [table-url]
 allowed-tools: Bash(sh:*), AskUserQuestion
 ---
