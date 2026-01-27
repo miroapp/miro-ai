@@ -1,10 +1,10 @@
 {
-  "name": "tracking-plugin",
-  "description": "Your progress should live on a Miro board",
+  "name": "miro-tasks",
+  "description": "Track tasks on a Miro board",
   "version": "1.0.0",
   "author": {
-    "name": "Elena",
-    "email": "elena@miro.com"
+    "name": "Miro",
+    "email": "support@miro.com"
   },
   "hooks": "./.claude-plugin/hooks.json",
   "commands": [
