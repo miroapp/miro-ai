@@ -51,7 +51,7 @@ Creates complete plugin directory structure:
 
 **Start the workflow:**
 ```
-/solutions-dev:create-plugin
+/miro-solutions:create-plugin
 ```
 
 The agent will ask:
