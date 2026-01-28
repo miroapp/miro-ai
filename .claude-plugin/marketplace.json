@@ -49,9 +49,90 @@
     },
     {
       "name": "miro-tasks",
-      "description": "Your progress should live on a Miro board",
+      "description": "Track your coding progress on a Miro board. Automatically syncs todos and task status to visual cards.",
       "source": "./claude-plugins/miro-tasks",
-      "category": "development"
+      "category": "development",
+      "version": "1.0.0",
+      "author": {
+        "name": "Miro",
+        "email": "support@miro.com"
+      },
+      "homepage": "https://miro.com",
+      "repository": "https://github.com/miroapp/miro-ai",
+      "license": "MIT",
+      "keywords": [
+        "miro",
+        "tasks",
+        "todos",
+        "progress-tracking",
+        "project-management",
+        "kanban",
+        "workflow"
+      ],
+      "tags": [
+        "development",
+        "productivity",
+        "project-management",
+        "tracking"
+      ]
+    },
+    {
+      "name": "miro-solutions",
+      "description": "Create customer-specific Miro plugins during sales calls. Rapid plugin generation for Solution Architects.",
+      "source": "./claude-plugins/miro-solutions",
+      "category": "development",
+      "version": "1.0.0",
+      "author": {
+        "name": "Miro",
+        "email": "support@miro.com"
+      },
+      "homepage": "https://miro.com",
+      "repository": "https://github.com/miroapp/miro-ai",
+      "license": "MIT",
+      "keywords": [
+        "miro",
+        "solutions",
+        "sales",
+        "plugin-generator",
+        "gtm",
+        "customer-demo",
+        "integration"
+      ],
+      "tags": [
+        "development",
+        "sales",
+        "automation",
+        "plugin-creation"
+      ]
+    },
+    {
+      "name": "miro-research",
+      "description": "Research any topic and visualize findings on Miro boards. Uses available tools (Glean, local repos) and creates docs, tables, and diagrams.",
+      "source": "./claude-plugins/miro-research",
+      "category": "productivity",
+      "version": "1.0.0",
+      "author": {
+        "name": "Miro",
+        "email": "support@miro.com"
+      },
+      "homepage": "https://miro.com",
+      "repository": "https://github.com/miroapp/miro-ai",
+      "license": "MIT",
+      "keywords": [
+        "miro",
+        "research",
+        "visualization",
+        "glean",
+        "documentation",
+        "diagrams",
+        "knowledge-synthesis"
+      ],
+      "tags": [
+        "productivity",
+        "research",
+        "visualization",
+        "documentation"
+      ]
     }
   ]
 }

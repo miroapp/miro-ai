@@ -12,7 +12,7 @@ This plugin enables Solution Architects to rapidly create demo plugins that show
 |--------|---------|------------------|
 | `miro` (required) | Miro MCP integration | MCP tools, commands for diagrams/tables/docs |
 | `plugin-dev` (required) | General plugin creation | Plugin creation workflow, validation |
-| **`solutions-dev`** | GTM enablement | Miro Platform knowledge + SA-focused agent |
+| **`miro-solutions`** | GTM enablement | Miro Platform knowledge + SA-focused agent |
 
 **This plugin adds:**
 1. **Miro Platform Knowledge Skill** - Comprehensive guide to Miro as a platform (canvas features, AI capabilities, enterprise use cases)
@@ -28,7 +28,7 @@ Install the required companion plugins:
 
 ```bash
 # Start the guided plugin creation workflow
-/solutions-dev:create-plugin
+/miro-solutions:create-plugin
 ```
 
 ## What Gets Generated
@@ -94,7 +94,7 @@ Guided workflow agent with:
 
 ### Command: create-plugin
 
-Entry point: `/solutions-dev:create-plugin`
+Entry point: `/miro-solutions:create-plugin`
 
 ### Templates
 
@@ -111,7 +111,7 @@ Plugin scaffolding templates:
 ## Directory Structure
 
 ```
-solutions-dev/
+miro-solutions/
 ├── .claude-plugin/
 │   └── plugin.json
 ├── agents/
@@ -149,7 +149,7 @@ solutions-dev/
 
 ### Test agent flow
 ```
-/solutions-dev:create-plugin
+/miro-solutions:create-plugin
 ```
 Walk through all 3 questions and verify the generated plugin.
 
