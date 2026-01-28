@@ -163,7 +163,7 @@ How to use this effectively.
 
 ## References
 
-- [Tools Reference](references/tools.md)
+- [Tools Reference](references/tools-reference.md)
 ```
 
 ### Frontmatter Fields

@@ -107,6 +107,33 @@ This approach:
    - Trigger the hook event (e.g., end a session for `Stop` hooks)
    - Check that the hook script runs and returns expected output
 
+### Testing the Marketplace Locally
+
+If you're modifying `.claude-plugin/marketplace.json`:
+
+1. **Add local marketplace:**
+   ```bash
+   /plugin marketplace add /path/to/miro-ai
+   ```
+
+2. **Install plugins from it:**
+   ```bash
+   /plugin install miro@miro-ai
+   /plugin install miro-tasks@miro-ai
+   /plugin install miro-solutions@miro-ai
+   /plugin install miro-research@miro-ai
+   ```
+
+3. **Verify all plugins appear:**
+   ```bash
+   /plugin marketplace list
+   ```
+
+4. **Validate JSON:**
+   ```bash
+   claude plugin validate .
+   ```
+
 ### Making Changes
 
 1. Edit files in `claude-plugins/your-plugin/`
