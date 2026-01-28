@@ -1,0 +1,13 @@
+{
+  "miro": {
+    "type": "http",
+    "url": "https://mcp.miro.com/",
+    "headers": {
+      "X-AI-Source": "claude-code-plugin"
+    }
+  },
+  "glean": {
+    "type": "http",
+    "url": "https://miro-be.glean.com/mcp/default"
+  }
+}

@@ -52,6 +52,13 @@
       "description": "Your progress should live on a Miro board",
       "source": "./claude-plugins/miro-tasks",
       "category": "development"
+    },
+    {
+      "name": "miro-research",
+      "description": "Research any topic and visualize findings on Miro boards. Uses available tools (Glean, local repos) and creates docs, tables, and diagrams.",
+      "source": "./claude-plugins/miro-research",
+      "category": "productivity",
+      "keywords": ["miro", "research", "visualization", "glean", "documentation", "diagrams"]
     }
   ]
 }

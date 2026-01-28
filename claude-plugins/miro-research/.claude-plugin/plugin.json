@@ -1,0 +1,10 @@
+{
+  "name": "miro-research",
+  "version": "1.0.0",
+  "description": "Research workflows with Miro visualization. Performs thorough research using available tools (Glean, local repos, files) and creates visual outputs on Miro boards.",
+  "author": {
+    "name": "Miro",
+    "email": "support@miro.com"
+  },
+  "commands": ["./commands/research.md"]
+}

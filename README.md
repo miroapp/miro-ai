@@ -150,6 +150,7 @@ Test your setup with these example prompts:
 | `/miro:table` | Create tables with typed columns |
 | `/miro:summarize` | Extract documentation from boards |
 | `/miro-tasks:enable` | Enable automatic task tracking |
+| `/miro-research:research` | Research topics and visualize on Miro |
 
 ### Capabilities (All Platforms)
 
@@ -171,6 +172,7 @@ Test your setup with these example prompts:
 | [miro](docs/claude-code/miro.md) | Core MCP integration with 5 commands |
 | [miro-tasks](docs/claude-code/miro-tasks.md) | Automatic task tracking in Miro tables |
 | [miro-solutions](docs/claude-code/miro-solutions.md) | Create customer demo plugins |
+| [miro-research](docs/claude-code/miro-research.md) | Research and visualize findings on Miro |
 
 ### Kiro
 
