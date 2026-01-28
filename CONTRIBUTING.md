@@ -119,9 +119,10 @@ This approach:
 ```
 plugin-name/
 ├── .claude-plugin/
-│   ├── plugin.json          # Plugin manifest (required)
-│   └── hooks.json           # Hook definitions (optional)
+│   └── plugin.json          # Plugin manifest (required)
 ├── .mcp.json                # MCP server config (optional)
+├── hooks/                   # Hook definitions (optional)
+│   └── hooks.json
 ├── commands/                # Slash commands
 │   └── command-name.md
 ├── skills/                  # Knowledge skills
@@ -177,9 +178,9 @@ Before submitting a PR, verify:
    cd powers/code-gen
    ```
 
-2. **Required files:**
-   - `POWER.md` — Steering instructions for the AI
-   - `mcp.json` — MCP server configuration
+2. **Power files:**
+   - `POWER.md` — Steering instructions for the AI (required)
+   - `mcp.json` — MCP server configuration (optional, only needed for MCP tools)
 
 3. **Test with Kiro:**
    - Configure Kiro to use your power directory
@@ -191,7 +192,7 @@ Before submitting a PR, verify:
 ```
 power-name/
 ├── POWER.md     # Steering instructions (required)
-└── mcp.json     # MCP configuration (required)
+└── mcp.json     # MCP configuration (optional)
 ```
 
 ### POWER.md Format
@@ -240,8 +241,8 @@ Steps the AI should follow.
 
 3. **Copy to Gemini config:**
    ```bash
-   mkdir -p ~/.config/gemini/extensions
-   cp gemini-extension.json ~/.config/gemini/extensions/miro.json
+   mkdir -p ~/.gemini/extensions/miro
+   cp gemini-extension.json ~/.gemini/extensions/miro/gemini-extension.json
    ```
 
 4. **Restart Gemini CLI**
@@ -252,11 +253,11 @@ Steps the AI should follow.
 
 ```json
 {
-  "name": "miro",
-  "description": "Connect to Miro boards",
+  "name": "Miro",
+  "version": "1.0.0",
   "mcpServers": {
     "miro": {
-      "url": "https://mcp.miro.com/"
+      "httpUrl": "https://mcp.miro.com/"
     }
   }
 }

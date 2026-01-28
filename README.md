@@ -61,8 +61,8 @@ See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 Copy the extension file to your Gemini configuration:
 
 ```bash
-mkdir -p ~/.config/gemini/extensions
-cp gemini-extension.json ~/.config/gemini/extensions/miro.json
+mkdir -p ~/.gemini/extensions/miro
+cp gemini-extension.json ~/.gemini/extensions/miro/gemini-extension.json
 ```
 
 Restart Gemini CLI.
