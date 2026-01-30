@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "skill-frontmatter.schema.json",
+  "title": "Claude Code SKILL.md Frontmatter",
+  "description": "Schema for validating SKILL.md frontmatter in Claude Code plugins",
+  "type": "object",
+  "required": ["description"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Skill identifier (kebab-case)"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "description": "User-facing description of when to use this skill"
+    },
+    "disable-model-invocation": {
+      "type": "boolean",
+      "description": "If true, prevents automatic invocation by the model"
+    }
+  },
+  "additionalProperties": true
+}

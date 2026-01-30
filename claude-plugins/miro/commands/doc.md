@@ -1,6 +1,6 @@
 ---
 description: Create a document (Google Docs-style) on a Miro board
-argument-hint: [board-url] [content]
+argument-hint: "[board-url] [content]"
 ---
 
 # Create Document on Miro Board

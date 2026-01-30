@@ -23,19 +23,22 @@ miro-ai/
 │   └── miro-research/       # Research visualization
 ├── powers/                   # Kiro powers
 │   └── code-gen/            # Design-to-code (POWER.md + mcp.json)
+├── validation/               # Validation scripts and schemas
+│   ├── schemas/             # JSON schemas for frontmatter
+│   └── src/                 # TypeScript validators
 ├── docs/                     # Documentation
 ├── .claude-plugin/           # Marketplace manifest
 ├── gemini-extension.json     # Gemini CLI extension
+├── package.json              # Bun project config
 └── CONTRIBUTING.md
-└── README.md
 ```
 
-# Validation Checklist
+# Validation
 
-Before committing changes:
-- `plugin.json` is valid JSON
-- All commands have `description` in frontmatter
-- Skills have `SKILL.md` with `name` and `description` frontmatter
-- Hooks return valid JSON if `parseJson: true`
-- Scripts are executable (`chmod +x scripts/*.sh`)
-- MCP servers are reachable
+Run before committing (also runs automatically via pre-commit hook):
+
+```bash
+bun run validate
+```
+
+Validates: plugin.json, frontmatter (SKILL.md, commands, agents, POWER.md), bash scripts, JSON syntax, MCP consistency.

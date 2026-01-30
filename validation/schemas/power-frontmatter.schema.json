@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "power-frontmatter.schema.json",
+  "title": "Kiro POWER.md Frontmatter",
+  "description": "Schema for validating POWER.md frontmatter in Kiro powers (https://kiro.dev/docs/powers/create/)",
+  "type": "object",
+  "required": ["name", "displayName", "description", "keywords"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Internal identifier for the power (kebab-case)"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 3,
+      "description": "User-facing title shown in the UI"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Summary of the power's capabilities"
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Terms triggering automatic power activation"
+    },
+    "author": {
+      "type": "string",
+      "description": "Creator attribution"
+    }
+  },
+  "additionalProperties": true
+}

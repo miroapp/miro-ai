@@ -69,7 +69,7 @@ Create `.md` files in the `commands/` directory:
 ```markdown
 ---
 description: Short description for /help
-argument-hint: [required-arg] [optional-arg?]
+argument-hint: "[required-arg] [optional-arg?]"
 allowed-tools: Bash(sh:*), AskUserQuestion
 ---
 
@@ -105,7 +105,7 @@ Usage examples.
 ```markdown
 ---
 description: Create a diagram on a Miro board
-argument-hint: [board-url] [description]
+argument-hint: "[board-url] [description]"
 ---
 
 # Create Diagram

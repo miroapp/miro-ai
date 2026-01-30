@@ -1,6 +1,6 @@
 ---
 description: Generate documentation or summary from a Miro board
-argument-hint: [board-url] [doc-type?]
+argument-hint: "[board-url] [doc-type?]"
 ---
 
 # Summarize Miro Board Content
