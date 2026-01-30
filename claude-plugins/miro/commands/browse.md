@@ -1,6 +1,6 @@
 ---
 description: List and explore items on a Miro board
-argument-hint: [board-url] [item-type?]
+argument-hint: "[board-url] [item-type?]"
 ---
 
 # Browse Miro Board Contents

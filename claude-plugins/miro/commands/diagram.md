@@ -1,6 +1,6 @@
 ---
 description: Create a diagram on a Miro board from a text description
-argument-hint: [board-url] [description]
+argument-hint: "[board-url] [description]"
 ---
 
 # Create Diagram on Miro Board

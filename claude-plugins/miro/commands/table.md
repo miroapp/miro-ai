@@ -1,6 +1,6 @@
 ---
 description: Create a table on a Miro board with specified columns
-argument-hint: [board-url] [table-name]
+argument-hint: "[board-url] [table-name]"
 ---
 
 # Create Table on Miro Board
