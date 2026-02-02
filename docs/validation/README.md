@@ -14,7 +14,7 @@ bun run validate # Run all validations
 | Component | Validation | Tool |
 |-----------|------------|------|
 | Claude plugin.json | Schema, required fields | `claude plugin validate` CLI |
-| Claude SKILL.md | YAML frontmatter schema | Ajv + gray-matter |
+| Claude SKILL.md | YAML frontmatter + name-directory match | Ajv ([agentskills.io spec](https://agentskills.io/specification)) |
 | Claude commands/*.md | YAML frontmatter schema | Ajv + gray-matter |
 | Claude agents/*.md | YAML frontmatter schema | Ajv + gray-matter |
 | Kiro POWER.md | YAML frontmatter schema | Ajv + gray-matter |
@@ -60,3 +60,8 @@ GitHub Actions runs validation on every push and PR to `main`:
 - [Schemas](./schemas.md) — JSON schema definitions for frontmatter
 - [Adding Validators](./adding-validators.md) — How to extend validation
 - [Troubleshooting](./troubleshooting.md) — Common errors and fixes
+
+## Related
+
+- [Contributing](../../CONTRIBUTING.md) — Development workflow and PR process
+- [Agent Skills Spec](https://agentskills.io/specification) — SKILL.md format specification

@@ -8,7 +8,7 @@ Located in `validation/schemas/`:
 
 | Schema | Validates | Source |
 |--------|-----------|--------|
-| `skill-frontmatter.schema.json` | `**/skills/*/SKILL.md` | [Claude Code docs](https://code.claude.com/docs/en/skills) |
+| `skill-frontmatter.schema.json` | `**/skills/*/SKILL.md` | [agentskills.io spec](https://agentskills.io/specification) |
 | `command-frontmatter.schema.json` | `**/commands/*.md` | [Claude Code docs](https://code.claude.com/docs/en/plugins-reference) |
 | `agent-frontmatter.schema.json` | `**/agents/*.md` | [Claude Code docs](https://code.claude.com/docs/en/sub-agents) |
 | `power-frontmatter.schema.json` | `**/POWER.md` | [Kiro docs](https://kiro.dev/docs/powers/create/) |
@@ -19,19 +19,31 @@ Located in `validation/schemas/`:
 
 **File:** `validation/schemas/skill-frontmatter.schema.json`
 
+**Spec:** [agentskills.io/specification](https://agentskills.io/specification)
+
 **Required fields:**
-- `description` (string, min 10 chars) — When to use this skill
+- `name` (string, 1-64 chars, lowercase + hyphens, **must match directory name**)
+- `description` (string, 1-1024 chars) — What the skill does and when to use it
 
 **Optional fields:**
-- `name` (string) — Skill identifier
-- `disable-model-invocation` (boolean) — Prevent automatic invocation
+- `license` (string) — License name or bundled file reference
+- `compatibility` (string, max 500 chars) — Environment requirements
+- `metadata` (object) — Arbitrary key-value pairs
+- `allowed-tools` (string) — Space-delimited list of pre-approved tools
 
 **Example:**
 ```yaml
 ---
-description: Create diagrams on Miro boards from text descriptions
+name: miro-mcp
+description: Use Miro MCP tools for creating diagrams, documents, and tables on Miro boards. Use when working with Miro board content.
 ---
 ```
+
+**Validation rules:**
+- `name` must be lowercase alphanumeric with hyphens (pattern: `^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
+- `name` must match the parent directory name
+- No consecutive hyphens (`--`) allowed
+- Cannot start or end with a hyphen
 
 ---
 
@@ -111,9 +123,16 @@ keywords: ["miro", "diagram", "workflow", "whiteboard"]
 
 ## Vendor Documentation References
 
+- **Agent Skills Spec**: [agentskills.io/specification](https://agentskills.io/specification)
 - **Claude Code Plugins**: [code.claude.com/docs/en/plugins-reference](https://code.claude.com/docs/en/plugins-reference)
 - **Claude Code Skills**: [code.claude.com/docs/en/skills](https://code.claude.com/docs/en/skills)
 - **Claude Code Agents**: [code.claude.com/docs/en/sub-agents](https://code.claude.com/docs/en/sub-agents)
 - **Kiro Powers**: [kiro.dev/docs/powers/create](https://kiro.dev/docs/powers/create/)
 - **Gemini CLI Extensions**: [google-gemini.github.io/gemini-cli/docs/extensions](https://google-gemini.github.io/gemini-cli/docs/extensions/)
 - **Gemini Settings Schema**: [raw.githubusercontent.com/.../settings.schema.json](https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json)
+
+## Related
+
+- [Validation Overview](./README.md) — What's validated and how
+- [Troubleshooting](./troubleshooting.md) — Common errors and fixes
+- [Adding Validators](./adding-validators.md) — How to extend validation

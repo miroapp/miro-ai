@@ -29,10 +29,34 @@ const validators = {
   power: ajv.compile(powerSchema),
 };
 
+/**
+ * Validates that skill name matches its directory name per agentskills.io spec.
+ * https://agentskills.io/specification
+ */
+function validateNameMatchesDirectory(
+  filePath: string,
+  data: Record<string, unknown>
+): string[] {
+  const errors: string[] = [];
+  const name = data.name as string | undefined;
+
+  if (name) {
+    const dirName = path.basename(path.dirname(filePath));
+    if (name !== dirName) {
+      errors.push(
+        `name "${name}" must match directory name "${dirName}" (agentskills.io spec)`
+      );
+    }
+  }
+
+  return errors;
+}
+
 async function validateFile(
   filePath: string,
   validator: ReturnType<typeof ajv.compile>,
-  type: string
+  type: string,
+  extraValidation?: (filePath: string, data: Record<string, unknown>) => string[]
 ): Promise<ValidationResult> {
   try {
     const content = await readFile(filePath, "utf-8");
@@ -46,10 +70,22 @@ async function validateFile(
       };
     }
 
+    const errors: string[] = [];
+
+    // Schema validation
     const valid = validator(data);
     if (!valid) {
-      const errors =
-        validator.errors?.map((e) => `${e.instancePath || "root"}: ${e.message}`) || [];
+      errors.push(
+        ...(validator.errors?.map((e) => `${e.instancePath || "root"}: ${e.message}`) || [])
+      );
+    }
+
+    // Extra validation (e.g., name-directory match for skills)
+    if (extraValidation) {
+      errors.push(...extraValidation(filePath, data as Record<string, unknown>));
+    }
+
+    if (errors.length > 0) {
       return { file: filePath, valid: false, errors };
     }
 
@@ -68,14 +104,20 @@ export async function validateFrontmatter(
 ): Promise<FrontmatterValidationResults> {
   const results: ValidationResult[] = [];
 
-  // Validate SKILL.md files
+  // Validate SKILL.md files (with name-directory match per agentskills.io spec)
   const skillFiles = await fg("**/skills/*/SKILL.md", {
     cwd: root,
     ignore: ["**/node_modules/**"],
+    dot: true, // Include hidden directories like .claude/
   });
   for (const file of skillFiles) {
     results.push(
-      await validateFile(path.join(root, file), validators.skill, "SKILL.md")
+      await validateFile(
+        path.join(root, file),
+        validators.skill,
+        "SKILL.md",
+        validateNameMatchesDirectory
+      )
     );
   }
 

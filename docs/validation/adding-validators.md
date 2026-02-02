@@ -155,3 +155,9 @@ bun run validate:frontmatter
 | `gray-matter` | YAML frontmatter parsing |
 | `fast-glob` | File pattern matching |
 | `execa` | Shell command execution |
+
+## Related
+
+- [Validation Overview](./README.md) — What's validated and how
+- [Schemas](./schemas.md) — Existing JSON schema definitions
+- [Troubleshooting](./troubleshooting.md) — Common errors and fixes

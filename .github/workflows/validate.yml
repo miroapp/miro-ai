@@ -19,16 +19,16 @@ jobs:
       - name: Install ShellCheck
         run: sudo apt-get install -y shellcheck
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
-        continue-on-error: true
 
       - name: Install dependencies
         run: bun install
 
       - name: Run validation
         run: bun run validate
-
-      - name: Run ShellCheck directly
-        run: |
-          shellcheck claude-plugins/miro-tasks/scripts/*.sh || true

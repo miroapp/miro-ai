@@ -55,11 +55,63 @@ description: "Brief description of this component"
 **Cause:** Field value is too short.
 
 **Minimum lengths:**
-- SKILL.md `description`: 10 characters
+- SKILL.md `name`: 1 character
+- SKILL.md `description`: 1 character (max 1024)
 - Command `description`: 5 characters
 - Agent `description`: 10 characters
 - POWER.md `description`: 10 characters
 - POWER.md `displayName`: 3 characters
+
+---
+
+### "name must match directory name"
+
+**Cause:** SKILL.md `name` field doesn't match its parent directory name ([agentskills.io spec](https://agentskills.io/specification)).
+
+**Bad:**
+```
+skills/my-skill/SKILL.md
+---
+name: different-name  # ✗ doesn't match "my-skill"
+---
+```
+
+**Good:**
+```
+skills/my-skill/SKILL.md
+---
+name: my-skill  # ✓ matches directory
+---
+```
+
+**Fix:** Ensure `name` exactly matches the directory containing the SKILL.md file.
+
+---
+
+### "name must match pattern"
+
+**Cause:** SKILL.md `name` doesn't follow the required format.
+
+**Rules ([agentskills.io spec](https://agentskills.io/specification)):**
+- Lowercase letters, numbers, and hyphens only
+- Must start with a letter
+- Cannot start or end with hyphen
+- No consecutive hyphens (`--`)
+- Max 64 characters
+
+**Bad:**
+```yaml
+name: My-Skill      # uppercase
+name: -my-skill     # starts with hyphen
+name: my--skill     # consecutive hyphens
+```
+
+**Good:**
+```yaml
+name: my-skill
+name: miro-mcp
+name: data-analysis-2
+```
 
 ---
 
@@ -218,3 +270,9 @@ git commit --no-verify -m "message"
 1. Run with verbose output: `bun run validate 2>&1 | less`
 2. Check specific validator: `bun run validate:frontmatter`
 3. Open an issue: [github.com/miroapp/miro-ai/issues](https://github.com/miroapp/miro-ai/issues)
+
+## Related
+
+- [Validation Overview](./README.md) — What's validated and how
+- [Schemas](./schemas.md) — JSON schema definitions
+- [Agent Skills Spec](https://agentskills.io/specification) — SKILL.md format specification
