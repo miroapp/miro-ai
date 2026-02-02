@@ -17,15 +17,49 @@ Thank you for your interest in contributing to Miro AI. This guide covers develo
 ### Prerequisites
 
 - Git
-- Your AI tool of choice installed (Claude Code, Kiro, or Gemini CLI)
-- Node.js (optional, for some MCP tools)
+- [Bun](https://bun.sh/) — required for validation
+- [ShellCheck](https://www.shellcheck.net/) — optional, for bash script linting
+- Your AI tool of choice (Claude Code, Kiro, or Gemini CLI)
 
-### Clone the Repository
+### Clone and Setup
 
 ```bash
 git clone https://github.com/miroapp/miro-ai.git
 cd miro-ai
+bun install
 ```
+
+This installs dependencies and sets up **pre-commit hooks** automatically via Husky.
+
+### Validation
+
+Run validation before committing (also runs automatically on pre-commit):
+
+```bash
+bun run validate
+```
+
+| What's Validated | How |
+|------------------|-----|
+| Claude plugin.json files | `claude plugin validate` CLI |
+| SKILL.md frontmatter | JSON schema (requires `description`) |
+| Command .md frontmatter | JSON schema (requires `description`) |
+| Agent .md frontmatter | JSON schema (requires `description`, `tools`) |
+| Kiro POWER.md frontmatter | JSON schema (requires `name`, `displayName`, `description`, `keywords`) |
+| Bash scripts | ShellCheck + executable permission check |
+| All JSON files | Syntax validation |
+| MCP configurations | URL consistency across platforms |
+
+**Individual validators:**
+
+```bash
+bun run validate:claude       # Claude plugins only
+bun run validate:bash         # Bash scripts only
+bun run validate:frontmatter  # Markdown frontmatter only
+bun run validate:consistency  # Cross-platform consistency only
+```
+
+See [Validation Documentation](docs/validation/README.md) for detailed information on schemas, troubleshooting, and extending validators.
 
 ### Repository Structure
 
@@ -164,13 +198,17 @@ plugin-name/
 
 ### Validation Checklist
 
-Before submitting a PR, verify:
+Before submitting a PR, run `bun run validate` to automatically check:
 
-- [ ] `plugin.json` is valid JSON
-- [ ] All commands have `description` in frontmatter
-- [ ] Skills have `SKILL.md` with `name` and `description` in frontmatter
+- [x] `plugin.json` is valid JSON
+- [x] All commands have `description` in frontmatter
+- [x] Skills have `SKILL.md` with `description` in frontmatter
+- [x] Scripts are executable (`chmod +x scripts/*.sh`)
+- [x] Bash scripts pass ShellCheck (if installed)
+
+**Manual verification still needed:**
+
 - [ ] Hooks return valid JSON if `parseJson: true`
-- [ ] Scripts are executable (`chmod +x scripts/*.sh`)
 - [ ] MCP servers are reachable
 - [ ] Commands work end-to-end
 
@@ -226,27 +264,36 @@ power-name/
 
 ```markdown
 ---
-name: power-name
-description: What this power does
+name: "power-name"
+displayName: "Human Readable Name"
+description: "What this power does"
+keywords: ["keyword1", "keyword2", "keyword3"]
 ---
 
 # Power Name
 
 Steering instructions for the AI.
 
-## When to Use
+## Onboarding
 
-Describe when this power should activate.
+Setup and authentication steps.
 
 ## Workflow
 
 Steps the AI should follow.
 ```
 
+**Required frontmatter fields:** `name`, `displayName`, `description`, `keywords`
+
 ### Validation Checklist
 
-- [ ] `POWER.md` has valid YAML frontmatter
-- [ ] `mcp.json` is valid JSON
+Run `bun run validate` to automatically check:
+
+- [x] `POWER.md` has valid YAML frontmatter (`name`, `displayName`, `description`, `keywords`)
+- [x] `mcp.json` is valid JSON
+
+**Manual verification still needed:**
+
 - [ ] MCP server is reachable
 - [ ] Steering instructions are clear and actionable
 
@@ -292,8 +339,13 @@ Steps the AI should follow.
 
 ### Validation Checklist
 
-- [ ] JSON is valid
-- [ ] MCP server URL is correct
+Run `bun run validate` to automatically check:
+
+- [x] JSON is valid
+- [x] MCP server URL is consistent with other platforms
+
+**Manual verification still needed:**
+
 - [ ] Extension loads in Gemini CLI
 - [ ] MCP tools are accessible
 

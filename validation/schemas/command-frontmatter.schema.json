@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "command-frontmatter.schema.json",
+  "title": "Claude Code Command Frontmatter",
+  "description": "Schema for validating command .md frontmatter in Claude Code plugins",
+  "type": "object",
+  "required": ["description"],
+  "properties": {
+    "description": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Brief description of what the command does"
+    },
+    "argument-hint": {
+      "type": "string",
+      "description": "Syntax hint for arguments (e.g., '[board-url] [item-type?]')"
+    },
+    "allowed-tools": {
+      "type": "string",
+      "description": "Comma-separated list of tools permitted for this command"
+    }
+  },
+  "additionalProperties": true
+}

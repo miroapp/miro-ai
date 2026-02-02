@@ -1,6 +1,6 @@
 ---
 description: Enable miro-tasks plugin with optional board URL
-argument-hint: [table-url]
+argument-hint: "[table-url]"
 allowed-tools: Bash(sh:*), AskUserQuestion
 ---
 

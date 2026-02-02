@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "skill-frontmatter.schema.json",
+  "title": "SKILL.md Frontmatter (agentskills.io spec)",
+  "description": "Schema per https://agentskills.io/specification",
+  "type": "object",
+  "required": ["name", "description"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "description": "Skill identifier. Lowercase + hyphens only. Must match directory name."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "description": "What the skill does and when to use it"
+    },
+    "license": {
+      "type": "string",
+      "description": "License name or bundled file reference"
+    },
+    "compatibility": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Environment requirements (system packages, network access, etc.)"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Arbitrary key-value metadata"
+    },
+    "allowed-tools": {
+      "type": "string",
+      "description": "Space-delimited list of pre-approved tools (experimental)"
+    }
+  },
+  "additionalProperties": true
+}

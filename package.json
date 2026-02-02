@@ -1,0 +1,31 @@
+{
+  "name": "miro-ai",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Miro AI Developer Tools - plugins for Claude Code, Gemini CLI, and Kiro",
+  "scripts": {
+    "validate": "bun validation/src/index.ts",
+    "validate:claude": "for dir in claude-plugins/*/; do claude plugin validate \"$dir\"; done",
+    "validate:bash": "find . -name '*.sh' -not -path './node_modules/*' -not -path './.husky/_/*' -exec shellcheck -x -S warning {} +",
+    "validate:frontmatter": "bun validation/src/index.ts --frontmatter-only",
+    "validate:consistency": "bun validation/src/index.ts --consistency-only",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "ajv": "^8.17.1",
+    "execa": "^9.5.1",
+    "fast-glob": "^3.3.2",
+    "gray-matter": "^4.0.3",
+    "husky": "^9.1.7"
+  },
+  "author": {
+    "name": "Miro",
+    "email": "support@miro.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/miroapp/miro-ai"
+  }
+}

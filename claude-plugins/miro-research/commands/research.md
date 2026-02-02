@@ -1,6 +1,6 @@
 ---
 description: Research a topic and visualize findings on a Miro board
-argument-hint: [board-url] [research-query]
+argument-hint: "[board-url] [research-query]"
 ---
 
 # Research and Visualize on Miro

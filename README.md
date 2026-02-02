@@ -210,6 +210,7 @@ Test your setup with these example prompts:
 ### Development
 - [Plugin Development Guide](docs/claude-code/plugin-development.md)
 - [Power Development Guide](docs/kiro/power-development.md)
+- [Validation](docs/validation/README.md)
 - [Contributing](CONTRIBUTING.md)
 
 ### External
