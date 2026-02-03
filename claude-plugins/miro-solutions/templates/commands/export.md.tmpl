@@ -27,8 +27,8 @@ Parse the user's input to extract:
 
 1. If board URL is missing, ask the user for it
 2. Read board content using Miro MCP tools:
-   - `miro__board_get_items` to list items
-   - `miro__context_get_board_docs` for structured extraction
+   - `miro__board_list_items` to list items
+   - `miro__context_get` for structured extraction
    - `miro__table_list_rows` for table data
 3. Transform content to {{DATA_SOURCE}} format
 4. Push to {{DATA_SOURCE}} using its MCP

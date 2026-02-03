@@ -14,16 +14,16 @@ Miro MCP (Model Context Protocol) enables Claude to interact directly with Miro 
 The Miro MCP provides these tool categories:
 
 ### Content Creation
-- **`miro__draft_diagram_new`** - Generate diagrams from text descriptions
-- **`miro__draft_doc_new`** - Create markdown documents on boards
-- **`miro__table_create_new`** - Create tables with text and select columns
+- **`miro__diagram_create`** - Generate diagrams from text descriptions
+- **`miro__doc_create`** - Create markdown documents on boards
+- **`miro__table_create`** - Create tables with text and select columns
 - **`miro__table_sync_rows`** - Add or update table rows
 
 ### Content Reading
-- **`miro__board_get_items`** - List items on a board with filtering
-- **`miro__context_get_board_docs`** - Extract typed documentation from boards
+- **`miro__board_list_items`** - List items on a board with filtering
+- **`miro__context_get`** - Extract text context from specific board items
 - **`miro__table_list_rows`** - Read table data with filtering
-- **`miro__board_get_image_data`** - Get image content from boards
+- **`miro__image_get_data`** - Get image content from boards
 
 ## Board URLs and IDs
 
@@ -35,7 +35,7 @@ When a URL includes `moveToWidget` or `focusWidget` parameters, the item_id is e
 
 ## Creating Diagrams
 
-Use `miro__draft_diagram_new` to create visual diagrams from text descriptions.
+Use `miro__diagram_create` to create visual diagrams from text descriptions.
 
 ### Supported Diagram Types
 - **flowchart** - Process flows, workflows, decision trees
@@ -75,7 +75,7 @@ Set `parent_id` to a frame ID to place the diagram inside that frame.
 
 ## Creating Documents
 
-Use `miro__draft_doc_new` to create Google Docs-style documents on boards.
+Use `miro__doc_create` to create Google Docs-style documents on boards.
 
 ### Supported Markdown
 - Headings: `# H1`, `## H2`, through `###### H6`
@@ -87,7 +87,7 @@ Use `miro__draft_doc_new` to create Google Docs-style documents on boards.
 
 ### Not Supported
 - Code blocks
-- Tables (use `miro__table_create_new` instead)
+- Tables (use `miro__table_create` instead)
 - Images
 
 ### Example Document
@@ -113,7 +113,7 @@ Use `miro__draft_doc_new` to create Google Docs-style documents on boards.
 
 ### Creating Tables
 
-Use `miro__table_create_new` to create tables with typed columns.
+Use `miro__table_create` to create tables with typed columns.
 
 **Column Types:**
 - **text** - Free-form text entry
@@ -173,33 +173,37 @@ Use `miro__table_list_rows` to read table contents. Filter by column value:
 filter_by: "Status=In Progress"
 ```
 
-## Extracting Board Documentation
+## Extracting Board Content
 
-Use `miro__context_get_board_docs` to generate structured documentation from board content.
+### Discovering Board Contents
 
-### Document Types
+Use `miro__context_explore` to get a high-level view of what's on a board:
+- Returns frames, documents, prototypes, tables, and diagrams
+- Each item includes its URL and title
+- Use this to understand board structure before getting details
 
-| Type | Description |
-|------|-------------|
-| `project_summary` | High-level overview, recommended starting point |
-| `style_guide` | Design tokens, colors, typography |
-| `screen_design_requirements` | UI/UX specifications per screen |
-| `screen_functional_requirements` | Feature requirements per screen |
-| `general_board_document` | Generic board content extraction |
-| `technical_specification` | Technical implementation details |
-| `functional_requirements` | Business requirements |
-| `non_functional_requirements` | Performance, security, scalability |
-| `prototypes` | Interactive prototype HTML/CSS |
+### Getting Item Details
+
+Use `miro__context_get` to extract detailed content from specific items:
+
+| Item Type | Returns |
+|-----------|---------|
+| Documents | HTML markup of the document content |
+| Prototype screens | HTML markup representing the UI/layout |
+| Prototype containers | AI-generated map of all screens with navigation flow |
+| Frames | AI-generated summary of frame contents |
+| Tables | Formatted table data |
+| Diagrams | AI-generated description and analysis |
 
 ### Workflow
 
-1. Start with `project_summary` to understand board structure
-2. Based on recommendations, request specific document types
-3. Filter to specific frames using `item_id` parameter
+1. Call `context_explore` to discover board contents
+2. Identify items of interest from the results
+3. Call `context_get` with specific item URLs (with moveToWidget parameter)
 
 ## Browsing Board Items
 
-Use `miro__board_get_items` to explore board contents.
+Use `miro__board_list_items` to explore board contents.
 
 ### Filtering by Type
 - `frame` - Frames/containers
@@ -239,19 +243,19 @@ Use `cursor` from previous response to fetch next page. Default limit is capped 
 - Use key_column for idempotent updates
 
 ### For Context Extraction
-- Start with project_summary
+- Start with context_explore to discover board contents
 - Focus on specific frames when boards are large
-- Request multiple document types for comprehensive coverage
+- Use context_get with item URLs for detailed content
 
 ## Quick Reference
 
 | Task | Tool | Key Parameters |
 |------|------|----------------|
-| Create flowchart | `draft_diagram_new` | board_id, text_description, diagram_type="flowchart" |
-| Create document | `draft_doc_new` | board_id, content (markdown) |
-| Create table | `table_create_new` | board_id, title, columns |
+| Create flowchart | `diagram_create` | board_id, text_description, diagram_type="flowchart" |
+| Create document | `doc_create` | board_id, content (markdown) |
+| Create table | `table_create` | board_id, title, columns |
 | Add table rows | `table_sync_rows` | board_id, item_id, rows, key_column |
-| Get board summary | `context_get_board_docs` | board_id, document_types=["project_summary"] |
-| List frames | `board_get_items` | board_id, item_type="frame" |
+| Get item context | `context_get` | item_url (with moveToWidget parameter) |
+| List frames | `board_list_items` | board_id, item_type="frame" |
 
 See [tools-reference.md](references/tools-reference.md) for complete parameter documentation.

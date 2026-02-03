@@ -25,7 +25,7 @@ Parse the user's input to extract:
 3. Based on the table purpose, suggest appropriate columns using AskUserQuestion:
    - Propose a default column structure
    - Let user customize or accept defaults
-4. Call `mcp__plugin_miro_miro__table_create_new` with:
+4. Call `mcp__plugin_miro_miro__table_create` with:
    - `board_id`: The board URL
    - `title`: The table name
    - `columns`: Array of column definitions

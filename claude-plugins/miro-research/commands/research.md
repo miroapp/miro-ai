@@ -55,7 +55,7 @@ Organize findings into:
 Create appropriate Miro artifacts based on the data:
 
 ### Documents (for summaries and detailed findings)
-Use `miro__draft_doc_new` for:
+Use `miro__doc_create` for:
 - Research summary with key findings
 - Detailed explanations
 - Recommendations and next steps
@@ -63,7 +63,7 @@ Use `miro__draft_doc_new` for:
 Include markdown links to all sources: `[Title](URL)`
 
 ### Tables (for structured data)
-Use `miro__table_create_new` and `miro__table_sync_rows` for:
+Use `miro__table_create` and `miro__table_sync_rows` for:
 - Lists of resources/documents found
 - Comparison of options
 - Search results with metadata
@@ -71,7 +71,7 @@ Use `miro__table_create_new` and `miro__table_sync_rows` for:
 Columns should include linked titles, sources, dates, owners.
 
 ### Diagrams (for relationships and flows)
-Use `miro__draft_diagram_new` for:
+Use `miro__diagram_create` for:
 - Architecture/dependency diagrams (network)
 - Process flows (flowchart)
 - Topic exploration (mindmap)

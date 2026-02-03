@@ -30,7 +30,7 @@ The document supports:
    - If it's actual document content, use it directly
    - If it's a topic/request, generate appropriate document content
 3. If content is missing, ask what document they want to create
-4. Call `mcp__plugin_miro_miro__draft_doc_new` with:
+4. Call `mcp__plugin_miro_miro__doc_create` with:
    - `board_id`: The board URL
    - `content`: The markdown content
 5. Report success with a link to the board

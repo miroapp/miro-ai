@@ -141,19 +141,16 @@ Generate documentation from board content.
 **Arguments:**
 - `board-url` (required) - Miro board URL
 
-**Document Types Generated:**
-- `project_summary` - High-level overview
-- `style_guide` - Design tokens, colors, typography
-- `screen_design_requirements` - UI/UX specifications
-- `technical_specification` - Implementation details
-- `functional_requirements` - Business requirements
+**Workflow:**
+1. Uses `context_explore` to discover board contents (frames, documents, prototypes, tables, diagrams)
+2. Uses `context_get` with specific item URLs to extract detailed content
 
 **Example:**
 ```
 /miro:summarize https://miro.com/app/board/abc=
 ```
 
-Start with project summary to understand board structure, then request specific document types.
+Discovers board contents first, then offers to get details on specific items.
 
 ## Skills
 
