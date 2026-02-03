@@ -84,18 +84,14 @@ AI coding tools can:
 | `code_create_from_board` | Analyze wireframes/PRDs and generate code |
 | `code_explain_on_board` | Visualize code logic by creating diagrams |
 
-### MCP Document Types
+### MCP Context Tools
 
-When reading board context via MCP, specify the type of documentation needed:
+Use these tools to read board content via MCP:
 
-| Document Type | Use Case |
-|---------------|----------|
-| `project_summary` | High-level overview, starting point |
-| `screen_design_requirements` | UI/UX specifications per screen |
-| `screen_functional_requirements` | Feature requirements per screen |
-| `technical_specification` | Implementation details |
-| `style_guide` | Design tokens, colors, typography |
-| `prototypes` | Interactive prototype HTML/CSS |
+| Tool | Use Case |
+|------|----------|
+| `context_explore` | Discover board contents (frames, documents, prototypes, tables, diagrams) |
+| `context_get` | Get detailed content from specific items |
 
 ### Example: Claude Code Reading Miro
 
@@ -103,9 +99,9 @@ When reading board context via MCP, specify the type of documentation needed:
 User: "Generate the login component from the wireframe"
 
 Claude Code:
-1. Reads board via miro__context_get_board_docs
-2. Extracts screen_design_requirements for login frame
-3. Gets style_guide for design tokens
+1. Uses context_explore to discover board contents
+2. Identifies the login wireframe frame
+3. Uses context_get with the frame URL to extract details
 4. Generates React component matching the design
 ```
 
@@ -118,10 +114,9 @@ Claude Code:
 - Document design decisions in text elements
 
 ### For Development Teams
-- Request project_summary first to understand scope
+- Use context_explore first to understand board scope
 - Focus on specific frames rather than entire boards
-- Combine design requirements with technical specs
-- Use prototypes document type for exact styling
+- Use context_get with specific item URLs for detailed content
 
 ### For Product Teams
 - Keep PRDs close to related wireframes

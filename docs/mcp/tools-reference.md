@@ -4,7 +4,7 @@ Overview of available Miro MCP tools. For complete parameter documentation, see 
 
 ## Content Creation
 
-### miro__diagram_get_dsl_spec
+### miro__diagram_get_dsl
 
 Get the DSL format specification for a diagram type before creating diagrams.
 
@@ -12,7 +12,7 @@ Get the DSL format specification for a diagram type before creating diagrams.
 - `board_id` (required) - Board ID or URL
 - `diagram_type` (required) - `flowchart`, `uml_class`, `uml_sequence`, `entity_relationship`
 
-### miro__diagram_create_new
+### miro__diagram_create
 
 Create a diagram from DSL text.
 
@@ -23,7 +23,7 @@ Create a diagram from DSL text.
 - `x`, `y` (optional) - Position on board
 - `parent_id` (optional) - Frame ID to place diagram in
 
-### miro__draft_doc_new / miro__doc_new
+### miro__doc_create
 
 Create a markdown document on a board.
 
@@ -39,7 +39,7 @@ Create a markdown document on a board.
 - Lists (ordered and unordered)
 - Links (`[text](url)`)
 
-### miro__table_create_new
+### miro__table_create
 
 Create a table with typed columns.
 
@@ -64,7 +64,7 @@ Add or update table rows.
 
 ## Content Reading
 
-### miro__board_get_items
+### miro__board_list_items
 
 List items on a board with filtering.
 
@@ -110,7 +110,7 @@ Read table rows with filtering.
 - `limit` (optional) - Max rows
 - `next_cursor` (optional) - Pagination
 
-### miro__board_get_image_data
+### miro__image_get_data
 
 Get image content from a board.
 
@@ -118,7 +118,7 @@ Get image content from a board.
 - `board_id` (required) - Board ID or URL
 - `item_id` (optional) - Image item ID
 
-### miro__board_get_image_download_url
+### miro__image_get_url
 
 Get download URL for an image item.
 
@@ -128,7 +128,7 @@ Get download URL for an image item.
 
 ## Document Editing
 
-### miro__doc_read
+### miro__doc_get
 
 Read document content and version.
 
@@ -136,7 +136,7 @@ Read document content and version.
 - `board_id` (required) - Board ID or URL
 - `item_id` (optional) - Document ID
 
-### miro__doc_edit
+### miro__doc_update
 
 Edit document using find-and-replace.
 
@@ -159,11 +159,11 @@ When URLs include `moveToWidget` or `focusWidget` parameters, the item ID is ext
 
 | Task | Tool |
 |------|------|
-| Create flowchart | `diagram_create_new` |
-| Create document | `doc_new` |
-| Create table | `table_create_new` |
+| Create flowchart | `diagram_create` |
+| Create document | `doc_create` |
+| Create table | `table_create` |
 | Add table rows | `table_sync_rows` |
-| List frames | `board_get_items` (item_type=frame) |
+| List frames | `board_list_items` (item_type=frame) |
 | Get board overview | `context_explore` |
 | Extract documentation | `context_get` |
 

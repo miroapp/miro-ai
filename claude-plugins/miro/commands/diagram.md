@@ -27,7 +27,7 @@ Automatically detect or let the user specify:
 1. If board URL is missing, ask the user for it
 2. If description is missing or unclear, ask what they want to diagram
 3. Determine the appropriate diagram type from the description (or ask if ambiguous)
-4. Call `mcp__plugin_miro_miro__draft_diagram_new` with:
+4. Call `mcp__plugin_miro_miro__diagram_create` with:
    - `board_id`: The board URL
    - `text_description`: The diagram description
    - `diagram_type`: (optional) Specify if user requested a specific type

@@ -27,7 +27,7 @@ Parse the user's input to extract:
 ## Workflow
 
 1. If board URL is missing, ask the user for it
-2. Call `mcp__plugin_miro_miro__board_get_items` with:
+2. Call `mcp__plugin_miro_miro__board_list_items` with:
    - `board_id`: The board URL
    - `limit`: Start with 50 items
    - `item_type`: (optional) Filter if specified

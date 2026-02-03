@@ -21,7 +21,7 @@ Identifies a specific item on the board (frame, table, image, etc.). Can be:
 
 ## Content Creation Tools
 
-### miro__draft_diagram_new
+### miro__diagram_create
 
 Create diagrams from text descriptions.
 
@@ -46,7 +46,7 @@ Create diagrams from text descriptions.
 
 ---
 
-### miro__draft_doc_new
+### miro__doc_create
 
 Create markdown documents on boards.
 
@@ -72,7 +72,7 @@ Create markdown documents on boards.
 
 ---
 
-### miro__table_create_new
+### miro__table_create
 
 Create tables with typed columns.
 
@@ -140,7 +140,7 @@ Add or update table rows.
 
 ## Content Reading Tools
 
-### miro__board_get_items
+### miro__board_list_items
 
 List items on a board with pagination.
 
@@ -168,34 +168,27 @@ List items on a board with pagination.
 
 ---
 
-### miro__context_get_board_docs
+### miro__context_get
 
-Extract typed documentation from boards.
+Get text context from a specific item on a Miro board.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| board_id | string | Yes | Board ID or URL |
-| document_types | array | Yes | Types of documentation to generate |
-| item_id | string | No | Filter to specific frame/container |
+| item_url | string | Yes | Miro board URL with `moveToWidget` parameter identifying the item |
 
-**Document Types:**
+**Returns by Item Type:**
 
-| Type | Description | Best For |
-|------|-------------|----------|
-| `project_summary` | High-level overview with recommendations | Starting point, understanding board structure |
-| `style_guide` | Design tokens, colors, typography, spacing | Design handoff, consistency documentation |
-| `screen_design_requirements` | UI/UX specifications per screen | Designer-developer handoff |
-| `screen_functional_requirements` | Feature requirements per screen | Product requirements |
-| `general_board_document` | Generic content extraction | Any board content |
-| `technical_specification` | Implementation details | Engineering documentation |
-| `functional_requirements` | Business/feature requirements | PRDs, feature specs |
-| `non_functional_requirements` | Performance, security, scalability | Architecture decisions |
-| `prototypes` | Interactive prototype HTML/CSS | Design implementation |
+| Item Type | Returns |
+|-----------|---------|
+| Documents | HTML markup of the document content |
+| Prototype screens | HTML markup representing the UI/layout |
+| Prototype containers | AI-generated map of all screens with navigation flow |
+| Frames | AI-generated summary of frame contents |
+| Tables | Formatted table data |
+| Diagrams | AI-generated description and analysis |
 
-**Recommended Workflow:**
-1. Start with `["project_summary"]`
-2. Review recommendations in summary
-3. Request specific types based on board content
+**Example URL:**
+`https://miro.com/app/board/uXjVGeTCXKY=/?moveToWidget=3458764654510025479`
 
 ---
 
@@ -220,7 +213,7 @@ Read table data with filtering and pagination.
 
 ---
 
-### miro__board_get_image_download_url
+### miro__image_get_url
 
 Get download URL for an image item.
 
@@ -231,7 +224,7 @@ Get download URL for an image item.
 
 ---
 
-### miro__board_get_image_data
+### miro__image_get_data
 
 Get image data (base64 or visual) for an image item.
 
