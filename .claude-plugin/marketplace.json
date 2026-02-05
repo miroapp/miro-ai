@@ -133,6 +133,36 @@
         "visualization",
         "documentation"
       ]
+    },
+    {
+      "name": "miro-spec",
+      "description": "Extract and save Miro Specs to local files for AI-assisted planning and implementation. Downloads documents, diagrams, prototypes, and images.",
+      "source": "./claude-plugins/miro-spec",
+      "category": "productivity",
+      "version": "1.0.0",
+      "author": {
+        "name": "Miro",
+        "email": "support@miro.com"
+      },
+      "homepage": "https://miro.com",
+      "repository": "https://github.com/miroapp/miro-ai",
+      "license": "MIT",
+      "keywords": [
+        "miro",
+        "specs",
+        "specifications",
+        "extraction",
+        "documentation",
+        "planning",
+        "requirements",
+        "prototypes"
+      ],
+      "tags": [
+        "productivity",
+        "documentation",
+        "planning",
+        "extraction"
+      ]
     }
   ]
 }
