@@ -1,7 +1,7 @@
 ---
 description: Extract and save Miro specs to local files
 argument-hint: "[url]"
-allowed-tools: Bash(mkdir:*, rm:*, cat:*, echo:*), AskUserQuestion, miro__board_list_items, miro__context_get, miro__image_get_data, Write, Read
+allowed-tools: Bash(mkdir:*, rm:*, cat:*, echo:*), AskUserQuestion, mcp__miro__context_explore, mcp__miro__context_get, mcp__miro__table_list_rows, mcp__miro__image_get_data, Write, Read
 ---
 
 # Extract Miro Specs
@@ -55,10 +55,10 @@ Extract board_id and optionally item_id from URL:
 ### 4. Discover Items to Extract
 
 **For Board URLs:**
-- Use `miro__board_list_items` with appropriate item_type filters
-- Filter for spec-related types: `document`, `frame`, `data_table_format`
-- Collect all item IDs and types
-- Build URLs with `moveToWidget` parameter for each item
+- Use `mcp__miro__context_explore` with the board URL
+- Returns high-level items: frames, documents, prototypes, tables, and diagrams
+- Each item includes its type, URL (with moveToWidget parameter), and title
+- Collect all items with their types, URLs, and titles for extraction
 
 **For Item URLs:**
 - Extract item_id from URL
@@ -66,30 +66,40 @@ Extract board_id and optionally item_id from URL:
 
 ### 5. Extract Content from Each Item
 
-For each item URL:
-- Call `miro__context_get` with the item URL
-- Determine content type from response
-- Save to appropriate subdirectory:
+For each item discovered:
 
 **Document items:**
-- Save HTML to `.miro/specs/documents/[item_id].html`
-- Extract title from HTML if available
+- Call `mcp__miro__context_get` with the item URL
+- Returns Markdown content of the document
+- Save to `.miro/specs/documents/[item_id].md`
+- Extract title from content if available
 
 **Diagram items:**
-- Save AI description to `.miro/specs/diagrams/[item_id].md`
+- Call `mcp__miro__context_get` with the item URL
+- Returns AI-generated description and analysis
+- Save to `.miro/specs/diagrams/[item_id].md`
 
 **Prototype items:**
-- Save HTML to `.miro/specs/prototypes/[item_id].html`
+- Call `mcp__miro__context_get` with the item URL
+- **Prototype container:** Returns AI-generated summary with navigation map of all screens
+  - Save to `.miro/specs/prototypes/[item_id]-container.md`
+- **Prototype screen:** Returns Markdown with HTML representing the UI/layout
+  - Save to `.miro/specs/prototypes/[item_id]-screen.html`
 
 **Frame items:**
-- Save AI summary to `.miro/specs/frames/[item_id].md`
+- Call `mcp__miro__context_get` with the item URL
+- Returns AI-generated summary of frame contents
+- Save to `.miro/specs/frames/[item_id].md`
 
 **Table items:**
-- Save formatted data to `.miro/specs/tables/[item_id].json`
+- Call `mcp__miro__table_list_rows` with board_id and item_id
+- Returns structured table data with columns and rows
+- Save to `.miro/specs/tables/[item_id].json`
+- Include column definitions and all row data
 
-### 6. Extract Images from HTML Content
+### 6. Extract Images from Prototypes
 
-For all HTML files saved (documents, prototypes):
+For all prototype screen HTML files saved:
 - Parse HTML for Miro image URLs
 - Pattern to match: `https://miro.com/...` URLs in `src` attributes
 - Extract image URLs and associated item IDs
@@ -102,9 +112,9 @@ For each image URL found:
 - Save image to `.miro/specs/images/[item_id].png`
 - Track mapping of original URL to local path
 
-### 8. Replace Image URLs in HTML
+### 8. Replace Image URLs in Prototype Screens
 
-For each HTML file:
+For each prototype screen HTML file:
 - Read the file content
 - Replace Miro image URLs with relative paths: `../images/[item_id].png`
 - Write updated content back to file
