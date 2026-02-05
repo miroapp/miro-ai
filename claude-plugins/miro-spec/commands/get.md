@@ -143,7 +143,7 @@ Create `.miro/specs/index.json` with:
       "title": "Item title if available",
       "path": "relative path to file",
       "url": "original item URL",
-      "parentUrl": "parent container URL (for prototype screens)"
+      "parentUrl": "parent item URL if item has a parent"
     }
   ],
   "images": [

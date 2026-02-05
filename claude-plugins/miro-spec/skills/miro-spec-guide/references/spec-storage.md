@@ -377,7 +377,7 @@ This frame contains the complete authentication flow specification including log
   - **title:** Item title if available (may be null)
   - **path:** Relative path to file
   - **url:** Original Miro URL with moveToWidget parameter
-  - **parentUrl:** (Optional) Parent container URL for prototype screens
+  - **parentUrl:** (Optional) Parent item URL if item has a parent
 - **images:** Array of extracted images
   - **id:** Image item ID
   - **path:** Relative path to image file
@@ -409,11 +409,6 @@ https://miro.com/api/v1/boards/uXjVK123abc=/resources/3458764612355
 
 ### Converted Relative Paths
 
-**From documents directory:**
-```html
-<img src="../images/3458764612355.png"/>
-```
-
 **From prototypes directory:**
 ```html
 <img src="../images/3458764612355.png"/>
@@ -421,8 +416,7 @@ https://miro.com/api/v1/boards/uXjVK123abc=/resources/3458764612355
 
 ### Path Resolution
 
-All HTML files are in subdirectories one level deep:
-- `.miro/specs/documents/` → `../images/`
+Prototype screen HTML files are in subdirectories one level deep:
 - `.miro/specs/prototypes/` → `../images/`
 
 Images directory is at root level:
