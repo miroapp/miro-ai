@@ -114,16 +114,18 @@ For all prototype screen HTML files saved:
 ### 7. Download Images
 
 For each image URL found:
-- Extract board_id and item_id from the image URL
-- Call `miro__image_get_data` with board_id and item_id
-- Save image to `.miro/specs/images/[item_id].png`
+- Extract resource ID from the image URL (e.g., `3458764517562141899` from the URL path)
+- Call `mcp__miro__image_get_data` with:
+  - `board_id`: the board ID
+  - `item_id`: the **full image URL** (not just the resource ID)
+- Save image to `.miro/specs/images/[resource_id].png`
 - Track mapping of original URL to local path
 
 ### 8. Replace Image URLs in Prototype Screens
 
 For each prototype screen HTML file:
 - Read the file content
-- Replace Miro image URLs with relative paths: `../images/[item_id].png`
+- Replace Miro image URLs with relative paths: `../images/[resource_id].png`
 - Write updated content back to file
 
 ### 9. Create Metadata Index
