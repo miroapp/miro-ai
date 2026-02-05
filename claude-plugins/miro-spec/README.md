@@ -74,7 +74,8 @@ Extracted specs are saved to `.miro/specs/`:
 
 `index.json` contains:
 - Board URL and extraction timestamp
-- List of all extracted items with types and paths
+- List of all extracted items with types, titles, and paths
+- Parent URLs for prototype screens (linking to containers)
 - Image inventory with local paths
 - Original item URLs for reference
 
@@ -143,7 +144,7 @@ rm -rf .miro/specs/
 
 | Type | Saves As | Contains |
 |------|----------|----------|
-| Documents | `.html` | Full HTML markup with formatting |
+| Documents | `.md` | Markdown content with formatting |
 | Diagrams | `.md` | AI-generated description and analysis |
 | Prototypes | `.html` | Screen HTML or navigation map |
 | Tables | `.json` | Structured table data |

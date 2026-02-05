@@ -44,13 +44,13 @@ Extract board_id and optionally item_id from URL:
 - Create directory structure if needed:
   ```
   .miro/specs/
-  ├── documents/
-  ├── diagrams/
-  ├── prototypes/
-  ├── tables/
-  ├── frames/
-  ├── other/
-  └── images/
+  ├── documents/      # Markdown documents
+  ├── diagrams/       # Diagram descriptions
+  ├── prototypes/     # Containers (Markdown) and screens (HTML)
+  ├── tables/         # Table JSON data
+  ├── frames/         # Frame summaries
+  ├── other/          # Unknown types (slides, etc.)
+  └── images/         # Extracted images
   ```
 
 ### 4. Discover Items to Extract
@@ -142,13 +142,15 @@ Create `.miro/specs/index.json` with:
       "original_type": "original type name from Miro (for 'other' items)",
       "title": "Item title if available",
       "path": "relative path to file",
-      "url": "original item URL"
+      "url": "original item URL",
+      "parentUrl": "parent container URL (for prototype screens)"
     }
   ],
   "images": [
     {
       "id": "image_id",
-      "path": "images/[item_id].png"
+      "path": "images/[item_id].png",
+      "referenced_by": ["prototypes/[id]-screen.html"]
     }
   ]
 }

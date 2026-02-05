@@ -7,23 +7,27 @@ Detailed documentation of how Miro specs are stored in `.miro/specs/` directory.
 ```
 .miro/specs/
 ├── documents/           # Miro document items
-│   ├── 3458764612345.html
-│   └── 3458764612346.html
+│   ├── 3458764612345.md
+│   └── 3458764612346.md
 ├── diagrams/            # Diagram descriptions
 │   ├── 3458764612347.md
 │   └── 3458764612348.md
 ├── prototypes/          # Prototype screens and containers
-│   ├── 3458764612349.html
-│   └── 3458764612350.html
+│   ├── 3458764612349-screen.html
+│   ├── 3458764612350-container.md
+│   └── 3458764612351-screen.html
 ├── tables/              # Table data
-│   ├── 3458764612351.json
-│   └── 3458764612352.json
+│   ├── 3458764612352.json
+│   └── 3458764612353.json
 ├── frames/              # Frame summaries
-│   ├── 3458764612353.md
-│   └── 3458764612354.md
+│   ├── 3458764612354.md
+│   └── 3458764612355.md
+├── other/               # Unknown types (slides, etc.)
+│   ├── 3458764612356.md
+│   └── 3458764612357.md
 ├── images/              # Extracted images
-│   ├── 3458764612355.png
-│   └── 3458764612356.png
+│   ├── 3458764612358.png
+│   └── 3458764612359.png
 └── index.json           # Metadata index
 ```
 
@@ -37,39 +41,44 @@ All files are named using Miro item IDs:
 
 ## Content Formats
 
-### Documents (HTML)
+### Documents (Markdown)
 
-**Location:** `.miro/specs/documents/[id].html`
+**Location:** `.miro/specs/documents/[id].md`
 
-**Format:** Full HTML markup from Miro document
+**Format:** Markdown content from Miro document
 
 **Example:**
-```html
-<div>
-  <h1>Product Requirements</h1>
-  <h2>Overview</h2>
-  <p>This feature enables users to...</p>
-  <ul>
-    <li>Requirement 1</li>
-    <li>Requirement 2</li>
-  </ul>
-  <img src="../images/3458764612355.png" alt="Architecture diagram"/>
-</div>
+```markdown
+# Product Requirements
+
+## Overview
+
+This feature enables users to...
+
+- Requirement 1
+- Requirement 2
+
+## Technical Details
+
+The implementation will include:
+1. Authentication system
+2. User profile management
+3. Data persistence layer
 ```
 
 **Features:**
-- Preserves HTML structure
+- Preserves Markdown structure
 - Maintains heading hierarchy
 - Keeps lists and formatting
-- Image URLs converted to relative paths
+- Clean text format
 
 **Reading:**
 ```bash
-# View raw HTML
-cat .miro/specs/documents/3458764612345.html
+# View content
+cat .miro/specs/documents/3458764612345.md
 
-# Extract text content
-# Use HTML parser or read directly
+# Parse with markdown tools
+# Or read directly
 ```
 
 ### Diagrams (Markdown)
@@ -115,13 +124,15 @@ cat .miro/specs/documents/3458764612345.html
 - Relationship analysis
 - Flow documentation
 
-### Prototypes (HTML)
+### Prototypes
 
-**Location:** `.miro/specs/prototypes/[id].html`
+#### Prototype Screens (HTML)
+
+**Location:** `.miro/specs/prototypes/[id]-screen.html`
 
 **Format:** HTML markup representing UI layout
 
-**Example (Screen):**
+**Example:**
 ```html
 <div class="screen">
   <header>
@@ -136,30 +147,40 @@ cat .miro/specs/documents/3458764612345.html
 </div>
 ```
 
-**Example (Container):**
+**Features:**
+- Screen layouts in HTML
+- UI component structure
+- Embedded design images
+
+#### Prototype Containers (Markdown)
+
+**Location:** `.miro/specs/prototypes/[id]-container.md`
+
+**Format:** AI-generated navigation map
+
+**Example:**
 ```markdown
-# Navigation Map
+# User Authentication Flow
 
 ## Screens
 
-1. **Login Screen** (3458764612349)
+1. **Login Screen** (3458764612349-screen)
    - Login button → Home Screen
    - Sign up link → Registration Screen
 
-2. **Home Screen** (3458764612350)
+2. **Home Screen** (3458764612350-screen)
    - Profile button → Profile Screen
    - Logout button → Login Screen
 
-3. **Profile Screen** (3458764612351)
+3. **Profile Screen** (3458764612351-screen)
    - Back button → Home Screen
    - Edit button → Edit Profile Screen
 ```
 
 **Features:**
-- Screen layouts in HTML
-- Navigation flows in containers
-- UI component structure
-- Embedded design images
+- Navigation flows and relationships
+- Screen inventory
+- Interaction documentation
 
 ### Tables (JSON)
 
@@ -297,8 +318,23 @@ This frame contains the complete authentication flow specification including log
       "id": "3458764612345",
       "type": "document",
       "title": "Product Requirements",
-      "path": "documents/3458764612345.html",
+      "path": "documents/3458764612345.md",
       "url": "https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612345"
+    },
+    {
+      "id": "3458764612349",
+      "type": "prototype",
+      "title": "Login Screen",
+      "path": "prototypes/3458764612349-screen.html",
+      "url": "https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612349",
+      "parentUrl": "https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612350"
+    },
+    {
+      "id": "3458764612350",
+      "type": "prototype",
+      "title": "User Authentication Flow",
+      "path": "prototypes/3458764612350-container.md",
+      "url": "https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612350"
     },
     {
       "id": "3458764612347",
@@ -313,8 +349,7 @@ This frame contains the complete authentication flow specification including log
       "id": "3458764612355",
       "path": "images/3458764612355.png",
       "referenced_by": [
-        "documents/3458764612345.html",
-        "prototypes/3458764612349.html"
+        "prototypes/3458764612349-screen.html"
       ]
     }
   ],
@@ -342,10 +377,11 @@ This frame contains the complete authentication flow specification including log
   - **title:** Item title if available (may be null)
   - **path:** Relative path to file
   - **url:** Original Miro URL with moveToWidget parameter
+  - **parentUrl:** (Optional) Parent container URL for prototype screens
 - **images:** Array of extracted images
   - **id:** Image item ID
   - **path:** Relative path to image file
-  - **referenced_by:** Files that reference this image
+  - **referenced_by:** Prototype screen files that reference this image
 - **summary:** Quick stats
   - **total_items:** Total items extracted
   - **by_type:** Count by content type
@@ -368,7 +404,7 @@ cat .miro/specs/index.json | jq '.summary.by_type'
 ### Original Miro URLs
 
 ```
-https://miro.com/api/v2/boards/uXjVK123abc=/images/3458764612355
+https://miro.com/api/v1/boards/uXjVK123abc=/resources/3458764612355
 ```
 
 ### Converted Relative Paths
@@ -396,17 +432,17 @@ Images directory is at root level:
 
 ### Typical Sizes
 
-- **Documents:** 5-50 KB HTML
-- **Diagrams:** 1-10 KB markdown
-- **Prototypes:** 10-100 KB HTML
+- **Documents:** 2-20 KB Markdown
+- **Diagrams:** 1-10 KB Markdown
+- **Prototypes:** 10-100 KB HTML (screens), 2-10 KB Markdown (containers)
 - **Tables:** 1-20 KB JSON
-- **Frames:** 1-5 KB markdown
-- **Images:** 50-500 KB PNG
+- **Frames:** 1-5 KB Markdown
+- **Images:** 100 KB - 2 MB PNG
 
 ### Large Boards
 
 For boards with 50+ items:
-- Total directory size: 5-20 MB
+- Total directory size: 10-50 MB (due to images)
 - Consider using `.gitignore` if not committing
 - Extract specific frames instead of entire board
 

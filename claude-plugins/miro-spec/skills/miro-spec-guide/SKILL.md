@@ -44,30 +44,31 @@ https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612345
 
 ```
 .miro/specs/
-├── documents/      # Miro documents (HTML format)
+├── documents/      # Miro documents (Markdown format)
 ├── diagrams/       # Diagram descriptions (Markdown)
-├── prototypes/     # Prototype screens (HTML)
+├── prototypes/     # Prototype containers (Markdown) and screens (HTML)
 ├── tables/         # Table data (JSON)
 ├── frames/         # Frame summaries (Markdown)
+├── other/          # Unknown types like slides (Markdown)
 ├── images/         # Downloaded images (PNG)
 └── index.json      # Metadata index
 ```
 
 ### Content Types
 
-**Documents** (`.html`)
-- Full HTML markup with formatting
-- Embedded images converted to relative paths
-- Preserved styling and structure
+**Documents** (`.md`)
+- Markdown content with formatting
+- Preserved headings and structure
+- Clean text format
 
 **Diagrams** (`.md`)
 - AI-generated description of diagram
 - Flow analysis and component relationships
 - Key elements and connections
 
-**Prototypes** (`.html`)
-- Individual screen HTML markup
-- Container navigation maps
+**Prototypes** (`.md` / `.html`)
+- Containers: Markdown with navigation map (`.md`, suffix `-container`)
+- Screens: HTML markup with UI layout (`.html`, suffix `-screen`)
 - UI component structure
 
 **Tables** (`.json`)
@@ -81,8 +82,8 @@ https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612345
 - Organizational structure
 
 **Images** (`.png`)
-- Automatically extracted from HTML
-- Referenced by relative paths in documents
+- Automatically extracted from prototypes
+- Referenced by relative paths in prototype screens
 - Named by Miro item ID
 
 ## Extraction Workflow
@@ -157,7 +158,7 @@ Open `.miro/specs/index.json` to see:
 
 ### Automatic Image Discovery
 
-1. Plugin scans HTML content (documents, prototypes)
+1. Plugin scans prototype screen HTML content
 2. Finds Miro image URLs in `src` attributes
 3. Extracts board_id and item_id from URLs
 4. Downloads each image using Miro MCP
