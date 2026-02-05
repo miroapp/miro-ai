@@ -1,7 +1,7 @@
 ---
 description: Extract and save Miro specs to local files
 argument-hint: "[url]"
-allowed-tools: Bash(mkdir:*, rm:*, cat:*, echo:*), AskUserQuestion, mcp__miro__context_explore, mcp__miro__context_get, mcp__miro__table_list_rows, mcp__miro__image_get_data, Write, Read
+allowed-tools: Bash(mkdir:*, rm:*, cat:*, echo:*), AskUserQuestion, context_explore, context_get, table_list_rows, image_get_data, Write, Read
 ---
 
 # Extract Miro Specs
@@ -56,7 +56,7 @@ Extract board_id and optionally item_id from URL:
 ### 4. Discover Items to Extract
 
 **For Board URLs:**
-- Use `mcp__miro__context_explore` with the board URL
+- Use `context_explore` with the board URL
 - Returns high-level items: frames, documents, prototypes, tables, diagrams, and potentially other types
 - Each item includes its type, URL (with moveToWidget parameter), and title
 - Collect all items with their types, URLs, and titles for extraction
@@ -70,36 +70,36 @@ Extract board_id and optionally item_id from URL:
 For each item discovered:
 
 **Document items:**
-- Call `mcp__miro__context_get` with the item URL
+- Call `context_get` with the item URL
 - Returns Markdown content of the document
 - Save to `.miro/specs/documents/[item_id].md`
 - Extract title from content if available
 
 **Diagram items:**
-- Call `mcp__miro__context_get` with the item URL
+- Call `context_get` with the item URL
 - Returns AI-generated description and analysis
 - Save to `.miro/specs/diagrams/[item_id].md`
 
 **Prototype items:**
-- Call `mcp__miro__context_get` with the item URL
+- Call `context_get` with the item URL
 - **Prototype container:** Returns AI-generated summary with navigation map of all screens
   - Save to `.miro/specs/prototypes/[item_id]-container.md`
 - **Prototype screen:** Returns Markdown with HTML representing the UI/layout
   - Save to `.miro/specs/prototypes/[item_id]-screen.html`
 
 **Frame items:**
-- Call `mcp__miro__context_get` with the item URL
+- Call `context_get` with the item URL
 - Returns AI-generated summary of frame contents
 - Save to `.miro/specs/frames/[item_id].md`
 
 **Table items:**
-- Call `mcp__miro__table_list_rows` with board_id and item_id
+- Call `table_list_rows` with board_id and item_id
 - Returns structured table data with columns and rows
 - Save to `.miro/specs/tables/[item_id].json`
 - Include column definitions and all row data
 
 **Unknown/Other item types** (e.g., slides, or any new types):
-- Call `mcp__miro__context_get` with the item URL
+- Call `context_get` with the item URL
 - Assume Markdown format for the returned content
 - Save to `.miro/specs/other/[item_id].md`
 - Preserve original type name in metadata for reference
@@ -115,7 +115,7 @@ For all prototype screen HTML files saved:
 
 For each image URL found:
 - Extract resource ID from the image URL (e.g., `3458764517562141899` from the URL path)
-- Call `mcp__miro__image_get_data` with:
+- Call `image_get_data` with:
   - `board_id`: the board ID
   - `item_id`: the **full image URL** (not just the resource ID)
 - Save image to `.miro/specs/images/[resource_id].png`
