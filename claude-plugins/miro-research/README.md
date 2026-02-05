@@ -53,9 +53,11 @@ Both use HTTP remote servers with browser OAuth - no tokens to configure.
 ## Setup
 
 ```bash
-cd miro-research
-claude plugins add .
+/plugin marketplace add miroapp/miro-ai
+/plugin install miro-research@miro-ai
 ```
+
+For development setup, see [CONTRIBUTING.md](../../CONTRIBUTING.md#claude-code-plugins).
 
 ## Resources
 

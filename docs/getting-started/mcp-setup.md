@@ -26,8 +26,6 @@ Add this configuration to your MCP client:
 
 ### Claude Code
 
-**Option 1: Plugin (Recommended)**
-
 ```bash
 /plugin marketplace add miroapp/miro-ai
 /plugin install miro@miro-ai
@@ -35,19 +33,7 @@ Add this configuration to your MCP client:
 
 Restart Claude Code and authenticate when prompted.
 
-**Option 2: Manual Configuration**
-
-Edit `~/.claude/mcp_settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "miro": {
-      "url": "https://mcp.miro.com/"
-    }
-  }
-}
-```
+For manual configuration, see [CONTRIBUTING.md](../../CONTRIBUTING.md#claude-code-plugins).
 
 ### Cursor
 
@@ -75,17 +61,11 @@ Edit `~/.claude/mcp_settings.json`:
 
 ### Gemini CLI
 
-Add to your Gemini CLI configuration file:
-
-```json
-{
-  "mcpServers": {
-    "miro": {
-      "url": "https://mcp.miro.com/"
-    }
-  }
-}
+```bash
+gemini extensions install https://github.com/miroapp/miro-ai
 ```
+
+For manual configuration, see [CONTRIBUTING.md](../../CONTRIBUTING.md#gemini-cli-extensions).
 
 ### Other Clients
 

@@ -201,10 +201,10 @@ Use Miro MCP tools when the user mentions "the board", "diagrams", or "specs".
 
 ### Local Development
 
-1. Create your power directory
-2. Add POWER.md with steering instructions
-3. Configure mcp.json for required services
-4. Add the power to Kiro's configuration
+1. Create your power directory with `POWER.md` and `mcp.json`
+2. In Kiro, open the **Powers** panel
+3. Click **Add power from Local Path**
+4. Select your power directory
 5. Test with sample prompts
 
 ### Testing Checklist

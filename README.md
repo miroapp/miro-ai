@@ -58,29 +58,28 @@ See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 <details>
 <summary><strong>Gemini CLI</strong></summary>
 
-Copy the extension file to your Gemini configuration:
+Install from GitHub:
 
 ```bash
-mkdir -p ~/.gemini/extensions/miro
-cp gemini-extension.json ~/.gemini/extensions/miro/gemini-extension.json
+gemini extensions install https://github.com/miroapp/miro-ai
 ```
 
-Restart Gemini CLI.
+Restart Gemini CLI and authenticate when prompted.
 
-See [Gemini CLI Extension](docs/gemini-cli/overview.md) for details.
+See [Gemini CLI Extension](docs/gemini-cli/overview.md) | [Official Docs](https://geminicli.com/docs/extensions/)
 
 </details>
 
 <details>
 <summary><strong>Kiro</strong></summary>
 
-Install the `code-gen` power from `powers/code-gen/`:
+1. Open the **Powers** panel in Kiro
+2. Click **Add power from GitHub**
+3. Enter: `miroapp/miro-ai` and select `powers/code-gen`
 
-1. Copy `powers/code-gen/` to your Kiro powers directory
-2. Configure Kiro to use the power
-3. Restart Kiro
+For local development, see [CONTRIBUTING.md](CONTRIBUTING.md#kiro-powers).
 
-See [Kiro Powers](docs/kiro/overview.md) for details.
+See [Kiro Powers](docs/kiro/overview.md) | [Official Docs](https://kiro.dev/docs/powers/installation/)
 
 </details>
 

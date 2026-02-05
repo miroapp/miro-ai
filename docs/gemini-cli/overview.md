@@ -35,23 +35,13 @@ The extension is defined in `gemini-extension.json` at the repository root:
 
 ## Installation
 
-### Using the Extension
-
-1. Copy `gemini-extension.json` to your Gemini CLI configuration directory
-2. Or add the MCP server configuration to your existing settings:
-
-```json
-{
-  "mcpServers": {
-    "miro": {
-      "httpUrl": "https://mcp.miro.com/",
-      "oauth": {
-        "enabled": true
-      }
-    }
-  }
-}
+```bash
+gemini extensions install https://github.com/miroapp/miro-ai
 ```
+
+Restart Gemini CLI and authenticate when prompted.
+
+For manual setup or local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#gemini-cli-extensions).
 
 ### Authentication
 
