@@ -49,6 +49,7 @@ Extract board_id and optionally item_id from URL:
   ├── prototypes/
   ├── tables/
   ├── frames/
+  ├── other/
   └── images/
   ```
 
@@ -56,7 +57,7 @@ Extract board_id and optionally item_id from URL:
 
 **For Board URLs:**
 - Use `mcp__miro__context_explore` with the board URL
-- Returns high-level items: frames, documents, prototypes, tables, and diagrams
+- Returns high-level items: frames, documents, prototypes, tables, diagrams, and potentially other types
 - Each item includes its type, URL (with moveToWidget parameter), and title
 - Collect all items with their types, URLs, and titles for extraction
 
@@ -97,6 +98,12 @@ For each item discovered:
 - Save to `.miro/specs/tables/[item_id].json`
 - Include column definitions and all row data
 
+**Unknown/Other item types** (e.g., slides, or any new types):
+- Call `mcp__miro__context_get` with the item URL
+- Assume Markdown format for the returned content
+- Save to `.miro/specs/other/[item_id].md`
+- Preserve original type name in metadata for reference
+
 ### 6. Extract Images from Prototypes
 
 For all prototype screen HTML files saved:
@@ -129,7 +136,8 @@ Create `.miro/specs/index.json` with:
   "items": [
     {
       "id": "item_id",
-      "type": "document|diagram|prototype|frame|table",
+      "type": "document|diagram|prototype|frame|table|other",
+      "original_type": "original type name from Miro (for 'other' items)",
       "title": "Item title if available",
       "path": "relative path to file",
       "url": "original item URL"

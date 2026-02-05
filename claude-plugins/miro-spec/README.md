@@ -4,7 +4,7 @@ Extract and save Miro specifications to local files for AI-assisted planning and
 
 ## Overview
 
-The miro-spec plugin downloads all specification content from Miro boards (documents, diagrams, prototypes, tables, frames) and saves them to `.miro/specs/` directory. This makes specs available for LLMs to reference during planning and implementation phases.
+The miro-spec plugin downloads all specification content from Miro boards (documents, diagrams, prototypes, tables, frames, and other types) and saves them to `.miro/specs/` directory. This makes specs available for LLMs to reference during planning and implementation phases.
 
 ## Features
 
@@ -13,7 +13,8 @@ The miro-spec plugin downloads all specification content from Miro boards (docum
 - Save content in organized directory structure
 - Convert image URLs to local relative paths
 - Generate metadata index for easy navigation
-- Preserves HTML formatting for documents and prototypes
+- Supports all content types including unknown/new types
+- Preserves formatting for documents (Markdown) and prototypes (HTML)
 
 ## Installation
 
@@ -51,15 +52,18 @@ Extracted specs are saved to `.miro/specs/`:
 
 ```
 .miro/specs/
-├── documents/         # HTML documents
-│   └── [id].html
+├── documents/         # Markdown documents
+│   └── [id].md
 ├── diagrams/          # Diagram descriptions
 │   └── [id].md
-├── prototypes/        # Prototype screens
-│   └── [id].html
+├── prototypes/        # Prototype containers and screens
+│   ├── [id]-container.md
+│   └── [id]-screen.html
 ├── tables/            # Table data
 │   └── [id].json
 ├── frames/            # Frame summaries
+│   └── [id].md
+├── other/             # Unknown types (slides, etc.)
 │   └── [id].md
 ├── images/            # Downloaded images
 │   └── [id].png
