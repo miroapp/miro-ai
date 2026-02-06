@@ -18,6 +18,32 @@ This skill defines how documentation is organized and maintained in this reposit
 
 ## Document Responsibilities
 
+## User vs Developer Content Separation
+
+**CRITICAL RULE:** User documentation must ONLY contain fully automated installation methods. All manual setup belongs in developer documentation.
+
+| Content Type | User Docs | Developer Docs |
+|--------------|-----------|----------------|
+| Marketplace install | ✓ | ✓ |
+| One-command GitHub install | ✓ | ✓ |
+| git clone | ✗ | ✓ |
+| --plugin-dir | ✗ | ✓ |
+| extensions link | ✗ | ✓ |
+| JSON config editing | ✗ | ✓ |
+| Local path setup | ✗ | ✓ |
+| mcp_settings.json | ✗ | ✓ |
+
+### User Documentation (README.md, docs/*/overview.md)
+- Installation must be copy-paste simple
+- Single command or UI-only steps
+- Link to dev docs for manual alternatives
+
+### Developer Documentation (CONTRIBUTING.md, docs/*/*-development.md)
+- All manual setup workflows
+- Local testing procedures
+- Configuration file editing
+- Environment setup
+
 ### README.md (Landing Page)
 
 **Purpose:** First impression. Get users started quickly.

@@ -22,17 +22,14 @@ Powers provide Kiro with the knowledge to use MCP tools effectively for specific
 
 ## Installation
 
-Powers are installed from this repository's `powers/` directory.
+1. In Kiro, open the **Powers** panel
+2. Click **Add power from GitHub**
+3. Enter repository: `miroapp/miro-ai`
+4. Select the power: `powers/code-gen`
 
-```bash
-# Clone the repository
-git clone https://github.com/miroapp/miro-ai.git
+For local development, see [Power Development Guide](power-development.md#local-development).
 
-# Powers are located in
-./miro-ai/powers/
-```
-
-Follow Kiro's documentation for adding powers to your configuration.
+See [Kiro Powers Documentation](https://kiro.dev/docs/powers/installation/).
 
 ## Available Powers
 

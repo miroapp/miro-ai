@@ -247,9 +247,10 @@ Before submitting a PR, run `bun run validate` to automatically check:
    - `POWER.md` — Steering instructions for the AI (required)
    - `mcp.json` — MCP server configuration (optional, only needed for MCP tools)
 
-3. **Test with Kiro:**
-   - Configure Kiro to use your power directory
-   - Restart Kiro
+3. **Test with Kiro using Local Path:**
+   - In Kiro, open the **Powers** panel
+   - Click **Add power from Local Path**
+   - Select your power directory (e.g., `miro-ai/powers/code-gen/`)
    - Test with sample prompts
 
 ### Power Structure Reference
@@ -313,15 +314,24 @@ Run `bun run validate` to automatically check:
    cat gemini-extension.json | jq .
    ```
 
-3. **Copy to Gemini config:**
+3. **Link extension for development:**
    ```bash
-   mkdir -p ~/.gemini/extensions/miro
-   cp gemini-extension.json ~/.gemini/extensions/miro/gemini-extension.json
+   gemini extensions link /path/to/miro-ai
    ```
 
 4. **Restart Gemini CLI**
 
 5. **Test MCP tools are available**
+
+### User Installation
+
+For end users installing from GitHub:
+
+```bash
+gemini extensions install https://github.com/miroapp/miro-ai
+```
+
+See [Gemini CLI Extensions Docs](https://geminicli.com/docs/extensions/).
 
 ### Extension Format
 
