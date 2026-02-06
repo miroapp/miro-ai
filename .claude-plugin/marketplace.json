@@ -154,8 +154,7 @@
         "github",
         "security-review",
         "architecture",
-        "visualization",
-        "glean"
+        "visualization"
       ],
       "tags": [
         "development",
