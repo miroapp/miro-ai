@@ -1,0 +1,14 @@
+{
+  "name": "miro-ast",
+  "version": "1.0.0",
+  "description": "Visualize tree-sitter AST output on Miro boards. Parse any source file and create an interactive syntax tree diagram.",
+  "keywords": [
+    "miro",
+    "ast",
+    "tree-sitter",
+    "syntax-tree",
+    "visualization",
+    "code-analysis"
+  ],
+  "skills": "./skills/"
+}
