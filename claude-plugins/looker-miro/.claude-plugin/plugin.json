@@ -1,0 +1,10 @@
+{
+  "name": "looker-miro",
+  "version": "1.0.0",
+  "description": "Miro integration plugin for Looker. Visualize Looker analytics data on Miro boards using natural language queries.",
+  "author": {
+    "name": "Miro",
+    "email": "support@miro.com"
+  },
+  "keywords": ["miro", "looker", "integration", "data-visualization", "analytics"]
+}
