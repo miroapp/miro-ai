@@ -39,7 +39,7 @@ A complete, working plugin:
 {plugin-name}/
 ├── .claude-plugin/
 │   └── plugin.json
-├── .mcp.json                  # Miro + discovered MCPs
+├── .mcp.json                  # Non-Miro MCPs only (if any)
 ├── commands/
 │   ├── sync.md               # Pull data to Miro
 │   ├── visualize.md          # Create diagrams
@@ -154,9 +154,9 @@ miro-solutions/
 Walk through all 3 questions and verify the generated plugin.
 
 ### Test generated plugin
-1. Install the generated plugin
+1. `claude --plugin-dir ./{generated-plugin-name}`
 2. Run the generated commands
-3. Verify Miro MCP integration works
+3. Verify Miro board artifacts are created
 
 ## License
 

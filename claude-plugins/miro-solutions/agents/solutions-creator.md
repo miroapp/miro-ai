@@ -170,7 +170,7 @@ Create in the current working directory:
 {plugin-name}/
 ├── .claude-plugin/
 │   └── plugin.json
-├── .mcp.json                  # Miro + discovered MCPs
+├── .mcp.json                  # Non-Miro MCPs only (if any discovered)
 ├── commands/
 │   ├── sync.md               # If pull flow
 │   ├── visualize.md          # If pull flow
@@ -184,18 +184,15 @@ Create in the current working directory:
 
 ### Generate MCP Config
 
-Create `.mcp.json` based on research findings:
+**Important:** The `miro` plugin is always installed and provides Miro MCP tools. Do NOT include Miro server configuration in generated plugins.
+
+Only create `.mcp.json` if non-Miro MCP servers were discovered during research. If all tools are Miro-only, skip `.mcp.json` creation entirely.
+
+Example `.mcp.json` (non-Miro MCPs only):
 
 ```json
 {
   "mcpServers": {
-    "miro": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/miro-mcp"],
-      "env": {
-        "MIRO_OAUTH_TOKEN": "${MIRO_OAUTH_TOKEN}"
-      }
-    },
     "linear": {
       "command": "npx",
       "args": ["-y", "linear-mcp"],
@@ -256,8 +253,18 @@ The generated plugin should:
 4. Reference Miro MCP correctly
 5. Configure discovered MCPs with proper placeholders
 
-After generation, remind the SA to:
-1. Review the generated plugin
-2. Set up required credentials
-3. Test the commands with a sample board
-4. Customize as needed for the demo
+After generation, test the plugin immediately:
+
+```bash
+# Test the generated plugin without installing it globally
+claude --plugin-dir ./{plugin-name}
+
+# Then run a command from the generated plugin
+/{plugin-name}:sync https://miro.com/app/board/your-board-id=
+```
+
+The `--plugin-dir` flag loads the plugin from a local directory for the current session only. This is the recommended way to test newly created plugins before distributing them.
+
+Remind the SA to:
+1. Set up required credentials for non-Miro MCPs
+2. Customize commands as needed for the demo
