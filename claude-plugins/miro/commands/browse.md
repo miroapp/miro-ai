@@ -27,11 +27,7 @@ Parse the user's input to extract:
 ## Workflow
 
 1. If board URL is missing, ask the user for it
-2. Call `mcp__plugin_miro_miro__board_list_items` with:
-   - `board_id`: The board URL
-   - `limit`: Start with 50 items
-   - `item_type`: (optional) Filter if specified
-   - `item_id`: (optional) If URL contains moveToWidget, filter to that container
+2. Call `board_list_items` with the board URL, requesting up to 50 items. Apply type filter if the user specified one. If the URL contains a moveToWidget parameter, scope to that container.
 3. Present the items in a readable format:
    - Show item type, ID, and relevant content/title
    - Group by type if showing mixed items

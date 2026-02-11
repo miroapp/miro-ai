@@ -12,7 +12,7 @@
       "description": "Secure access to Miro boards. Enables AI to read board context, create diagrams, and generate code with enterprise-grade security.",
       "source": "./claude-plugins/miro",
       "category": "productivity",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"

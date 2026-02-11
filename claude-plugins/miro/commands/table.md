@@ -16,7 +16,7 @@ Parse the user's input to extract:
 ## Column Types
 
 - **text** - Free-form text entry
-- **select** - Dropdown with predefined options (each option needs a displayValue and hex color)
+- **select** - Dropdown with predefined options (each option needs a label and hex color)
 
 ## Workflow
 
@@ -25,63 +25,19 @@ Parse the user's input to extract:
 3. Based on the table purpose, suggest appropriate columns using AskUserQuestion:
    - Propose a default column structure
    - Let user customize or accept defaults
-4. Call `mcp__plugin_miro_miro__table_create` with:
-   - `board_id`: The board URL
-   - `title`: The table name
-   - `columns`: Array of column definitions
+4. Call `table_create` with the board URL, table name, and column definitions.
 5. Report success and offer to add initial rows
 
 ## Common Table Templates
 
 ### Task Tracker
-```json
-[
-  {"type": "text", "title": "Task"},
-  {"type": "text", "title": "Assignee"},
-  {"type": "select", "title": "Status", "options": [
-    {"displayValue": "To Do", "color": "#E0E0E0"},
-    {"displayValue": "In Progress", "color": "#FFD700"},
-    {"displayValue": "Done", "color": "#00FF00"}
-  ]},
-  {"type": "select", "title": "Priority", "options": [
-    {"displayValue": "Low", "color": "#90EE90"},
-    {"displayValue": "Medium", "color": "#FFA500"},
-    {"displayValue": "High", "color": "#FF6347"}
-  ]}
-]
-```
+Text columns for Task and Assignee. Select columns for Status (To Do / In Progress / Done) and Priority (Low / Medium / High) with traffic-light colors.
 
 ### Decision Log
-```json
-[
-  {"type": "text", "title": "Decision"},
-  {"type": "text", "title": "Date"},
-  {"type": "text", "title": "Owner"},
-  {"type": "select", "title": "Status", "options": [
-    {"displayValue": "Proposed", "color": "#E0E0E0"},
-    {"displayValue": "Approved", "color": "#00FF00"},
-    {"displayValue": "Rejected", "color": "#FF6347"}
-  ]}
-]
-```
+Text columns for Decision, Date, and Owner. Select column for Status (Proposed / Approved / Rejected).
 
 ### Risk Register
-```json
-[
-  {"type": "text", "title": "Risk"},
-  {"type": "text", "title": "Mitigation"},
-  {"type": "select", "title": "Impact", "options": [
-    {"displayValue": "Low", "color": "#90EE90"},
-    {"displayValue": "Medium", "color": "#FFA500"},
-    {"displayValue": "High", "color": "#FF6347"}
-  ]},
-  {"type": "select", "title": "Likelihood", "options": [
-    {"displayValue": "Unlikely", "color": "#90EE90"},
-    {"displayValue": "Possible", "color": "#FFA500"},
-    {"displayValue": "Likely", "color": "#FF6347"}
-  ]}
-]
-```
+Text columns for Risk and Mitigation. Select columns for Impact (Low / Medium / High) and Likelihood (Unlikely / Possible / Likely) with traffic-light colors.
 
 ## Examples
 

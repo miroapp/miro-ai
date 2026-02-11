@@ -1,7 +1,7 @@
 ---
 description: Generate visual code review on Miro board from GitHub PR or local changes
 argument-hint: "<board-url> <pr|owner/repo#pr|PR-URL|--local|--branch name>"
-allowed-tools: Bash(gh:*), Bash(git:*), mcp__miro__*
+allowed-tools: Bash(gh:*), Bash(git:*)
 ---
 
 # Visual Code Review
@@ -118,7 +118,7 @@ Use a **horizontal row layout** because tables and docs have fixed width but var
 
 #### File Changes Table
 
-Create first (appears at board center). Use `mcp__miro__table_create` with columns **in this order**:
+Create first (appears at board center). Use Miro MCP tool to create a table with columns **in this order**:
 
 | Column | Type | Options |
 |--------|------|---------|

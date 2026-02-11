@@ -16,11 +16,11 @@ Parse the user's input to extract:
 ## Workflow
 
 1. If board URL is missing, ask the user for it
-2. Call `mcp__plugin_miro_miro__context_explore` to discover high-level items on the board:
+2. Call `context_explore` to discover high-level items on the board:
    - Returns frames, documents, prototypes, tables, and diagrams with their URLs
 3. Present the discovered items to the user
 4. For specific items the user wants to explore:
-   - Call `mcp__plugin_miro_miro__context_get` with the item URL (includes moveToWidget parameter)
+   - Call `context_get` with the item URL (includes moveToWidget parameter)
    - Returns detailed content based on item type (HTML for docs, summaries for frames, etc.)
 5. Present the extracted documentation to the user
 
@@ -40,4 +40,4 @@ Parse the user's input to extract:
 
 - **Start with context_explore** - Discover what's on the board before diving into details
 - **Use moveToWidget URLs** - Get detailed content from specific items using context_get
-- **Prototypes** - Images are returned as Miro URLs that can be downloaded with `miro__image_get_url`
+- **Prototypes** - Images are returned as Miro URLs that can be downloaded with `image_get_url`
