@@ -81,7 +81,7 @@
       "description": "Create customer-specific Miro plugins during sales calls. Rapid plugin generation for Solution Architects.",
       "source": "./claude-plugins/miro-solutions",
       "category": "development",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"

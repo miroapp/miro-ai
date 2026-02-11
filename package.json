@@ -9,6 +9,7 @@
     "validate:bash": "find . -name '*.sh' -not -path './node_modules/*' -not -path './.husky/_/*' -exec shellcheck -x -S warning {} +",
     "validate:frontmatter": "bun validation/src/index.ts --frontmatter-only",
     "validate:consistency": "bun validation/src/index.ts --consistency-only",
+    "validate:version": "bun validation/src/index.ts --version-only",
     "prepare": "husky"
   },
   "devDependencies": {

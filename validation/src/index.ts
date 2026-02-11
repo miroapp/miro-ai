@@ -3,6 +3,7 @@ import { validateFrontmatter } from "./frontmatter-validator";
 import { validateBashScripts } from "./bash-validator";
 import { validateClaudePlugins } from "./claude-validator";
 import { checkConsistency } from "./consistency-checker";
+import { checkVersions } from "./version-checker";
 
 const ROOT = process.cwd();
 const args = process.argv.slice(2);
@@ -12,7 +13,8 @@ const frontmatterOnly = args.includes("--frontmatter-only");
 const bashOnly = args.includes("--bash-only");
 const claudeOnly = args.includes("--claude-only");
 const consistencyOnly = args.includes("--consistency-only");
-const runAll = !frontmatterOnly && !bashOnly && !claudeOnly && !consistencyOnly;
+const versionOnly = args.includes("--version-only");
+const runAll = !frontmatterOnly && !bashOnly && !claudeOnly && !consistencyOnly && !versionOnly;
 
 // ANSI colors
 const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
@@ -123,6 +125,22 @@ async function main() {
     const consistencyResults = await checkConsistency(ROOT);
 
     for (const result of consistencyResults.results) {
+      const status = result.valid ? green("✓") : red("✗");
+      console.log(`│ ${status} ${result.check}`);
+      for (const detail of result.details) {
+        console.log(`│   └─ ${dim(detail)}`);
+      }
+      if (!result.valid) totalErrors++;
+    }
+    printFooter();
+  }
+
+  // Version Checks
+  if (runAll || versionOnly) {
+    printHeader("Version Checks");
+    const versionResults = await checkVersions(ROOT);
+
+    for (const result of versionResults.results) {
       const status = result.valid ? green("✓") : red("✗");
       console.log(`│ ${status} ${result.check}`);
       for (const detail of result.details) {
