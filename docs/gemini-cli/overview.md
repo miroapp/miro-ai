@@ -12,13 +12,12 @@ The Gemini CLI extension provides Miro MCP integration, enabling Gemini to:
 
 ## Extension Files
 
-This repository provides 5 per-plugin extensions in `gemini-extensions/`, each auto-generated from the corresponding Claude plugin via `bun run convert`:
+This repository provides 4 per-plugin extensions in `gemini-extensions/`, each auto-generated from the corresponding Claude plugin via `bun run convert`:
 
 ```
 gemini-extensions/
 ├── miro/                # Core MCP integration with commands and skills
 ├── miro-tasks/          # Task tracking commands and hooks
-├── miro-solutions/      # Demo plugin generator with agent
 ├── miro-research/       # Research visualization
 └── miro-review/         # Code review workflows
 ```
@@ -42,11 +41,25 @@ Each extension contains a `gemini-extension.json` plus any commands (TOML), skil
 
 ## Installation
 
+**Quick start** — install the root extension for MCP access:
+
 ```bash
 gemini extensions install https://github.com/miroapp/miro-ai
 ```
 
-This installs all 5 extensions from the repository. Restart Gemini CLI and authenticate when prompted.
+This installs the root `gemini-extension.json`, giving Gemini access to the Miro MCP server (board reading, diagrams, tables, docs). It does **not** install the per-plugin extensions with commands, skills, and hooks.
+
+**Full install** — clone the repo and install individual extensions:
+
+```bash
+git clone https://github.com/miroapp/miro-ai.git
+gemini extensions install ./miro-ai/gemini-extensions/miro
+gemini extensions install ./miro-ai/gemini-extensions/miro-tasks
+gemini extensions install ./miro-ai/gemini-extensions/miro-research
+gemini extensions install ./miro-ai/gemini-extensions/miro-review
+```
+
+Restart Gemini CLI and authenticate when prompted.
 
 For local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#gemini-cli-extensions).
 
@@ -56,7 +69,6 @@ For local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#gemini-cli-ex
 |-----------|-------------|
 | miro | Core MCP integration with commands and skills |
 | miro-tasks | Task tracking with commands and hooks |
-| miro-solutions | Demo plugin generator with agent |
 | miro-research | Research visualization |
 | miro-review | Code review workflows |
 

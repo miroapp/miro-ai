@@ -74,7 +74,6 @@ miro-ai/
 ├── gemini-extensions/        # Gemini CLI extensions (auto-generated)
 │   ├── miro/
 │   ├── miro-tasks/
-│   ├── miro-solutions/
 │   ├── miro-research/
 │   └── miro-review/
 ├── skills/                   # Agent Skills (auto-generated from claude-plugins)

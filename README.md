@@ -68,13 +68,23 @@ See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 <details>
 <summary><strong>Gemini CLI</strong></summary>
 
-Install from GitHub:
+**Quick start** — install the root extension for MCP access:
 
 ```bash
 gemini extensions install https://github.com/miroapp/miro-ai
 ```
 
-This installs 5 extensions: **miro**, **miro-tasks**, **miro-solutions**, **miro-research**, and **miro-review** — each in `gemini-extensions/`.
+This installs the root `gemini-extension.json`, which gives Gemini access to the Miro MCP server (board reading, diagrams, tables, docs).
+
+**Full install** — for commands, skills, and hooks, clone the repo and install individual extensions:
+
+```bash
+git clone https://github.com/miroapp/miro-ai.git
+gemini extensions install ./miro-ai/gemini-extensions/miro
+gemini extensions install ./miro-ai/gemini-extensions/miro-tasks
+gemini extensions install ./miro-ai/gemini-extensions/miro-research
+gemini extensions install ./miro-ai/gemini-extensions/miro-review
+```
 
 Restart Gemini CLI and authenticate when prompted.
 
@@ -211,7 +221,6 @@ Want to modify plugins, test changes locally, or build your own? See [CONTRIBUTI
 |-----------|-------------|
 | miro | Core MCP integration with commands and skills |
 | miro-tasks | Task tracking commands |
-| miro-solutions | Demo plugin generator with agent |
 | miro-research | Research visualization |
 | miro-review | Code review workflows |
 
