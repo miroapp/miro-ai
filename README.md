@@ -49,7 +49,7 @@ Select your AI tool below and follow the installation steps.
 /plugin install miro@miro-ai
 ```
 
-**Restart Claude Code** after installation.
+**Restart Claude Code** after installation. If you previously configured Miro MCP manually, [remove the duplicate](docs/troubleshooting.md#duplicate-mcp-servers) to avoid conflicts.
 
 See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 

@@ -52,7 +52,7 @@
       "description": "Track your coding progress on a Miro board. Automatically syncs todos and task status to visual cards.",
       "source": "./claude-plugins/miro-tasks",
       "category": "development",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"
@@ -110,7 +110,7 @@
       "description": "Research any topic and visualize findings on Miro boards. Uses available tools (Glean, local repos) and creates docs, tables, and diagrams.",
       "source": "./claude-plugins/miro-research",
       "category": "productivity",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"
@@ -139,7 +139,7 @@
       "description": "Visual code reviews on Miro boards. Generates comprehensive review artifacts from GitHub PRs or local changes with security and architecture analysis.",
       "source": "./claude-plugins/miro-review",
       "category": "development",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"

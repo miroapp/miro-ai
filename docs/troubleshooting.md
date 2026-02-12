@@ -38,6 +38,29 @@ Common issues and solutions for Miro AI integrations.
 3. Check that `plugin.json` is valid JSON
 4. Run `/plugin add ./path` to re-register
 
+## Duplicate MCP Servers
+
+### Plugin and Manual Config Both Active
+
+**Symptoms:**
+- Duplicate Miro tools in the tool list (e.g., both `mcp__miro__*` and `mcp__plugin_miro_miro__*`)
+- Being prompted to authenticate with Miro multiple times
+- Claude unsure which set of Miro tools to use
+- `/mcp` shows multiple Miro servers
+
+**Cause:** Claude Code namespaces plugin MCP tools (`mcp__plugin_miro_miro__*`) separately from user-configured ones (`mcp__miro__*`). If you installed the plugin **and** previously added Miro MCP manually, both load independently — even though they point to the same server. Each maintains its own auth session.
+
+**How to check:** Run `/mcp` or `claude mcp list` to see all active servers. If you see more than one Miro entry, you have duplicates.
+
+**Fix:** Remove the manual configuration since the plugin already provides it:
+
+```bash
+claude mcp remove miro --scope user
+claude mcp remove miro --scope local
+```
+
+If you named the server differently, check `claude mcp list` for the actual name and substitute it. Restart Claude Code after removal.
+
 ## Authentication Issues
 
 ### OAuth Flow Fails
