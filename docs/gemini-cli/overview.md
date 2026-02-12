@@ -10,24 +10,31 @@ The Gemini CLI extension provides Miro MCP integration, enabling Gemini to:
 - Create diagrams, documents, and tables
 - Generate code from board designs
 
-## Extension File
+## Extension Files
 
-The extension is defined in `gemini-extension.json` at the repository root:
+This repository provides 5 per-plugin extensions in `gemini-extensions/`, each auto-generated from the corresponding Claude plugin via `bun run convert`:
+
+```
+gemini-extensions/
+├── miro/                # Core MCP integration with commands and skills
+├── miro-tasks/          # Task tracking commands and hooks
+├── miro-solutions/      # Demo plugin generator with agent
+├── miro-research/       # Research visualization
+└── miro-review/         # Code review workflows
+```
+
+Each extension contains a `gemini-extension.json` plus any commands (TOML), skills, hooks, and agents from the source Claude plugin. Example (`gemini-extensions/miro/gemini-extension.json`):
 
 ```json
 {
-  "name": "Miro",
-  "version": "1.0.0",
-  "description": "Secure access to Miro boards. Enables AI to read board context, create diagrams, and generate code with enterprise-grade security.",
+  "name": "miro",
+  "version": "1.0.1",
+  "description": "Secure access to Miro boards...",
   "mcpServers": {
     "miro": {
       "httpUrl": "https://mcp.miro.com/",
-      "oauth": {
-        "enabled": true
-      },
-      "headers": {
-        "X-AI-Source": "gemini-extension"
-      }
+      "oauth": { "enabled": true },
+      "headers": { "X-AI-Source": "gemini-extension" }
     }
   }
 }
@@ -39,9 +46,19 @@ The extension is defined in `gemini-extension.json` at the repository root:
 gemini extensions install https://github.com/miroapp/miro-ai
 ```
 
-Restart Gemini CLI and authenticate when prompted.
+This installs all 5 extensions from the repository. Restart Gemini CLI and authenticate when prompted.
 
-For manual setup or local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#gemini-cli-extensions).
+For local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#gemini-cli-extensions).
+
+## Available Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| miro | Core MCP integration with commands and skills |
+| miro-tasks | Task tracking with commands and hooks |
+| miro-solutions | Demo plugin generator with agent |
+| miro-research | Research visualization |
+| miro-review | Code review workflows |
 
 ### Authentication
 
@@ -107,11 +124,11 @@ Once configured, you can interact with Miro boards:
 | Feature | Gemini CLI | Claude Code |
 |---------|------------|-------------|
 | Configuration | JSON extension file | Plugin system |
-| Commands | None (use prompts) | Slash commands |
-| Skills | None | Knowledge skills |
-| Automation | None | Hooks and agents |
+| Commands | TOML commands (converted) | Markdown slash commands |
+| Skills | Knowledge skills (converted) | Knowledge skills |
+| Automation | Hooks (converted) | Hooks and agents |
 
-Gemini CLI provides basic MCP integration. For advanced features like slash commands and skills, see [Claude Code](../claude-code/overview.md).
+Gemini extensions are auto-generated from Claude plugins via `bun run convert`. Some advanced features may differ. See [Claude Code](../claude-code/overview.md) for the canonical plugin source.
 
 ## Troubleshooting
 

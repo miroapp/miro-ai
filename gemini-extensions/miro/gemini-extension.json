@@ -1,0 +1,16 @@
+{
+  "name": "miro",
+  "version": "1.0.1",
+  "description": "Secure access to Miro boards. Enables AI to read board context, create diagrams, and generate code with enterprise-grade security.",
+  "mcpServers": {
+    "miro": {
+      "httpUrl": "https://mcp.miro.com/",
+      "oauth": {
+        "enabled": true
+      },
+      "headers": {
+        "X-AI-Source": "gemini-extension"
+      }
+    }
+  }
+}

@@ -24,12 +24,13 @@ This repo provides everything you need to connect AI tools to Miro:
 
 ### Supported AI Tools
 
-| AI Tool | Integration | What You Get |
-|---------|-------------|--------------|
-| **Claude Code** | Plugin | Commands (`/miro:diagram`), skills, agents, hooks |
-| **Gemini CLI** | Extension | MCP tools for board interaction |
-| **Kiro** | Power | Design-to-code workflows |
-| **Cursor, VSCode, Windsurf, etc.** | MCP Config | Direct MCP access via JSON config |
+| AI Tool | Integration |
+|---------|-------------|
+| **Claude Code** | Plugins |
+| **Gemini CLI** | Extensions |
+| **Kiro** | Power |
+| **Agent Skills** | Skills |
+| **Cursor, VSCode, Windsurf, etc.** | MCP Config|
 
 ---
 
@@ -49,6 +50,15 @@ Select your AI tool below and follow the installation steps.
 /plugin install miro@miro-ai
 ```
 
+Optional plugins:
+
+```bash
+/plugin install miro-tasks@miro-ai      # Task tracking in Miro tables
+/plugin install miro-solutions@miro-ai   # Demo plugin generator
+/plugin install miro-research@miro-ai    # Research visualization
+/plugin install miro-review@miro-ai      # Code review workflows
+```
+
 **Restart Claude Code** after installation. If you previously configured Miro MCP manually, [remove the duplicate](docs/troubleshooting.md#duplicate-mcp-servers) to avoid conflicts.
 
 See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
@@ -63,6 +73,8 @@ Install from GitHub:
 ```bash
 gemini extensions install https://github.com/miroapp/miro-ai
 ```
+
+This installs 5 extensions: **miro**, **miro-tasks**, **miro-solutions**, **miro-research**, and **miro-review** — each in `gemini-extensions/`.
 
 Restart Gemini CLI and authenticate when prompted.
 
@@ -80,6 +92,21 @@ See [Gemini CLI Extension](docs/gemini-cli/overview.md) | [Official Docs](https:
 For local development, see [CONTRIBUTING.md](CONTRIBUTING.md#kiro-powers).
 
 See [Kiro Powers](docs/kiro/overview.md) | [Official Docs](https://kiro.dev/docs/powers/installation/)
+
+</details>
+
+<details>
+<summary><strong>Agent Skills</strong> (agentskills.io)</summary>
+
+Install portable skills into any MCP-compatible tool:
+
+```bash
+npx skills add miroapp/miro-ai
+```
+
+Available skills: **miro-mcp**, **miro-platform**, **miro-code-review**
+
+See [agentskills.io](https://agentskills.io) for compatible tools.
 
 </details>
 
@@ -127,6 +154,10 @@ Test your setup with these example prompts:
 "Summarize the architecture diagram on my Miro board"
 ```
 
+### Developer Mode
+
+Want to modify plugins, test changes locally, or build your own? See [CONTRIBUTING.md](CONTRIBUTING.md#local-development-setup) for dev setup instructions.
+
 ---
 
 ## Enterprise Users
@@ -172,6 +203,17 @@ Test your setup with these example prompts:
 | [miro-tasks](docs/claude-code/miro-tasks.md) | Automatic task tracking in Miro tables |
 | [miro-solutions](docs/claude-code/miro-solutions.md) | Create customer demo plugins |
 | [miro-research](docs/claude-code/miro-research.md) | Research and visualize findings on Miro |
+| miro-review | Visual code reviews on Miro boards |
+
+### Gemini CLI
+
+| Extension | Description |
+|-----------|-------------|
+| miro | Core MCP integration with commands and skills |
+| miro-tasks | Task tracking commands |
+| miro-solutions | Demo plugin generator with agent |
+| miro-research | Research visualization |
+| miro-review | Code review workflows |
 
 ### Kiro
 

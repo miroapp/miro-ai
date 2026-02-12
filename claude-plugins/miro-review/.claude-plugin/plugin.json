@@ -1,6 +1,6 @@
 {
   "name": "miro-review",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Visual code reviews on Miro boards. Generates comprehensive review artifacts from GitHub PRs or local changes, with optional context enrichment from enterprise knowledge bases.",
   "keywords": [
     "miro",

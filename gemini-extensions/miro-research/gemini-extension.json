@@ -1,0 +1,13 @@
+{
+  "name": "miro-research",
+  "version": "1.0.1",
+  "description": "Research workflows with Miro visualization. Performs thorough research using available tools (Glean, local repos, files) and creates visual outputs on Miro boards.",
+  "mcpServers": {
+    "glean": {
+      "httpUrl": "https://miro-be.glean.com/mcp/default",
+      "oauth": {
+        "enabled": true
+      }
+    }
+  }
+}
