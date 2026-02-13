@@ -63,16 +63,21 @@ export async function checkConsistency(
     }
   }
 
-  // Gemini extension
-  const geminiPath = path.join(root, "gemini-extension.json");
-  const geminiData = (await readJsonFile(geminiPath)) as {
-    mcpServers?: Record<string, McpServerConfig>;
-  } | null;
-  if (geminiData?.mcpServers) {
-    mcpConfigs.push({
-      file: "gemini-extension.json",
-      servers: geminiData.mcpServers,
-    });
+  // Gemini extensions (root + generated)
+  const geminiFiles = [
+    "gemini-extension.json",
+    ...(await fg("gemini-extensions/*/gemini-extension.json", { cwd: root })),
+  ];
+  for (const file of geminiFiles) {
+    const geminiData = (await readJsonFile(path.join(root, file))) as {
+      mcpServers?: Record<string, McpServerConfig>;
+    } | null;
+    if (geminiData?.mcpServers) {
+      mcpConfigs.push({
+        file,
+        servers: geminiData.mcpServers,
+      });
+    }
   }
 
   // Check: All Miro MCP URLs should point to the same base URL
@@ -106,7 +111,7 @@ export async function checkConsistency(
     let platform = "unknown";
     if (config.file.includes("claude-plugins")) platform = "claude";
     else if (config.file.includes("powers")) platform = "kiro";
-    else if (config.file.includes("gemini")) platform = "gemini";
+    else if (config.file.includes("gemini-extension") || config.file.includes("gemini")) platform = "gemini";
 
     for (const server of Object.values(config.servers)) {
       const source = server.headers?.["X-AI-Source"];
@@ -116,32 +121,39 @@ export async function checkConsistency(
     }
   }
 
-  // Group by platform and check each platform has consistent headers
+  // Group by platform and check each platform uses correct header prefix
+  // kiro → "kiro-*-extension", gemini → "gemini-extension", claude → "claude-code-plugin"
+  const platformPrefixes: Record<string, string> = {
+    claude: "claude-",
+    kiro: "kiro-",
+    gemini: "gemini-",
+  };
   const platformSources = new Map<string, Set<string>>();
+  const badHeaders: string[] = [];
+
   for (const h of sourceHeaders) {
     if (!platformSources.has(h.platform)) {
       platformSources.set(h.platform, new Set());
     }
     platformSources.get(h.platform)!.add(h.source);
+
+    const expectedPrefix = platformPrefixes[h.platform];
+    if (expectedPrefix && !h.source.startsWith(expectedPrefix)) {
+      badHeaders.push(
+        `${h.file}: "${h.source}" does not start with "${expectedPrefix}"`
+      );
+    }
   }
 
-  // Each platform should have only one unique header value
-  const inconsistentPlatforms = [...platformSources.entries()].filter(
-    ([, sources]) => sources.size > 1
-  );
-
   results.push({
-    check: "X-AI-Source headers consistent per platform",
-    valid: inconsistentPlatforms.length === 0,
+    check: "X-AI-Source headers use correct platform prefix",
+    valid: badHeaders.length === 0,
     details:
-      inconsistentPlatforms.length === 0
+      badHeaders.length === 0
         ? [...platformSources.entries()].map(
             ([platform, sources]) => `${platform}: ${[...sources].join(", ")}`
           )
-        : inconsistentPlatforms.map(
-            ([platform, sources]) =>
-              `${platform} has inconsistent headers: ${[...sources].join(", ")}`
-          ),
+        : badHeaders,
   });
 
   // Check: JSON files are valid JSON
@@ -152,6 +164,8 @@ export async function checkConsistency(
     ".claude-plugin/marketplace.json",
     ...await fg("claude-plugins/*/.claude-plugin/plugin.json", { cwd: root }),
     ...await fg("claude-plugins/*/.claude-plugin/hooks.json", { cwd: root }),
+    ...await fg("gemini-extensions/*/gemini-extension.json", { cwd: root }),
+    ...await fg("gemini-extensions/*/hooks/hooks.json", { cwd: root }),
   ];
 
   const jsonErrors: string[] = [];

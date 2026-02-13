@@ -65,19 +65,29 @@ See [Validation Documentation](docs/validation/README.md) for detailed informati
 
 ```
 miro-ai/
-├── claude-plugins/          # Claude Code plugins
-│   ├── miro/               # Core MCP integration
-│   ├── miro-tasks/         # Task tracking
-│   └── miro-solutions/     # Demo plugin generator
-├── powers/                  # Kiro powers
-│   └── code-gen/           # Design-to-code
-├── docs/                    # Documentation
-│   ├── claude-code/        # Plugin docs
-│   ├── kiro/               # Power docs
-│   ├── gemini-cli/         # Extension docs
-│   └── mcp/                # MCP reference
-├── gemini-extension.json    # Gemini CLI extension
-└── README.md               # Main documentation
+├── claude-plugins/           # Claude Code plugins (source of truth)
+│   ├── miro/                # Core MCP integration
+│   ├── miro-tasks/          # Task tracking
+│   ├── miro-solutions/      # Demo plugin generator
+│   ├── miro-research/       # Research visualization
+│   └── miro-review/         # Code review workflows
+├── gemini-extensions/        # Gemini CLI extensions (auto-generated)
+│   ├── miro/
+│   ├── miro-tasks/
+│   ├── miro-research/
+│   └── miro-review/
+├── skills/                   # Agent Skills (auto-generated from claude-plugins)
+├── powers/                   # Kiro powers
+│   └── code-gen/            # Design-to-code
+├── validation/               # Validators and converters
+│   └── src/
+│       └── converters/      # bun run convert
+├── docs/                     # Documentation
+│   ├── claude-code/         # Plugin docs
+│   ├── kiro/                # Power docs
+│   ├── gemini-cli/          # Extension docs
+│   └── mcp/                 # MCP reference
+└── README.md
 ```
 
 ---
@@ -302,49 +312,47 @@ Run `bun run validate` to automatically check:
 
 ## Gemini CLI Extensions
 
+Extensions are auto-generated from Claude plugins via `bun run convert`. They live in `gemini-extensions/*/`, each containing a `gemini-extension.json` plus converted commands (TOML), skills, hooks, and agents.
+
 ### Development Workflow
 
-1. **Edit the extension file:**
+1. **Edit the source Claude plugin:**
    ```bash
-   vim gemini-extension.json
+   vim claude-plugins/miro/commands/diagram.md
    ```
 
-2. **Validate JSON:**
+2. **Regenerate extensions:**
    ```bash
-   cat gemini-extension.json | jq .
+   bun run convert --gemini                    # All extensions
+   bun run convert --gemini --plugin=miro      # Single extension
+   bun run convert --gemini --dry-run          # Preview changes
    ```
 
-3. **Link extension for development:**
+3. **Link an extension for local testing:**
    ```bash
-   gemini extensions link /path/to/miro-ai
+   gemini extensions link ./gemini-extensions/miro
+   gemini extensions link ./gemini-extensions/miro-tasks
    ```
 
 4. **Restart Gemini CLI**
 
-5. **Test MCP tools are available**
+5. **Test:**
+   - Verify TOML commands load
+   - Verify MCP tools are accessible
+   - Test agent workflows (if applicable)
 
-### User Installation
+### Extension Structure
 
-For end users installing from GitHub:
+Each generated extension in `gemini-extensions/*/`:
 
-```bash
-gemini extensions install https://github.com/miroapp/miro-ai
 ```
-
-See [Gemini CLI Extensions Docs](https://geminicli.com/docs/extensions/).
-
-### Extension Format
-
-```json
-{
-  "name": "Miro",
-  "version": "1.0.0",
-  "mcpServers": {
-    "miro": {
-      "httpUrl": "https://mcp.miro.com/"
-    }
-  }
-}
+extension-name/
+├── gemini-extension.json    # Extension manifest with MCP config
+├── commands/                # TOML commands (converted from .md)
+├── skills/                  # Knowledge skills (if any)
+├── hooks/                   # Hook definitions (if any)
+├── agents/                  # Agent definitions (if any)
+└── scripts/                 # Shell scripts (if any)
 ```
 
 ### Validation Checklist
@@ -357,7 +365,39 @@ Run `bun run validate` to automatically check:
 **Manual verification still needed:**
 
 - [ ] Extension loads in Gemini CLI
-- [ ] MCP tools are accessible
+- [ ] TOML commands are accessible
+- [ ] MCP tools work end-to-end
+
+---
+
+## Agent Skills
+
+See [Agent Skills Overview](docs/agent-skills/overview.md) for user-facing documentation.
+
+Skills are auto-generated from Claude plugin skills via `bun run convert:skills`. They live in `skills/*/` following the [agentskills.io specification](https://agentskills.io/specification).
+
+### Development Workflow
+
+1. **Edit the source Claude plugin skill:**
+   ```bash
+   vim claude-plugins/miro/skills/miro-mcp/SKILL.md
+   ```
+
+2. **Regenerate skills:**
+   ```bash
+   bun run convert:skills                       # All skills
+   bun run convert:skills --plugin=miro         # Single plugin's skills
+   bun run convert:skills --dry-run             # Preview changes
+   ```
+
+3. **Test locally:**
+   ```bash
+   npx skills add ./
+   ```
+
+### Naming Convention
+
+All skill directory names under `claude-plugins/` must start with `miro-` (enforced by validation). This ensures unique names when published as Agent Skills.
 
 ---
 

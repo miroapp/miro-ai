@@ -10,6 +10,9 @@
     "validate:frontmatter": "bun validation/src/index.ts --frontmatter-only",
     "validate:consistency": "bun validation/src/index.ts --consistency-only",
     "validate:version": "bun validation/src/index.ts --version-only",
+    "convert": "bun validation/src/converters/index.ts",
+    "convert:gemini": "bun validation/src/converters/index.ts --gemini",
+    "convert:skills": "bun validation/src/converters/index.ts --skills",
     "prepare": "husky"
   },
   "devDependencies": {

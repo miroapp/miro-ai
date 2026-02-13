@@ -1,5 +1,5 @@
 ---
-name: code-review
+name: miro-code-review
 description: Knowledge and patterns for effective code review visualization
 ---
 
