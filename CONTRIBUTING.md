@@ -372,6 +372,8 @@ Run `bun run validate` to automatically check:
 
 ## Agent Skills
 
+See [Agent Skills Overview](docs/agent-skills/overview.md) for user-facing documentation.
+
 Skills are auto-generated from Claude plugin skills via `bun run convert:skills`. They live in `skills/*/` following the [agentskills.io specification](https://agentskills.io/specification).
 
 ### Development Workflow

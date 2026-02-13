@@ -108,15 +108,17 @@ See [Kiro Powers](docs/kiro/overview.md) | [Official Docs](https://kiro.dev/docs
 <details>
 <summary><strong>Agent Skills</strong> (agentskills.io)</summary>
 
-Install portable skills into any MCP-compatible tool:
+Portable knowledge skills that work across AI coding tools (Claude Code, Cursor, VS Code + Copilot, Codex, etc.).
 
 ```bash
-npx skills add miroapp/miro-ai
+npx skills add miroapp/miro-ai            # Interactive install
+npx skills add miroapp/miro-ai --list     # List available skills
+npx skills add miroapp/miro-ai --skill=miro-mcp  # Install specific skill
 ```
 
 Available skills: **miro-mcp**, **miro-platform**, **miro-code-review**
 
-See [agentskills.io](https://agentskills.io) for compatible tools.
+See [Agent Skills Overview](docs/agent-skills/overview.md) | [agentskills.io](https://agentskills.io)
 
 </details>
 
@@ -224,6 +226,14 @@ Want to modify plugins, test changes locally, or build your own? See [CONTRIBUTI
 | miro-research | Research visualization |
 | miro-review | Code review workflows |
 
+### Agent Skills
+
+| Skill | Description |
+|-------|-------------|
+| miro-mcp | Miro MCP tools — diagrams, documents, tables, context extraction |
+| miro-platform | Miro platform overview — canvas features, content types, AI capabilities |
+| miro-code-review | Code review workflows using Miro boards |
+
 ### Kiro
 
 | Power | Description |
@@ -249,8 +259,9 @@ Want to modify plugins, test changes locally, or build your own? See [CONTRIBUTI
 
 ### Platform Guides
 - [Claude Code Plugins](docs/claude-code/overview.md)
-- [Kiro Powers](docs/kiro/overview.md)
 - [Gemini CLI Extension](docs/gemini-cli/overview.md)
+- [Agent Skills](docs/agent-skills/overview.md)
+- [Kiro Powers](docs/kiro/overview.md)
 
 ### Reference
 - [MCP Tools Reference](docs/mcp/tools-reference.md)

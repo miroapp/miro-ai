@@ -23,6 +23,10 @@ Claude Code plugins provide slash commands, skills, and automation for Miro inte
 
 - [Overview](gemini-cli/overview.md) - Extension setup and usage
 
+### Agent Skills
+
+- [Overview](agent-skills/overview.md) - Portable skills for any AI coding tool
+
 ### Kiro
 
 Kiro powers provide context and steering for AI assistants.
