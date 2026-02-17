@@ -42,6 +42,121 @@ function buildGeminiManifest(plugin: ClaudePlugin): Record<string, unknown> {
   return manifest;
 }
 
+/**
+ * Inline shell replacements for known scripts. Since ${extensionPath} is NOT
+ * resolved in TOML command files (only in gemini-extension.json and hooks.json),
+ * we inline the script logic directly using !{...} shell blocks.
+ *
+ * Each entry maps a script basename to its inline shell replacement.
+ * - `noArgs`: replacement when the script takes no arguments
+ * - `withArgs`: replacement when the script takes arguments (uses {{args}})
+ */
+const SCRIPT_INLINES: Record<
+  string,
+  { noArgs?: string; withArgs?: string }
+> = {
+  "command-status.sh": {
+    noArgs:
+      '!{if [ -f .miro/config.json ]; then cat .miro/config.json; else echo "Task tracking in Miro is disabled. Run /miro-tasks:enable <table-url> to enable it."; fi}',
+  },
+  "command-disable.sh": {
+    noArgs:
+      '!{rm -f .miro/config.json 2>/dev/null; echo "Task tracking in Miro is disabled."}',
+  },
+  "command-enable.sh": {
+    withArgs: `!{
+args="{{args}}"
+if [ -n "$args" ]; then
+  case "$args" in
+    *moveToWidget=*|*focusWidget=*)
+      mkdir -p .miro
+      printf '{\\n  "tableUrl": "%s"\\n}\\n' "$args" > .miro/config.json
+      echo "Enabled tracking for table $args"
+      ;;
+    *)
+      echo "ERROR: URL must contain moveToWidget or focusWidget parameter."
+      ;;
+  esac
+else
+  echo "NO_URL_PROVIDED"
+fi
+}`,
+  },
+};
+
+/** Fallback instructions appended after the enable !{...} block */
+const ENABLE_FALLBACK = `
+If the output above shows "Enabled tracking...", report success to the user and stop.
+If the output shows an error about the URL, tell the user the URL needs a moveToWidget or focusWidget parameter.
+
+Otherwise, follow these instructions to find a table URL:`;
+
+/**
+ * Regex matching script reference lines after variable substitution:
+ *   "Run script ${extensionPath}/scripts/foo.sh"
+ *   "1. Run script ${extensionPath}/scripts/foo.sh"
+ *   "   - Runs script ${extensionPath}/scripts/foo.sh <TABLE_URL>"
+ * Captures: (1) script basename  (2) trailing args or undefined
+ */
+const SCRIPT_REF_RE =
+  /^\s*(?:\d+\.\s+|-\s+)?Runs?\s+script\s+\$\{extensionPath\}\/scripts\/(\S+\.sh)(?:\s+(.+))?$/;
+
+/**
+ * Replace script references with inline !{...} shell blocks.
+ * Falls back to !{sh "${extensionPath}/scripts/..." 2>&1} for unknown scripts
+ * (works when extension is installed via `link`).
+ */
+function inlineScriptRefs(body: string, hasArgs: boolean): string {
+  const lines = body.split("\n");
+  const out: string[] = [];
+  let skipNext = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    if (skipNext) {
+      skipNext = false;
+      continue;
+    }
+
+    const line = lines[i];
+    const m = line.match(SCRIPT_REF_RE);
+    if (!m) {
+      out.push(line);
+      continue;
+    }
+
+    const scriptName = m[1]; // e.g. "command-status.sh"
+    const trailingArgs = m[2]?.trim();
+    const inline = SCRIPT_INLINES[scriptName];
+
+    // Skip orphaned follow-up line like "   - Replace `<TABLE_URL>`..."
+    if (
+      trailingArgs &&
+      i + 1 < lines.length &&
+      /^\s*-\s+Replace\b/.test(lines[i + 1])
+    ) {
+      skipNext = true;
+    }
+
+    if (inline) {
+      if (trailingArgs && inline.withArgs && hasArgs) {
+        out.push(inline.withArgs);
+        out.push(ENABLE_FALLBACK);
+      } else if (!trailingArgs && inline.noArgs) {
+        out.push(inline.noArgs);
+      } else {
+        const scriptPath = `\${extensionPath}/scripts/${scriptName}`;
+        out.push(`!{sh "${scriptPath}" 2>&1}`);
+      }
+    } else {
+      const scriptPath = `\${extensionPath}/scripts/${scriptName}`;
+      const args = trailingArgs && hasArgs ? ` "{{args}}"` : "";
+      out.push(`!{sh "${scriptPath}"${args} 2>&1}`);
+    }
+  }
+
+  return out.join("\n");
+}
+
 function convertCommandToToml(cmd: {
   description: string;
   argumentHint?: string;
@@ -51,7 +166,9 @@ function convertCommandToToml(cmd: {
   if (cmd.argumentHint) {
     prompt += `Arguments: {{args}}\n\n`;
   }
-  prompt += substituteVars(cmd.body, VARS);
+  let body = substituteVars(cmd.body, VARS);
+  body = inlineScriptRefs(body, !!cmd.argumentHint);
+  prompt += body;
   return serializeToml({ description: cmd.description, prompt });
 }
 
@@ -71,14 +188,22 @@ function mapAgentFrontmatter(agent: {
   return lines.join("\n") + "\n";
 }
 
-function convertHooks(
-  hooksRaw: string
-): { converted: string; unmapped: string[] } {
+/** Regex to extract script filename from hook command, e.g. "sh ${extensionPath}/scripts/hooks-stop.sh" */
+const HOOK_SCRIPT_RE =
+  /\bsh\s+\$\{extensionPath\}\/scripts\/([^\s"]+\.sh)\b/;
+
+function convertHooks(hooksRaw: string): {
+  converted: string;
+  unmapped: string[];
+  /** Script basenames that need a gemini-* wrapper (e.g. "hooks-stop.sh") */
+  wrapperScripts: string[];
+} {
   const parsed = JSON.parse(hooksRaw) as {
     hooks: Record<string, unknown[]>;
   };
   const unmapped: string[] = [];
   const newHooks: Record<string, unknown[]> = {};
+  const wrapperScripts: string[] = [];
 
   for (const [event, handlers] of Object.entries(parsed.hooks)) {
     const geminiEvent = HOOK_EVENT_MAP[event];
@@ -88,11 +213,71 @@ function convertHooks(
     }
     // Substitute variables in the handler JSON
     const handlersJson = substituteVars(JSON.stringify(handlers), VARS);
-    newHooks[geminiEvent] = JSON.parse(handlersJson);
+    const parsedHandlers = JSON.parse(handlersJson) as Array<{
+      hooks?: Array<Record<string, unknown>>;
+    }>;
+    // Strip Claude-specific fields and rewrite script refs to wrappers
+    for (const group of parsedHandlers) {
+      if (group.hooks) {
+        for (const h of group.hooks) {
+          delete h.parseJson;
+          // Rewrite command to use gemini-* wrapper script
+          if (typeof h.command === "string") {
+            const m = (h.command as string).match(HOOK_SCRIPT_RE);
+            if (m) {
+              const scriptName = m[1];
+              if (!wrapperScripts.includes(scriptName)) {
+                wrapperScripts.push(scriptName);
+              }
+              h.command = (h.command as string).replace(
+                `scripts/${scriptName}`,
+                `scripts/gemini-${scriptName}`
+              );
+            }
+          }
+        }
+      }
+    }
+    newHooks[geminiEvent] = parsedHandlers;
   }
 
   const converted = JSON.stringify({ hooks: newHooks }, null, 2) + "\n";
-  return { converted, unmapped };
+  return { converted, unmapped, wrapperScripts };
+}
+
+/**
+ * Generate a Gemini hook wrapper script that adapts Claude's hook protocol
+ * to Gemini CLI expectations:
+ * - Sets extensionPath env var (not provided by Gemini)
+ * - Outputs {"decision":"allow"} on empty stdout (Gemini expects JSON)
+ * - Exits 0 when forwarding JSON decisions (Gemini: exit 1 = warning, ignored)
+ */
+function generateHookWrapper(scriptName: string): string {
+  return `#!/bin/sh
+# Gemini CLI hook wrapper — adapts Claude hook protocol to Gemini
+# Generated by converter. Original script is not modified.
+
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+
+# Provide extensionPath env var (Gemini doesn't set it; scripts may reference it)
+extensionPath="$(cd "$SCRIPT_DIR/.." && pwd)"
+export extensionPath
+
+# Run the original script, capture output and exit code
+output=$("$SCRIPT_DIR/${scriptName}" 2>/dev/null)
+exit_code=$?
+
+if [ $exit_code -eq 0 ] && [ -z "$output" ]; then
+  # Allow path: original outputs nothing — Gemini needs JSON
+  printf '{\"decision\":\"allow\"}\\n'
+  exit 0
+fi
+
+# Block/decision path: forward JSON output, exit 0
+# Gemini: exit 0 = parse JSON decision, exit 1 = warning (non-fatal), exit 2 = emergency brake
+printf '%s\\n' "$output"
+exit 0
+`;
 }
 
 /**
@@ -156,15 +341,26 @@ export async function writeGeminiExtension(
       await writeOut(agent.relPath, converted);
     }
 
-    // 5. Hooks → event name mapping
+    // 5. Hooks → event name mapping + wrapper scripts
     if (plugin.hooks) {
-      const { converted, unmapped } = convertHooks(plugin.hooks.raw);
+      const { converted, unmapped, wrapperScripts } = convertHooks(
+        plugin.hooks.raw
+      );
       await writeOut("hooks/hooks.json", converted);
       for (const event of unmapped) {
         warnings.push({
           plugin: plugin.dirName,
           message: `Unmapped hook event "${event}" — skipped`,
         });
+      }
+      // Generate wrapper scripts for each hook script
+      for (const scriptName of wrapperScripts) {
+        const wrapperContent = generateHookWrapper(scriptName);
+        const wrapperPath = `scripts/gemini-${scriptName}`;
+        await writeOut(wrapperPath, wrapperContent);
+        if (!dryRun) {
+          await chmod(path.join(extDir, wrapperPath), 0o755);
+        }
       }
     }
 

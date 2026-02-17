@@ -5,8 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh ${extensionPath}/scripts/hooks-stop.sh",
-            "parseJson": true
+            "command": "sh ${extensionPath}/scripts/gemini-hooks-stop.sh"
           }
         ]
       }

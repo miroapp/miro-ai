@@ -66,31 +66,31 @@ See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 </details>
 
 <details>
-<summary><strong>Gemini CLI</strong></summary>
-
-**Quick start** — install the root extension for MCP access:
-
-```bash
-gemini extensions install https://github.com/miroapp/miro-ai
-```
-
-This installs the root `gemini-extension.json`, which gives Gemini access to the Miro MCP server (board reading, diagrams, tables, docs).
-
-**Full install** — for commands, skills, and hooks, clone the repo and install individual extensions:
-
-```bash
-git clone https://github.com/miroapp/miro-ai.git
-gemini extensions install ./miro-ai/gemini-extensions/miro
-gemini extensions install ./miro-ai/gemini-extensions/miro-tasks
-gemini extensions install ./miro-ai/gemini-extensions/miro-research
-gemini extensions install ./miro-ai/gemini-extensions/miro-review
-```
-
-Restart Gemini CLI and authenticate when prompted.
-
-See [Gemini CLI Extension](docs/gemini-cli/overview.md) | [Official Docs](https://geminicli.com/docs/extensions/)
-
-</details>
+    <summary><strong>Gemini CLI</strong></summary>
+    
+    **Quick start** — install the root extension for MCP access:
+    
+    ```bash
+    gemini extensions install https://github.com/miroapp/miro-ai
+    ```
+    
+    This installs the root `gemini-extension.json`, which gives Gemini access to the Miro MCP server (board reading, diagrams, tables, docs).
+    
+    **Full install** — for commands, skills, and hooks, clone the repo and install individual extensions:
+    
+    ```bash
+    git clone https://github.com/miroapp/miro-ai.git
+    gemini extensions install ./miro-ai/gemini-extensions/miro
+    gemini extensions install ./miro-ai/gemini-extensions/miro-tasks
+    gemini extensions install ./miro-ai/gemini-extensions/miro-research
+    gemini extensions install ./miro-ai/gemini-extensions/miro-review
+    ```
+    
+    Restart Gemini CLI and authenticate when prompted.
+    
+    See [Gemini CLI Extension](docs/gemini-cli/overview.md) | [Official Docs](https://geminicli.com/docs/extensions/)
+    
+    </details>
 
 <details>
 <summary><strong>Kiro</strong></summary>

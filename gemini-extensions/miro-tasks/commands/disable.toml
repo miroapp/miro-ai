@@ -5,5 +5,5 @@ prompt = """
 
 This command disables tracking of tasks execution in Miro.
 
-Run script ${extensionPath}/scripts/command-disable.sh
+!{rm -f .miro/config.json 2>/dev/null; echo "Task tracking in Miro is disabled."}
 """
