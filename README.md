@@ -4,7 +4,7 @@
 
 Connect AI coding assistants to your Miro boards. Create diagrams, extract context, generate code from designs, and track tasks—all through natural conversation.
 
-![Miro MCP Demo](assets/miro-mcp-demo.gif)
+![Miro MCP Demo]([assets/miro-mcp-demo.gif](https://github.com/user-attachments/assets/0d036147-fbc6-4102-bcbb-4af994171618))
 
 ---
 
