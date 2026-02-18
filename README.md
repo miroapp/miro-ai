@@ -2,9 +2,9 @@
 
 [![Documentation](https://img.shields.io/badge/docs-developers.miro.com-blue)](https://developers.miro.com/docs/mcp-intro)
 
-Connect AI coding assistants to your Miro boards. Create diagrams, extract context, generate code from designs, and track tasks—all through natural conversation.
+Connect AI coding assistants to your Miro boards. Create diagrams, extract context, generate code from designs, and track tasks—all through natural conversation. 
 
-<video src="https://github.com/user-attachments/assets/0d036147-fbc6-4102-bcbb-4af994171618" autoplay loop muted playsinline width="100%"></video>
+<video src="https://github.com/user-attachments/assets/a238d4e3-c2b4-42b0-9107-fde390490ba3" autoplay loop muted playsinline width="100%"></video>
 ---
 
 > [Share your feedback](https://q2oeb0jrhgi.typeform.com/to/YATmJPVx).
