@@ -2,13 +2,12 @@
 
 [![Documentation](https://img.shields.io/badge/docs-developers.miro.com-blue)](https://developers.miro.com/docs/mcp-intro)
 
-Connect AI coding assistants to your Miro boards. Create diagrams, extract context, generate code from designs, and track tasks—all through natural conversation.
+Connect AI coding assistants to your Miro boards. Create diagrams, extract context, generate code from designs, and track tasks—all through natural conversation. 
 
-![Miro MCP Demo](assets/miro-mcp-demo.gif)
-
+<video src="https://github.com/user-attachments/assets/835926de-9c4e-4575-b177-0ee60da003d2" autoplay loop muted playsinline width="100%"></video>
 ---
 
-> **Beta Release**: Miro's MCP Server is currently in beta. [Share your feedback](https://q2oeb0jrhgi.typeform.com/to/YATmJPVx).
+> [Share your feedback](https://q2oeb0jrhgi.typeform.com/to/YATmJPVx).
 
 ---
 
