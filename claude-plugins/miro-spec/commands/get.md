@@ -22,9 +22,10 @@ Extract specification content from a Miro board or item and save to `.miro/specs
    - MUST use TaskUpdate to mark tasks as in_progress/completed
    - Prevents skipping items and ensures visibility
 
-2. **✅ Image Extraction from Prototype Screens**
-   - Requires 3 tasks per screen: Get HTML → Extract Images → Update URLs
-   - Images are downloaded via `image_get_url` MCP tool (pass the full image URL as item_id)
+2. **✅ Prototype Screens via Subagent**
+   - Each screen MUST be processed by a subagent (Task tool) to avoid context bloat
+   - Subagent performs 3 tasks: Get HTML → Extract Images → Update URLs
+   - Images are downloaded via `image_get_url` + curl (full image URL as item_id)
    - If skipped: images will not be available locally
 
 **If either of these is missed, the extraction will be incomplete/broken.**
@@ -174,14 +175,10 @@ This file will be updated progressively as each item is extracted.
 4. Read current index.json, add this item to items array, Write updated index.json
 5. Use TaskUpdate to mark the item's task as `completed`
 
-**For prototype screens (MANDATORY 3-task workflow):**
-
-**Workflow for each screen:**
-1. Task 1: Get and save HTML
-2. Task 2: Extract images via `image_get_url`
-3. Task 3: Update image URLs in HTML
-
-Complete all 3 tasks for each screen before moving to the next.
+**For prototype screens (MANDATORY subagent workflow):**
+- Launch a subagent (Task tool) for each screen to avoid context bloat
+- Subagent performs all 3 tasks: Get HTML → Extract images → Update URLs
+- Large HTML content stays in subagent context, never enters main context
 
 **Document items:**
 - Call `context_get` with the item URL → Returns Markdown content
@@ -199,59 +196,67 @@ Complete all 3 tasks for each screen before moving to the next.
 - **MUST use Write tool** to save to `.miro/specs/prototypes/[item_id]-container.md`
 - Update index.json with this item
 
-**Prototype screen items (MANDATORY 3-task workflow):**
+**Prototype screen items (MANDATORY 3-task workflow via subagent):**
 
-⚠️ **EACH PROTOTYPE SCREEN REQUIRES 3 SEPARATE TASKS - NOT 1 TASK**
+⚠️ **EACH PROTOTYPE SCREEN REQUIRES A SUBAGENT WITH 3 SEPARATE TASKS**
 
----
+**Why subagent:** `context_get` returns large HTML that bloats the main agent's context. A subagent keeps this contained — the large HTML never enters the main conversation.
 
-**Task 1: Get and save HTML**
-- Use TaskUpdate to mark "Get and save HTML: [title]" as `in_progress`
-- Call `context_get` with the item URL → Returns raw HTML representing the UI/layout
-- **MUST use Write tool** to save to `.miro/specs/prototypes/[item_id]-screen.html`
-- Update index.json with this screen item
-- Use TaskUpdate to mark task as `completed`
-- **DO NOT MOVE TO NEXT ITEM - Go directly to Task 2**
+For each prototype screen, launch a **single subagent** (Task tool, `subagent_type: "general-purpose"`) that performs all 3 tasks sequentially. Pass the subagent all necessary context:
 
-**Task 2: Extract images**
-- Use TaskUpdate to mark "Extract images: [title]" as `in_progress`
-- Read the saved HTML file from `.miro/specs/prototypes/[item_id]-screen.html`
-- Parse HTML content for ALL image URLs in `src` attributes
-  - Extract the full URL from each src attribute
+**Subagent prompt template:**
+```
+Extract prototype screen and its images from Miro board.
+
+Context:
+- board_id: [board_id]
+- item_id: [item_id]
+- item_url: [item_url]
+- title: [title]
+- parent_url: [parent_url or "none"]
+- output_dir: .miro/specs
+- index_file: .miro/specs/index.json
+
+Execute these 3 tasks in order:
+
+Task 1: Get and save HTML
+- Call `context_get` with the item URL
+- Save the returned raw HTML to .miro/specs/prototypes/[item_id]-screen.html using Write tool
+- Read index.json, add this item to items array, Write updated index.json
+
+Task 2: Extract images
+- Read the saved HTML file
+- Parse HTML for ALL image URLs in `src` attributes
 - For EACH image URL found:
-  1. Extract resource ID from URL path (the item ID number in the URL)
-  2. Call `image_get_url` with:
-     - `board_id`: the board ID
-     - `item_id`: the **full image URL** (pass the complete URL, not just the resource ID)
-  3. Take the download URL from the response
-  4. Download the image using Bash: `curl -sL -o .miro/specs/images/[resource_id].png "[download_url]"`
-  5. Update index.json images array with entry:
-     ```json
-     {
-       "id": "[resource_id]",
-       "path": "images/[resource_id].png",
-       "referenced_by": ["[item_id]"]
-     }
-     ```
-- If ANY image download fails: log warning, continue with others
-- Use TaskUpdate to mark task as `completed`
+  1. Extract resource ID from URL path
+  2. Call `image_get_url` with board_id and the full image URL as item_id
+  3. Take the download URL from response
+  4. Download: `curl -sL -o .miro/specs/images/[resource_id].png "[download_url]"`
+  5. Read index.json, add image entry to images array, Write updated index.json:
+     {"id": "[resource_id]", "path": "images/[resource_id].png", "referenced_by": ["[item_id]"]}
+- If any download fails: log warning, continue with others
 
-**Task 3: Update image URLs in HTML**
-- Use TaskUpdate to mark "Update image URLs: [title]" as `in_progress`
-- Read the HTML file from `.miro/specs/prototypes/[item_id]-screen.html`
-- Find and replace ALL original image URLs with local relative paths:
-  - Replace with: `src="../images/[resource_id].png"`
-- **MUST use Write tool** to save the updated HTML file
-- Verify all image src attributes now point to `../images/[resource_id].png`
-- Use TaskUpdate to mark task as `completed`
+Task 3: Update image URLs in HTML
+- Read the HTML file from .miro/specs/prototypes/[item_id]-screen.html
+- Replace ALL original image URLs with relative paths: src="../images/[resource_id].png"
+- Save the updated HTML using Write tool
+- Verify all image src attributes now point to ../images/
 
----
+Report back: number of images found, downloaded, and any failures.
+```
+
+**Main agent workflow for each screen:**
+1. Use TaskUpdate to mark "Get and save HTML: [title]" as `in_progress`
+2. Launch subagent with the prompt above
+3. When subagent completes, mark all 3 tasks for this screen as `completed`
+4. Move to next screen
 
 **⚠️ CRITICAL REQUIREMENTS FOR PROTOTYPE SCREENS:**
-- ✗ DO NOT save prototype screen as a single task
-- ✓ CREATE 3 tasks per prototype screen
-- ✓ COMPLETE tasks in strict sequence: HTML → Images → URLs
-- ✓ Use `image_get_url` with the full image URL as item_id
+- ✗ DO NOT call `context_get` for screens from the main agent (context bloat)
+- ✓ ALWAYS use a subagent for each prototype screen
+- ✓ CREATE 3 tasks per prototype screen (for visibility)
+- ✓ Subagent completes all 3 tasks: HTML → Images → URLs
+- ✓ Use `image_get_url` with the full image URL as item_id, then curl to download
 - ✓ ALL image URLs must be replaced with local paths before moving on
 
 **Frame items:**
@@ -330,13 +335,13 @@ Update index.json with the calculated summary:
 
 2. **TREATING PROTOTYPE SCREENS AS 1 TASK**
    - ✗ Wrong: Create 1 task for a prototype screen
-   - ✓ Correct: Create 3 tasks (HTML, Images, URLs)
+   - ✓ Correct: Create 3 tasks (HTML, Images, URLs) and use a subagent
    - Result: Images are never extracted
 
-3. **DELAYING IMAGE EXTRACTION FOR A SCREEN**
-   - ✗ Wrong: Get screen A HTML, get screen B HTML, then extract screen A images
-   - ✓ Correct: Get screen A HTML → extract screen A images → update URLs → move to screen B
-   - Result: Complete each screen's 3 tasks before moving to the next
+3. **CALLING context_get FOR SCREENS FROM MAIN AGENT**
+   - ✗ Wrong: Call context_get for prototype screens directly (large HTML bloats context)
+   - ✓ Correct: Launch a subagent for each screen — HTML stays in subagent context
+   - Result: Main agent context overflows, extraction fails
 
 4. **NOT PARSING HTML FOR IMAGES**
    - ✗ Wrong: Skip parsing HTML, assume no images exist
@@ -392,10 +397,12 @@ User: /miro-spec:get https://miro.com/app/board/uXjVK123abc=/?moveToWidget=34587
 - Keep console output concise with progress indicators
 - Show what's being extracted and saved in real-time
 
+**Prototype Screens:**
+- ⚠️ **Always use a subagent** for prototype screens to avoid context bloat
+- Subagent performs all 3 tasks: Get HTML → Extract images → Update URLs
+- Use `image_get_url` to get download URL, then curl to save image to disk
+- If image download fails for a specific image, log warning but continue with others
+
 **Priority:**
 - Prioritize documents, prototypes, and tables (most valuable for specs)
-- ⚠️ **Images are NOT optional** - if prototype screens exist, image extraction is mandatory
-- Use `image_get_url` with full image URL as item_id to download each image
-- Complete all 3 tasks for each screen before moving to the next
-- If image download fails for a specific image, log warning but continue with others
-- If ALL images fail to download for a screen, still update HTML with relative paths and document the issue
+- Images are NOT optional — if prototype screens exist, image extraction is mandatory
