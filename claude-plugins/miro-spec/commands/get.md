@@ -13,11 +13,36 @@ Extract specification content from a Miro board or item and save to `.miro/specs
 1. Miro MCP must be enabled
 2. User must provide a Miro board or item URL
 
+## ⚠️ CRITICAL WORKFLOW REQUIREMENTS
+
+**DO NOT SKIP THESE - They are mandatory and blocking:**
+
+1. **✅ Task Creation & Tracking**
+   - MUST use TaskCreate for every item discovered
+   - MUST use TaskUpdate to mark tasks as in_progress/completed
+   - Prevents skipping items and ensures visibility
+
+2. **✅ Image Extraction from Prototype Screens**
+   - Requires 3 tasks per screen: Get HTML → Extract Images → Update URLs
+   - Images are downloaded via `image_get_data` MCP tool (pass the full image URL as item_id)
+   - If skipped: images will not be available locally
+
+**If either of these is missed, the extraction will be incomplete/broken.**
+
 ## URL Format Support
 
 This command accepts:
 - **Board URLs:** `https://miro.com/app/board/uXjVK123abc=/` - extracts all spec items from the board
 - **Item URLs:** `https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612345` - extracts single item
+
+## Pre-Flight Checklist
+
+Before extracting, verify:
+- [ ] I will create a task for EVERY item
+- [ ] I will mark tasks as in_progress before extraction
+- [ ] I will mark tasks as completed after saving
+- [ ] I understand prototype screens require 3 tasks each (not 1)
+- [ ] I will NOT skip image extraction for prototype screens
 
 ## Implementation Steps
 
@@ -65,28 +90,57 @@ Extract board_id and optionally item_id from URL:
 - Extract item_id from URL
 - Create single item URL list
 
-### 5. Create Tasks for Extraction
+### 5. Create Tasks for Extraction (MANDATORY)
 
-Use TaskCreate to create a task for each item discovered:
+🚨 **THIS STEP IS MANDATORY - DO NOT SKIP**
+
+Use TaskCreate to create a task for EVERY item discovered. This is the only way to ensure nothing is missed.
 
 **Task structure:**
-- **Subject:** "Extract [type]: [title or id]"
+- **Subject:** "Extract [type]: [title]" (use title if available from context_explore, otherwise use id)
 - **Description:** Include item type, id, URL, and target file path
-- **activeForm:** "Extracting [type]: [title or id]"
+- **activeForm:** "Extracting [type]: [title]" (use title if available, otherwise use id)
 
-**Example:**
+**Example with title:**
 ```
 Subject: "Extract document: Product Requirements"
 Description: "Extract document item 3458764612345 from board. Save to .miro/specs/documents/3458764612345.md"
 activeForm: "Extracting document: Product Requirements"
 ```
 
-**Create tasks for:**
-- Each document, diagram, prototype, frame, table, or other item
-- Image extraction (single task for all images after content extraction)
-- Metadata index creation
+**Example without title:**
+```
+Subject: "Extract diagram: 3458764612347"
+Description: "Extract diagram item 3458764612347 from board. Save to .miro/specs/diagrams/3458764612347.md"
+activeForm: "Extracting diagram: 3458764612347"
+```
 
-This ensures all items are tracked and nothing is skipped.
+**⚠️ IMPORTANT: Task Count by Type**
+
+Create tasks according to this exact breakdown:
+- Each document → **1 task**
+- Each diagram → **1 task**
+- Each prototype container → **1 task**
+- Each prototype screen → **3 tasks** (HTML + Images + URLs)
+  1. "Get and save HTML: [title]"
+  2. "Extract images: [title]"
+  3. "Update image URLs: [title]"
+- Each frame → **1 task**
+- Each table → **1 task**
+- Each other item → **1 task**
+- Final step → **1 task** "Finalize metadata index"
+
+**Critical:** Prototype screens are NOT 1 task, they are 3 tasks. If you create only 1 task per screen, images will be missed.
+
+**Naming Convention:**
+- Use titles from context_explore for readability
+- Use item IDs in file paths for uniqueness and filesystem safety
+
+**This task creation step ensures:**
+✓ All items are tracked
+✓ Nothing gets skipped
+✓ Progress is visible
+✓ Extraction workflow is structured
 
 ### 6. Initialize Metadata Index
 
@@ -112,12 +166,22 @@ This file will be updated progressively as each item is extracted.
 **CRITICAL: You MUST use the Write tool to save ALL content received from MCP tools to the file system. Do not skip this step.**
 
 **Workflow for each item (with task tracking and progressive index updates):**
+
+**For most items (documents, diagrams, containers, frames, tables, other):**
 1. Use TaskUpdate to mark the item's task as `in_progress`
 2. Call the appropriate MCP tool to get content
 3. **IMMEDIATELY** use Write tool to save content to file system
-4. **For prototype screens ONLY:** Extract and save images immediately (see below)
-5. Read current index.json, add this item to items array, Write updated index.json
-6. Use TaskUpdate to mark the item's task as `completed`
+4. Read current index.json, add this item to items array, Write updated index.json
+5. Use TaskUpdate to mark the item's task as `completed`
+
+**For prototype screens (MANDATORY 3-task workflow):**
+
+**Workflow for each screen:**
+1. Task 1: Get and save HTML
+2. Task 2: Extract images via `image_get_data`
+3. Task 3: Update image URLs in HTML
+
+Complete all 3 tasks for each screen before moving to the next.
 
 **Document items:**
 - Call `context_get` with the item URL → Returns Markdown content
@@ -130,24 +194,64 @@ This file will be updated progressively as each item is extracted.
 - **MUST use Write tool** to save content to `.miro/specs/diagrams/[item_id].md`
 - Update index.json with this item
 
-**Prototype items:**
-- Call `context_get` with the item URL
-- **Prototype container:** Returns AI-generated summary with navigation map
-  - **MUST use Write tool** to save to `.miro/specs/prototypes/[item_id]-container.md`
-  - Update index.json with this item
-- **Prototype screen:** Returns Markdown with HTML representing the UI/layout
-  - **MUST use Write tool** to save to `.miro/specs/prototypes/[item_id]-screen.html`
-  - **IMMEDIATELY after saving:** Extract images from this screen's HTML:
-    1. Parse the HTML content for presigned image URLs in `src` attributes
-    2. For each presigned image URL found:
-       - Extract resource ID from URL path (the item ID portion)
-       - **CRITICAL:** Use Bash with curl to download immediately (URLs expire in 15 minutes)
-         - Example: `curl -o .miro/specs/images/[resource_id].png "[presigned_url]"`
-       - Replace presigned URL in HTML with relative path `../images/[resource_id].png`
-       - Update index.json images array with this image
-    3. If any images were replaced, **MUST use Write tool** to update the HTML file with relative paths
-  - Update index.json with this screen item
-  - **NOTE:** Image URLs from context_get have 15-minute lifetime, extract immediately
+**Prototype container items:**
+- Call `context_get` with the item URL → Returns AI-generated summary with navigation map
+- **MUST use Write tool** to save to `.miro/specs/prototypes/[item_id]-container.md`
+- Update index.json with this item
+
+**Prototype screen items (MANDATORY 3-task workflow):**
+
+⚠️ **EACH PROTOTYPE SCREEN REQUIRES 3 SEPARATE TASKS - NOT 1 TASK**
+
+---
+
+**Task 1: Get and save HTML**
+- Use TaskUpdate to mark "Get and save HTML: [title]" as `in_progress`
+- Call `context_get` with the item URL → Returns raw HTML representing the UI/layout
+- **MUST use Write tool** to save to `.miro/specs/prototypes/[item_id]-screen.html`
+- Update index.json with this screen item
+- Use TaskUpdate to mark task as `completed`
+- **DO NOT MOVE TO NEXT ITEM - Go directly to Task 2**
+
+**Task 2: Extract images**
+- Use TaskUpdate to mark "Extract images: [title]" as `in_progress`
+- Read the saved HTML file from `.miro/specs/prototypes/[item_id]-screen.html`
+- Parse HTML content for ALL image URLs in `src` attributes
+  - Extract the full URL from each src attribute
+- For EACH image URL found:
+  1. Extract resource ID from URL path (the item ID number in the URL)
+  2. Call `image_get_data` with:
+     - `board_id`: the board ID
+     - `item_id`: the **full image URL** (pass the complete URL, not just the resource ID)
+  3. Save returned image data to `.miro/specs/images/[resource_id].png` using Write tool
+  4. Update index.json images array with entry:
+     ```json
+     {
+       "id": "[resource_id]",
+       "path": "images/[resource_id].png",
+       "referenced_by": ["[item_id]"]
+     }
+     ```
+- If ANY image download fails: log warning, continue with others
+- Use TaskUpdate to mark task as `completed`
+
+**Task 3: Update image URLs in HTML**
+- Use TaskUpdate to mark "Update image URLs: [title]" as `in_progress`
+- Read the HTML file from `.miro/specs/prototypes/[item_id]-screen.html`
+- Find and replace ALL original image URLs with local relative paths:
+  - Replace with: `src="../images/[resource_id].png"`
+- **MUST use Write tool** to save the updated HTML file
+- Verify all image src attributes now point to `../images/[resource_id].png`
+- Use TaskUpdate to mark task as `completed`
+
+---
+
+**⚠️ CRITICAL REQUIREMENTS FOR PROTOTYPE SCREENS:**
+- ✗ DO NOT save prototype screen as a single task
+- ✓ CREATE 3 tasks per prototype screen
+- ✓ COMPLETE tasks in strict sequence: HTML → Images → URLs
+- ✓ Use `image_get_data` with the full image URL as item_id
+- ✓ ALL image URLs must be replaced with local paths before moving on
 
 **Frame items:**
 - Call `context_get` with the item URL → Returns AI-generated summary
@@ -194,17 +298,64 @@ Update index.json with the calculated summary:
 
 ### 9. Verify and Display Summary
 
-**Verification:**
-- Count files actually written to `.miro/specs/` directories
-- Verify file count matches number of items processed
-- If mismatch, identify and save any missing items
+**Verification Checklist (MUST DO):**
+- [ ] Count files actually written to `.miro/specs/` directories
+- [ ] Verify file count matches number of items processed
+- [ ] If mismatch, identify and save any missing items
+- [ ] **Prototype screens: Verify all image URLs have been replaced with local paths**
+- [ ] **Check that all tasks have been marked as completed**
+- [ ] Count images in `.miro/specs/images/` matches index.json total_images
 
 **Display to user:**
 - Total items extracted (by type)
 - Total files written to disk
-- Total images downloaded
+- **Total images downloaded and embedded**
 - Output directory path
 - Next steps: "Use these specs for planning and implementation"
+
+**If verification fails, DO NOT report success:**
+- If any prototype screens still have original image URLs in HTML → Images won't work locally
+- If task count doesn't match item count → Some items were skipped
+- Re-extract missing items before finishing
+
+## Common Mistakes to Avoid
+
+🚨 **These are the most common reasons extraction fails or is incomplete:**
+
+1. **NOT CREATING TASKS**
+   - ✗ Wrong: Extract all items without creating tasks
+   - ✓ Correct: TaskCreate for every single item before extraction
+   - Result: Items get skipped, no visibility into progress
+
+2. **TREATING PROTOTYPE SCREENS AS 1 TASK**
+   - ✗ Wrong: Create 1 task for a prototype screen
+   - ✓ Correct: Create 3 tasks (HTML, Images, URLs)
+   - Result: Images are never extracted
+
+3. **DELAYING IMAGE EXTRACTION FOR A SCREEN**
+   - ✗ Wrong: Get screen A HTML, get screen B HTML, then extract screen A images
+   - ✓ Correct: Get screen A HTML → extract screen A images → update URLs → move to screen B
+   - Result: Complete each screen's 3 tasks before moving to the next
+
+4. **NOT PARSING HTML FOR IMAGES**
+   - ✗ Wrong: Skip parsing HTML, assume no images exist
+   - ✓ Correct: Search for all image `src` attributes in HTML
+   - Result: Images aren't discovered or downloaded
+
+5. **NOT UPDATING IMAGE URLS IN HTML**
+   - ✗ Wrong: Download images but leave original URLs in HTML
+   - ✓ Correct: Replace ALL original URLs with `../images/[id].png`
+   - Result: HTML still references remote URLs instead of local files
+
+6. **NOT TRACKING IMAGE METADATA**
+   - ✗ Wrong: Download images but don't update index.json
+   - ✓ Correct: Add image entries to index.json images array
+   - Result: Loss of tracking which images belong to which screens
+
+7. **NOT VERIFYING COMPLETION**
+   - ✗ Wrong: Finish extraction without checking files
+   - ✓ Correct: Verify all tasks completed, all images downloaded, all URLs replaced
+   - Result: Incomplete extraction discovered too late
 
 ## Error Handling
 
@@ -212,7 +363,7 @@ Update index.json with the calculated summary:
 - If URL is invalid → ask user to provide valid Miro URL
 - If board/item not found → show error and ask for valid URL
 - If context_get fails for an item → log warning, continue with other items
-- If image download fails → log warning, keep original URL in HTML
+- If image download fails → log warning, update HTML with relative path anyway (so you can see it failed)
 
 ## Example Usage
 
@@ -242,4 +393,8 @@ User: /miro-spec:get https://miro.com/app/board/uXjVK123abc=/?moveToWidget=34587
 
 **Priority:**
 - Prioritize documents, prototypes, and tables (most valuable for specs)
-- Images are optional - continue if image extraction fails
+- ⚠️ **Images are NOT optional** - if prototype screens exist, image extraction is mandatory
+- Use `image_get_data` with full image URL as item_id to download each image
+- Complete all 3 tasks for each screen before moving to the next
+- If image download fails for a specific image, log warning but continue with others
+- If ALL images fail to download for a screen, still update HTML with relative paths and document the issue
