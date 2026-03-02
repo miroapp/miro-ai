@@ -1,7 +1,7 @@
 ---
 description: Extract and save Miro specs to local files
 argument-hint: "[url]"
-allowed-tools: Bash(mkdir:*, rm:*, cat:*, echo:*), AskUserQuestion, context_explore, context_get, table_list_rows, image_get_data, Write, Read
+allowed-tools: Bash(mkdir:*, rm:*, cat:*, echo:*, curl:*), AskUserQuestion, context_explore, context_get, table_list_rows, image_get_url, Write, Read
 ---
 
 # Extract Miro Specs
@@ -24,7 +24,7 @@ Extract specification content from a Miro board or item and save to `.miro/specs
 
 2. **✅ Image Extraction from Prototype Screens**
    - Requires 3 tasks per screen: Get HTML → Extract Images → Update URLs
-   - Images are downloaded via `image_get_data` MCP tool (pass the full image URL as item_id)
+   - Images are downloaded via `image_get_url` MCP tool (pass the full image URL as item_id)
    - If skipped: images will not be available locally
 
 **If either of these is missed, the extraction will be incomplete/broken.**
@@ -178,7 +178,7 @@ This file will be updated progressively as each item is extracted.
 
 **Workflow for each screen:**
 1. Task 1: Get and save HTML
-2. Task 2: Extract images via `image_get_data`
+2. Task 2: Extract images via `image_get_url`
 3. Task 3: Update image URLs in HTML
 
 Complete all 3 tasks for each screen before moving to the next.
@@ -220,11 +220,12 @@ Complete all 3 tasks for each screen before moving to the next.
   - Extract the full URL from each src attribute
 - For EACH image URL found:
   1. Extract resource ID from URL path (the item ID number in the URL)
-  2. Call `image_get_data` with:
+  2. Call `image_get_url` with:
      - `board_id`: the board ID
      - `item_id`: the **full image URL** (pass the complete URL, not just the resource ID)
-  3. Save returned image data to `.miro/specs/images/[resource_id].png` using Write tool
-  4. Update index.json images array with entry:
+  3. Take the download URL from the response
+  4. Download the image using Bash: `curl -sL -o .miro/specs/images/[resource_id].png "[download_url]"`
+  5. Update index.json images array with entry:
      ```json
      {
        "id": "[resource_id]",
@@ -250,7 +251,7 @@ Complete all 3 tasks for each screen before moving to the next.
 - ✗ DO NOT save prototype screen as a single task
 - ✓ CREATE 3 tasks per prototype screen
 - ✓ COMPLETE tasks in strict sequence: HTML → Images → URLs
-- ✓ Use `image_get_data` with the full image URL as item_id
+- ✓ Use `image_get_url` with the full image URL as item_id
 - ✓ ALL image URLs must be replaced with local paths before moving on
 
 **Frame items:**
@@ -394,7 +395,7 @@ User: /miro-spec:get https://miro.com/app/board/uXjVK123abc=/?moveToWidget=34587
 **Priority:**
 - Prioritize documents, prototypes, and tables (most valuable for specs)
 - ⚠️ **Images are NOT optional** - if prototype screens exist, image extraction is mandatory
-- Use `image_get_data` with full image URL as item_id to download each image
+- Use `image_get_url` with full image URL as item_id to download each image
 - Complete all 3 tasks for each screen before moving to the next
 - If image download fails for a specific image, log warning but continue with others
 - If ALL images fail to download for a screen, still update HTML with relative paths and document the issue
