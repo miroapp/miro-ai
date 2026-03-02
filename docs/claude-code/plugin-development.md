@@ -122,7 +122,7 @@ Parse user input to extract:
 
 1. If board URL is missing, ask the user
 2. If description is unclear, ask for clarification
-3. Call `mcp__miro__diagram_create` with the parameters
+3. Call Miro MCP tool to create a diagram with the parameters
 4. Report success with a link to the board
 ```
 

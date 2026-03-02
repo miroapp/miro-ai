@@ -24,28 +24,14 @@ Plugins provide a higher-level experience on top of raw MCP tools.
 
 ## Installation
 
-### From Marketplace
-
 ```bash
-# Add the Miro AI marketplace
 /plugin marketplace add miroapp/miro-ai
-
-# Install plugins
 /plugin install miro@miro-ai
-/plugin install miro-tasks@miro-ai
-/plugin install miro-solutions@miro-ai
 ```
 
 Restart Claude Code after installation.
 
-### Manual Installation
-
-Clone the repository and add the plugin directly:
-
-```bash
-git clone https://github.com/miroapp/miro-ai.git
-/plugin add ./miro-ai/claude-plugins/miro
-```
+For local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#claude-code-plugins).
 
 ## Available Plugins
 

@@ -1,0 +1,8 @@
+description = "Show current miro-tasks plugin configuration and status"
+
+prompt = """
+Display the current status of the task tracking in Miro.
+
+!{if [ -f .miro/config.json ]; then cat .miro/config.json; else echo "Task tracking in Miro is disabled. Run /miro-tasks:enable <table-url> to enable it."; fi}
+2. When enabled - provide the status and URL of the table where we track tasks
+"""

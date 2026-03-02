@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "AfterAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh ${extensionPath}/scripts/gemini-hooks-stop.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

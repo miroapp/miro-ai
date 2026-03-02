@@ -12,35 +12,30 @@ This plugin connects Miro with {{CUSTOMER_NAME}}'s tools to enable {{PRIMARY_USE
 **Commands:**
 {{COMMANDS_LIST}}
 
+## Prerequisites
+
+- `miro` plugin must be installed (provides Miro MCP tools)
+
 ## Setup
 
-### 1. Install Dependencies
+### 1. Configure Credentials
 
-Ensure you have Node.js 18+ installed.
-
-### 2. Configure Credentials
-
-This plugin requires API credentials for the connected services. Set these environment variables:
+If this plugin connects to non-Miro services, set the required environment variables:
 
 {{CREDENTIALS_SETUP}}
 
-### 3. Enable the Plugin
+### 2. Test the Plugin (Local)
 
-Add this plugin to your Claude Code configuration:
+```bash
+# Load the plugin for the current session without installing globally
+claude --plugin-dir ./{{CUSTOMER_SLUG}}-miro-plugin
+```
+
+### 3. Install Permanently (Optional)
 
 ```bash
 # From the plugin directory
 claude plugins add .
-```
-
-Or add to your `.claude/settings.json`:
-
-```json
-{
-  "plugins": [
-    "./path/to/{{CUSTOMER_SLUG}}-miro-plugin"
-  ]
-}
 ```
 
 ## Commands
@@ -49,7 +44,7 @@ Or add to your `.claude/settings.json`:
 
 ## MCP Configuration
 
-This plugin uses the following MCP servers:
+Miro MCP is provided by the `miro` plugin (always installed). This plugin only configures additional non-Miro servers:
 
 ```json
 {{MCP_CONFIG}}
@@ -96,11 +91,14 @@ Ensure environment variables are set correctly. Check with:
 echo $MIRO_OAUTH_TOKEN
 ```
 
-### MCP Connection Failed
-Verify the MCP server is installed:
+### Plugin Not Loading
+Ensure you're using the correct path:
 ```bash
-npx -y @anthropic/miro-mcp --version
+claude --plugin-dir ./{{CUSTOMER_SLUG}}-miro-plugin
 ```
+
+### Miro Tools Not Available
+Ensure the `miro` plugin is installed. It provides all Miro MCP tools.
 
 ### Board Access Denied
 Ensure the Miro OAuth token has access to the board you're trying to use.

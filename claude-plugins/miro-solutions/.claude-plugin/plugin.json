@@ -1,6 +1,6 @@
 {
   "name": "miro-solutions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create customer-specific Miro plugins during sales calls. Provides Miro platform knowledge and an SA-focused workflow for rapid plugin generation.",
   "author": {
     "name": "Miro",

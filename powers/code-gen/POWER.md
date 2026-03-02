@@ -25,3 +25,7 @@ You are an expert at translating visual diagrams into structured code requiremen
 ## Best Practices
 - If the board contains a flow chart, implement the logic using clean switch/case or state machine patterns.
 - Always ask the user for the **Board ID** or URL if it isn't automatically detected in the conversation.
+
+---
+
+**License:** MIT — see [LICENSE](../../LICENSE)

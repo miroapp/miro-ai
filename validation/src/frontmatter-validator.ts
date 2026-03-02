@@ -47,6 +47,13 @@ function validateNameMatchesDirectory(
         `name "${name}" must match directory name "${dirName}" (agentskills.io spec)`
       );
     }
+
+    // Enforce miro- prefix for plugin skills (distributed as Agent Skills)
+    if (filePath.includes("claude-plugins/") && !name.startsWith("miro-")) {
+      errors.push(
+        `name "${name}" must start with "miro-" (plugin naming convention)`
+      );
+    }
   }
 
   return errors;

@@ -1,6 +1,6 @@
 ---
 description: Show current miro-tasks plugin configuration and status
-allowed-tools: Bash(sh:*), mcp__plugin_miro_miro__board_list_items
+allowed-tools: Bash(sh:*)
 ---
 
 Display the current status of the task tracking in Miro.

@@ -1,7 +1,7 @@
 {
   "name": "miro-tasks",
   "description": "Track tasks on a Miro board",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Miro",
     "email": "support@miro.com"

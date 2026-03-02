@@ -1,0 +1,9 @@
+description = "Disable miro-tasks plugin and stop automatic task tracking"
+
+prompt = """
+# Disable task tracking in Miro
+
+This command disables tracking of tasks execution in Miro.
+
+!{rm -f .miro/config.json 2>/dev/null; echo "Task tracking in Miro is disabled."}
+"""
