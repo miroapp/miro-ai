@@ -52,7 +52,7 @@
       "description": "Track your coding progress on a Miro board. Automatically syncs todos and task status to visual cards.",
       "source": "./claude-plugins/miro-tasks",
       "category": "development",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"
