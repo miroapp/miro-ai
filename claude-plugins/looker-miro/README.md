@@ -1,0 +1,176 @@
+# Looker Miro Plugin
+
+Custom Miro integration plugin for Looker analytics.
+
+## Overview
+
+This plugin connects Miro with Looker to enable data visualization workflows. Query Looker data using natural language and automatically create visual representations on Miro boards.
+
+**Data Sources:**
+- Looker (via Google Cloud MCP Toolbox)
+- Miro (via Miro MCP)
+
+**Commands:**
+- `visualize` - Query Looker data and create visualizations on Miro boards
+
+## Setup
+
+### 1. Install Dependencies
+
+Ensure you have Node.js 18+ installed.
+
+### 2. Configure Looker API Credentials
+
+This plugin requires Looker API credentials. Follow these steps:
+
+1. **Get Looker API credentials:**
+   - Log in to your Looker instance as an admin
+   - Go to Admin > Users
+   - Select your user and click "Edit Keys"
+   - Generate a new API3 key (Client ID and Client Secret)
+   - Copy these credentials
+
+2. **Set environment variables:**
+
+```bash
+export LOOKER_BASE_URL="https://your-instance.cloud.looker.com"
+export LOOKER_CLIENT_ID="your_client_id"
+export LOOKER_CLIENT_SECRET="your_client_secret"
+export LOOKER_VERIFY_SSL="true"
+```
+
+Add these to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) to persist them.
+
+### 3. Configure Miro OAuth Token
+
+1. **Get Miro OAuth token:**
+   - Go to https://miro.com/app/settings/user-profile/apps
+   - Create a new app or use an existing one
+   - Generate an OAuth token with board:write scope
+
+2. **Set environment variable:**
+
+```bash
+export MIRO_OAUTH_TOKEN="your_miro_oauth_token"
+```
+
+### 4. Enable the Plugin
+
+Add this plugin to your Claude Code configuration:
+
+```bash
+# From the plugin directory
+claude plugins add /Users/yi/projects/src/github/miroapp/demos/miro-ai/claude-plugins/looker-miro
+```
+
+Or add to your Claude Code settings.
+
+## Commands
+
+### `/looker-miro:visualize`
+
+Query Looker data using natural language and create visualizations on a Miro board.
+
+**Usage:**
+```
+/looker-miro:visualize <board-url> [query]
+```
+
+**Examples:**
+
+```
+/looker-miro:visualize https://miro.com/app/board/abc= "show top 10 customers by revenue"
+```
+
+```
+/looker-miro:visualize https://miro.com/app/board/abc= "monthly sales trend for last 6 months"
+```
+
+```
+/looker-miro:visualize https://miro.com/app/board/abc= "sales pipeline by stage"
+```
+
+## MCP Configuration
+
+This plugin uses the following MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "miro": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/miro-mcp"],
+      "env": {
+        "MIRO_OAUTH_TOKEN": "${MIRO_OAUTH_TOKEN}"
+      }
+    },
+    "looker": {
+      "command": "npx",
+      "args": ["-y", "@toolbox-sdk/server", "--prebuilt", "looker", "--stdio"],
+      "env": {
+        "LOOKER_BASE_URL": "${LOOKER_BASE_URL}",
+        "LOOKER_CLIENT_ID": "${LOOKER_CLIENT_ID}",
+        "LOOKER_CLIENT_SECRET": "${LOOKER_CLIENT_SECRET}",
+        "LOOKER_VERIFY_SSL": "${LOOKER_VERIFY_SSL:-true}"
+      }
+    }
+  }
+}
+```
+
+## How It Works
+
+1. **Query Looker:** The plugin uses Google Cloud's MCP Toolbox for Looker, which provides natural language query capabilities via the Conversational Analytics API
+2. **Transform Data:** Results are analyzed and transformed into appropriate visualization formats
+3. **Create on Miro:** The Miro MCP creates tables, diagrams, or other visual elements on your board
+
+## Supported Visualizations
+
+| Type | Use Case | Example Query |
+|------|----------|---------------|
+| **Table** | Structured data with multiple dimensions | "top 20 products by revenue and units sold" |
+| **Flowchart** | Process flows, stage-based data | "sales pipeline by stage" |
+| **Hierarchy** | Grouped or categorized data | "customers by region and segment" |
+| **Timeline** | Time-series data | "monthly active users for last year" |
+
+## Troubleshooting
+
+### Looker Credentials Not Found
+Ensure environment variables are set correctly:
+```bash
+echo $LOOKER_BASE_URL
+echo $LOOKER_CLIENT_ID
+```
+
+### MCP Connection Failed
+Verify the MCP server is accessible:
+```bash
+npx -y @toolbox-sdk/server --version
+```
+
+### Board Access Denied
+Ensure the Miro OAuth token has access to the board you're trying to use. Check token scopes include `board:write`.
+
+### Looker API Access
+- Verify your Looker user has API access enabled
+- Check that the API keys are active (not expired)
+- Ensure your Looker instance URL is correct (include https://)
+
+## Resources
+
+- [Looker MCP Documentation](https://googleapis.github.io/genai-toolbox/how-to/connect-ide/looker_mcp/)
+- [Looker API Authentication](https://cloud.google.com/looker/docs/api-auth)
+- [Miro MCP Documentation](https://github.com/anthropics/miro-mcp)
+- [Miro Developer Platform](https://developers.miro.com/)
+
+## Support
+
+For issues with this plugin, contact your Solution Architect.
+
+For Looker questions, see the [Google Cloud Looker Documentation](https://cloud.google.com/looker/docs).
+
+For Miro platform questions, see the [Miro Developer Documentation](https://developers.miro.com/).
+
+---
+
+*Generated by miro-solutions plugin for Claude Code*
