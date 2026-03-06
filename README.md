@@ -4,7 +4,8 @@
 
 Connect AI coding assistants to your Miro boards. Create diagrams, extract context, generate code from designs, and track tasks—all through natural conversation. 
 
-<video src="https://github.com/user-attachments/assets/835926de-9c4e-4575-b177-0ee60da003d2" autoplay loop muted playsinline width="100%"></video>
+![Gemini CLI docs, diagram, table demo](https://github.com/user-attachments/assets/54cb6aa9-9174-4d23-91a2-3cb4caa69d3d)
+
 ---
 
 > [Share your feedback](https://q2oeb0jrhgi.typeform.com/to/YATmJPVx).
