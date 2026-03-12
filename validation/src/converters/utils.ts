@@ -1,4 +1,15 @@
 /**
+ * Convert kebab-case to Title Case display name.
+ * "miro-tasks" → "Miro Tasks", "miro" → "Miro"
+ */
+export function toDisplayName(kebab: string): string {
+  return kebab
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+/**
  * Convert a string to kebab-case.
  * "Miro Tasks" → "miro-tasks", "miroTasks" → "miro-tasks"
  */
@@ -52,4 +63,19 @@ export const HOOK_EVENT_MAP: Record<string, string> = {
   PostToolUse: "AfterTool",
   SessionStart: "SessionStart",
   UserPromptSubmit: "BeforeAgent",
+};
+
+/**
+ * Hook event name mapping from Claude → Cursor.
+ * Cursor uses camelCase event names.
+ */
+export const CURSOR_HOOK_EVENT_MAP: Record<string, string> = {
+  Stop: "stop",
+  PreToolUse: "preToolUse",
+  PostToolUse: "postToolUse",
+  SessionStart: "sessionStart",
+  SessionEnd: "sessionEnd",
+  UserPromptSubmit: "beforeSubmitPrompt",
+  PreCompact: "preCompact",
+  SubagentStop: "subagentStop",
 };

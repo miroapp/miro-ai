@@ -129,6 +129,7 @@ keywords: ["miro", "diagram", "workflow", "whiteboard"]
 - **Claude Code Agents**: [code.claude.com/docs/en/sub-agents](https://code.claude.com/docs/en/sub-agents)
 - **Kiro Powers**: [kiro.dev/docs/powers/create](https://kiro.dev/docs/powers/create/)
 - **Gemini CLI Extensions**: [google-gemini.github.io/gemini-cli/docs/extensions](https://google-gemini.github.io/gemini-cli/docs/extensions/)
+- **Cursor Plugins**: [cursor.com/docs/plugins/building](https://cursor.com/docs/plugins/building)
 - **Gemini Settings Schema**: [raw.githubusercontent.com/.../settings.schema.json](https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json)
 
 ## Related

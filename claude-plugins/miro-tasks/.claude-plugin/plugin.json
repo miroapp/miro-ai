@@ -1,11 +1,22 @@
 {
   "name": "miro-tasks",
-  "description": "Track tasks on a Miro board",
-  "version": "1.0.1",
+  "version": "1.0.2",
+  "description": "Track your coding progress on a Miro board. Automatically syncs todos and task status to visual cards.",
   "author": {
     "name": "Miro",
     "email": "support@miro.com"
   },
+  "homepage": "https://miro.com",
+  "repository": "https://github.com/miroapp/miro-ai",
+  "license": "MIT",
+  "keywords": [
+    "miro", "whiteboard", "boards", "diagrams", "flowchart", "mindmap", "uml",
+    "mermaid", "plantuml", "documents", "tables", "stickies", "wireframes",
+    "prototypes", "visualization", "collaboration", "design-to-code", "mcp",
+    "prd", "specs", "documentation", "planning", "frames", "cards", "shapes",
+    "connectors", "images", "extraction", "design", "requirements", "tasks",
+    "tracking", "todos", "project-management", "kanban", "sync", "progress"
+  ],
   "hooks": "./.claude-plugin/hooks.json",
   "commands": [
     "./commands/enable.md",

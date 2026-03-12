@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "miro": {
+      "url": "https://mcp.miro.com/",
+      "headers": {
+        "X-AI-Source": "cursor-plugin"
+      }
+    }
+  }
+}
