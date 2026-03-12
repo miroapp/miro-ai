@@ -381,6 +381,17 @@ export async function writeGeminiExtension(
     for (const tmpl of plugin.templates) {
       await writeOut(tmpl.relPath, tmpl.content);
     }
+
+    // 8. README (copy from Claude plugin if present)
+    try {
+      const readme = await readFile(
+        path.join(plugin.absPath, "README.md"),
+        "utf-8"
+      );
+      await writeOut("README.md", readme);
+    } catch {
+      // No README in source — skip
+    }
   } catch (e) {
     errors.push(`Failed to write gemini extension: ${(e as Error).message}`);
   }

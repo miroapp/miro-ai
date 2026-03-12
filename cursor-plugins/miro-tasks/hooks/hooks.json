@@ -3,6 +3,7 @@
   "hooks": {
     "stop": [
       {
+        "type": "command",
         "command": "./scripts/hooks-stop.sh"
       }
     ]

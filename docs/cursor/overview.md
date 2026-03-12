@@ -82,7 +82,7 @@ On first use, you'll be prompted to authenticate with Miro via OAuth.
 | Skills | Identical | Identical |
 | Agents | `name`, `description`, `tools`, `model` | `name`, `description` only |
 | Hook events | PascalCase (`Stop`, `PreToolUse`) | camelCase (`stop`, `preToolUse`) |
-| Hook structure | `[{hooks: [{type, command, parseJson}]}]` | `[{command}]` (flat, no type) |
+| Hook structure | `[{hooks: [{type, command, parseJson}]}]` | `[{type, command}]` (flat) |
 | Scripts | `${CLAUDE_PLUGIN_ROOT}` | `.` (relative paths) |
 | Templates | Supported | Not supported |
 | MCP config | Flat `{ "miro": {...} }` | Wrapped `{ "mcpServers": { "miro": {...} } }` |

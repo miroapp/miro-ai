@@ -27,7 +27,6 @@ function buildCursorManifest(plugin: ClaudePlugin): Record<string, unknown> {
 
 /**
  * Build Cursor .mcp.json: wrap in { mcpServers: {...} }, set X-AI-Source.
- * Drop "type" field (Cursor infers from config structure).
  */
 function buildCursorMcp(plugin: ClaudePlugin): Record<string, unknown> | null {
   if (!plugin.mcp) return null;
@@ -129,7 +128,7 @@ function convertHooks(hooksRaw: string): {
         for (const h of group.hooks) {
           const handler: Record<string, unknown> = {};
           for (const [k, v] of Object.entries(h)) {
-            if (k === "parseJson" || k === "type") continue; // Drop parseJson + undocumented type
+            if (k === "parseJson") continue; // Drop parseJson (Claude-only field)
             handler[k] = v;
           }
           // Remove "sh " prefix from commands (Cursor runs scripts directly)
@@ -238,7 +237,18 @@ export async function writeCursorPlugin(
       }
     }
 
-    // 8. Warn about skipped templates
+    // 8. README (copy from Claude plugin if present)
+    try {
+      const readme = await readFile(
+        path.join(plugin.absPath, "README.md"),
+        "utf-8"
+      );
+      await writeOut("README.md", readme);
+    } catch {
+      // No README in source — skip
+    }
+
+    // 9. Warn about skipped templates
     if (plugin.templates.length > 0) {
       warnings.push({
         plugin: plugin.dirName,
