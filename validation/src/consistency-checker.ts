@@ -80,6 +80,17 @@ export async function checkConsistency(
     }
   }
 
+  // Cursor plugins .mcp.json files
+  const cursorMcpFiles = await fg("cursor-plugins/*/.mcp.json", { cwd: root });
+  for (const file of cursorMcpFiles) {
+    const data = (await readJsonFile(path.join(root, file))) as {
+      mcpServers?: Record<string, McpServerConfig>;
+    } | null;
+    if (data?.mcpServers) {
+      mcpConfigs.push({ file, servers: data.mcpServers });
+    }
+  }
+
   // Check: All Miro MCP URLs should point to the same base URL
   const miroUrls: { file: string; url: string }[] = [];
   for (const config of mcpConfigs) {
@@ -111,6 +122,7 @@ export async function checkConsistency(
     let platform = "unknown";
     if (config.file.includes("claude-plugins")) platform = "claude";
     else if (config.file.includes("powers")) platform = "kiro";
+    else if (config.file.includes("cursor-plugins")) platform = "cursor";
     else if (config.file.includes("gemini-extension") || config.file.includes("gemini")) platform = "gemini";
 
     for (const server of Object.values(config.servers)) {
@@ -126,6 +138,7 @@ export async function checkConsistency(
   const platformPrefixes: Record<string, string> = {
     claude: "claude-",
     kiro: "kiro-",
+    cursor: "cursor-",
     gemini: "gemini-",
   };
   const platformSources = new Map<string, Set<string>>();
@@ -162,10 +175,14 @@ export async function checkConsistency(
     ...kiroMcpFiles,
     "gemini-extension.json",
     ".claude-plugin/marketplace.json",
+    ".cursor-plugin/marketplace.json",
     ...await fg("claude-plugins/*/.claude-plugin/plugin.json", { cwd: root }),
     ...await fg("claude-plugins/*/.claude-plugin/hooks.json", { cwd: root }),
     ...await fg("gemini-extensions/*/gemini-extension.json", { cwd: root }),
     ...await fg("gemini-extensions/*/hooks/hooks.json", { cwd: root }),
+    ...await fg("cursor-plugins/*/.mcp.json", { cwd: root }),
+    ...await fg("cursor-plugins/*/.cursor-plugin/plugin.json", { cwd: root }),
+    ...await fg("cursor-plugins/*/hooks/hooks.json", { cwd: root }),
   ];
 
   const jsonErrors: string[] = [];

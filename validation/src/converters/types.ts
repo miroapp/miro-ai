@@ -92,7 +92,7 @@ export interface ConversionWarning {
 
 export interface ConversionResult {
   plugin: string;
-  target: "gemini" | "skills";
+  target: "gemini" | "skills" | "cursor";
   success: boolean;
   filesWritten: string[];
   warnings: ConversionWarning[];
