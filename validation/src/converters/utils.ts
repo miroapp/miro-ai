@@ -53,3 +53,18 @@ export const HOOK_EVENT_MAP: Record<string, string> = {
   SessionStart: "SessionStart",
   UserPromptSubmit: "BeforeAgent",
 };
+
+/**
+ * Hook event name mapping from Claude → Cursor.
+ * Cursor uses camelCase event names.
+ */
+export const CURSOR_HOOK_EVENT_MAP: Record<string, string> = {
+  Stop: "stop",
+  PreToolUse: "preToolUse",
+  PostToolUse: "postToolUse",
+  SessionStart: "sessionStart",
+  SessionEnd: "sessionEnd",
+  UserPromptSubmit: "beforeSubmitPrompt",
+  PreCompact: "preCompact",
+  SubagentStop: "subagentStop",
+};

@@ -2,7 +2,7 @@
   "name": "miro-ai",
   "version": "1.0.0",
   "type": "module",
-  "description": "Miro AI Developer Tools - plugins for Claude Code, Gemini CLI, and Kiro",
+  "description": "Miro AI Developer Tools - plugins for Claude Code, Gemini CLI, Cursor, and Kiro",
   "scripts": {
     "validate": "bun validation/src/index.ts",
     "validate:claude": "for dir in claude-plugins/*/; do claude plugin validate \"$dir\"; done",
@@ -13,6 +13,7 @@
     "convert": "bun validation/src/converters/index.ts",
     "convert:gemini": "bun validation/src/converters/index.ts --gemini",
     "convert:skills": "bun validation/src/converters/index.ts --skills",
+    "convert:cursor": "bun validation/src/converters/index.ts --cursor",
     "prepare": "husky"
   },
   "devDependencies": {

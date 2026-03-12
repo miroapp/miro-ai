@@ -1,0 +1,5 @@
+{
+  "name": "miro-spec",
+  "version": "1.0.0",
+  "description": "Extract and save Miro specs to local files for AI-assisted planning and implementation"
+}

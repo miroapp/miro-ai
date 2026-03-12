@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import path from "path";
 import { readAllPlugins } from "./claude-reader";
+import { writeCursorPlugin } from "./cursor-writer";
 import { writeGeminiExtension } from "./gemini-writer";
 import { writeAgentSkills } from "./skills-writer";
 import type { ConversionResult, ConversionSummary } from "./types";
@@ -14,9 +15,12 @@ const pluginFlag = args.find((a) => a.startsWith("--plugin="));
 const pluginFilter = pluginFlag?.split("=")[1];
 const hasGeminiFlag = args.includes("--gemini");
 const hasSkillsFlag = args.includes("--skills");
-// No flags = both targets; specific flag = only that target
-const targetGemini = hasGeminiFlag || !hasSkillsFlag;
-const targetSkills = hasSkillsFlag || !hasGeminiFlag;
+const hasCursorFlag = args.includes("--cursor");
+// No flags = all targets; specific flag = only that target
+const hasAnyFlag = hasGeminiFlag || hasSkillsFlag || hasCursorFlag;
+const targetGemini = hasGeminiFlag || !hasAnyFlag;
+const targetSkills = hasSkillsFlag || !hasAnyFlag;
+const targetCursor = hasCursorFlag || !hasAnyFlag;
 
 // ANSI colors (match validation/src/index.ts)
 const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
@@ -35,6 +39,9 @@ function printFooter() {
 
 // Plugins excluded from Gemini conversion
 const GEMINI_EXCLUDED = new Set(["miro-solutions"]);
+
+// Plugins excluded from Cursor conversion
+const CURSOR_EXCLUDED = new Set(["miro-solutions"]);
 
 async function main() {
   console.log(
@@ -127,6 +134,33 @@ async function main() {
       const skillNames = plugin.skills.map((s) => s.name).join(", ");
       console.log(
         `│ ${status} ${plugin.dirName} → skills/ ${dim(`(${result.filesWritten.length} files: ${skillNames})`)}`
+      );
+      for (const w of result.warnings) {
+        console.log(`│   └─ ${yellow("⚠")} ${w.message}`);
+      }
+      for (const e of result.errors) {
+        console.log(`│   └─ ${red("✗")} ${e}`);
+      }
+    }
+    printFooter();
+  }
+
+  // Cursor Plugins conversion
+  if (targetCursor) {
+    printHeader("Cursor Plugins");
+    const cursorDir = path.join(ROOT, "cursor-plugins");
+    for (const plugin of plugins) {
+      if (CURSOR_EXCLUDED.has(plugin.dirName)) {
+        console.log(
+          `│ ${yellow("⚠")} ${plugin.dirName} ${dim("(excluded, skipped)")}`
+        );
+        continue;
+      }
+      const result = await writeCursorPlugin(plugin, cursorDir, dryRun);
+      results.push(result);
+      const status = result.success ? green("✓") : red("✗");
+      console.log(
+        `│ ${status} ${plugin.dirName} → cursor-plugins/${plugin.dirName}/ ${dim(`(${result.filesWritten.length} files)`)}`
       );
       for (const w of result.warnings) {
         console.log(`│   └─ ${yellow("⚠")} ${w.message}`);

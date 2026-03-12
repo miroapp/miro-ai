@@ -8,6 +8,7 @@ Thank you for your interest in contributing to Miro AI. This guide covers develo
 - [Claude Code Plugins](#claude-code-plugins)
 - [Kiro Powers](#kiro-powers)
 - [Gemini CLI Extensions](#gemini-cli-extensions)
+- [Cursor Plugins](#cursor-plugins)
 - [General Guidelines](#general-guidelines)
 
 ---
@@ -77,6 +78,7 @@ miro-ai/
 │   ├── miro-research/
 │   └── miro-review/
 ├── skills/                   # Agent Skills (auto-generated from claude-plugins)
+├── cursor-plugins/           # Cursor plugins (auto-generated from claude-plugins)
 ├── powers/                   # Kiro powers
 │   └── code-gen/            # Design-to-code
 ├── validation/               # Validators and converters
@@ -398,6 +400,38 @@ Skills are auto-generated from Claude plugin skills via `bun run convert:skills`
 ### Naming Convention
 
 All skill directory names under `claude-plugins/` must start with `miro-` (enforced by validation). This ensures unique names when published as Agent Skills.
+
+---
+
+## Cursor Plugins
+
+See [Cursor Plugins Overview](docs/cursor/overview.md) for user-facing documentation.
+
+Plugins are auto-generated from Claude plugins via `bun run convert:cursor`. They live in `cursor-plugins/*/` with proper Cursor plugin structure (`.cursor-plugin/plugin.json`, commands, skills, hooks, scripts). All plugins are converted except `miro-solutions` (sales-only, template-dependent).
+
+### Development Workflow
+
+1. **Edit the source Claude plugin:**
+   ```bash
+   vim claude-plugins/miro/commands/diagram.md
+   ```
+
+2. **Regenerate plugins:**
+   ```bash
+   bun run convert:cursor                       # All cursor plugins
+   bun run convert:cursor --plugin=miro         # Single plugin
+   bun run convert:cursor --dry-run             # Preview changes
+   ```
+
+3. **Copy to local plugins dir and restart Cursor:**
+   ```bash
+   cp -r cursor-plugins/miro ~/.cursor/plugins/miro
+   # Restart Cursor (or Cmd+Shift+P → Reload Window)
+   ```
+
+4. Verify plugins load and test MCP connection.
+
+> **Note:** Local plugin loading is a [community workaround](https://forum.cursor.com/t/cursor-2-5-plugins/152124), not officially documented. The official install method is via the Cursor Marketplace (`/add-plugin`).
 
 ---
 
