@@ -22,11 +22,6 @@
       "description": "Track your coding progress on a Miro board. Automatically syncs todos and task status to visual cards."
     },
     {
-      "name": "miro-research",
-      "source": "cursor-plugins/miro-research",
-      "description": "Research any topic and visualize findings on Miro boards."
-    },
-    {
       "name": "miro-review",
       "source": "cursor-plugins/miro-review",
       "description": "Visual code reviews on Miro boards from GitHub PRs or local changes."

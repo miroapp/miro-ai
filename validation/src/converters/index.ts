@@ -38,10 +38,10 @@ function printFooter() {
 }
 
 // Plugins excluded from Gemini conversion
-const GEMINI_EXCLUDED = new Set(["miro-solutions"]);
+const GEMINI_EXCLUDED = new Set(["miro-solutions", "miro-research"]);
 
 // Plugins excluded from Cursor conversion
-const CURSOR_EXCLUDED = new Set(["miro-solutions"]);
+const CURSOR_EXCLUDED = new Set(["miro-solutions", "miro-research"]);
 
 async function main() {
   console.log(

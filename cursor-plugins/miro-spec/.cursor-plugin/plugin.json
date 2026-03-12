@@ -1,6 +1,7 @@
 {
   "name": "miro-spec",
-  "version": "1.0.0",
+  "displayName": "Miro Spec",
+  "version": "1.0.1",
   "description": "Extract and save Miro specs to local files for AI-assisted planning and implementation",
   "author": {
     "name": "Miro",
@@ -11,9 +12,42 @@
   "license": "MIT",
   "keywords": [
     "miro",
+    "whiteboard",
+    "boards",
+    "diagrams",
+    "flowchart",
+    "mindmap",
+    "uml",
+    "mermaid",
+    "plantuml",
+    "documents",
+    "tables",
+    "stickies",
+    "wireframes",
+    "prototypes",
+    "visualization",
+    "collaboration",
+    "design-to-code",
+    "mcp",
+    "prd",
     "specs",
     "documentation",
     "planning",
-    "extraction"
-  ]
+    "frames",
+    "cards",
+    "shapes",
+    "connectors",
+    "images",
+    "extraction",
+    "design",
+    "requirements",
+    "tasks",
+    "tracking",
+    "todos",
+    "project-management",
+    "kanban",
+    "sync"
+  ],
+  "commands": "./commands/",
+  "skills": "./skills/"
 }

@@ -10,13 +10,14 @@
   "repository": "https://github.com/miroapp/miro-ai",
   "license": "MIT",
   "keywords": [
-    "miro",
-    "code-review",
-    "pr-review",
-    "github",
-    "visualization",
-    "security-review",
-    "architecture"
+    "miro", "whiteboard", "boards", "diagrams", "flowchart", "mindmap", "uml",
+    "mermaid", "plantuml", "documents", "tables", "stickies", "wireframes",
+    "prototypes", "visualization", "collaboration", "design-to-code", "mcp",
+    "prd", "specs", "documentation", "planning", "frames", "cards", "shapes",
+    "connectors", "images", "extraction", "design", "requirements", "tasks",
+    "tracking", "todos", "project-management", "kanban", "sync",
+    "code-review", "pr-review", "pull-request", "github", "security-review",
+    "architecture", "diff"
   ],
   "skills": "./skills/"
 }

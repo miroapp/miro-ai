@@ -1,7 +1,0 @@
-{
-  "mcpServers": {
-    "glean": {
-      "url": "https://miro-be.glean.com/mcp/default"
-    }
-  }
-}

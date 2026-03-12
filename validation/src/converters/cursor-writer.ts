@@ -1,19 +1,22 @@
 import { chmod, mkdir, readFile, stat, writeFile } from "fs/promises";
 import path from "path";
 import type { ClaudePlugin, ConversionResult, ConversionWarning } from "./types";
-import { CURSOR_HOOK_EVENT_MAP, substituteVars } from "./utils";
+import { CURSOR_HOOK_EVENT_MAP, substituteVars, toDisplayName } from "./utils";
 
 const VARS: Record<string, string> = {
   "${CLAUDE_PLUGIN_ROOT}": ".",
 };
 
 /**
- * Build Cursor plugin.json manifest from Claude plugin manifest.
- * Drops hooks path (Cursor auto-discovers hooks/hooks.json).
+ * Build Cursor plugin.json manifest from Claude plugin.
+ * Generates displayName from kebab-case name and declares component paths
+ * so Cursor can discover commands, skills, and agents.
+ * Hooks path is omitted (Cursor auto-discovers hooks/hooks.json).
  */
 function buildCursorManifest(plugin: ClaudePlugin): Record<string, unknown> {
   const manifest: Record<string, unknown> = {
     name: plugin.manifest.name,
+    displayName: toDisplayName(plugin.manifest.name),
   };
   if (plugin.manifest.version) manifest.version = plugin.manifest.version;
   if (plugin.manifest.description) manifest.description = plugin.manifest.description;
@@ -22,6 +25,11 @@ function buildCursorManifest(plugin: ClaudePlugin): Record<string, unknown> {
   if (plugin.manifest.repository) manifest.repository = plugin.manifest.repository;
   if (plugin.manifest.license) manifest.license = plugin.manifest.license;
   if (plugin.manifest.keywords) manifest.keywords = plugin.manifest.keywords;
+
+  if (plugin.commands.length > 0) manifest.commands = "./commands/";
+  if (plugin.skills.length > 0) manifest.skills = "./skills/";
+  if (plugin.agents.length > 0) manifest.agents = "./agents/";
+
   return manifest;
 }
 

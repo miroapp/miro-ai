@@ -21,20 +21,12 @@
       "repository": "https://github.com/miroapp/miro-ai",
       "license": "MIT",
       "keywords": [
-        "miro",
-        "whiteboard",
-        "diagrams",
-        "diagramming",
-        "visualization",
-        "collaboration",
-        "prototyping",
-        "wireframes",
-        "brainstorming",
-        "flowcharts",
-        "architecture-diagrams",
-        "mcp",
-        "visual-collaboration",
-        "code-generation"
+        "miro", "whiteboard", "boards", "diagrams", "flowchart", "mindmap", "uml",
+        "mermaid", "plantuml", "documents", "tables", "stickies", "wireframes",
+        "prototypes", "visualization", "collaboration", "design-to-code", "mcp",
+        "prd", "specs", "documentation", "planning", "frames", "cards", "shapes",
+        "connectors", "images", "extraction", "design", "requirements", "tasks",
+        "tracking", "todos", "project-management", "kanban", "sync"
       ],
       "tags": [
         "productivity",
@@ -61,13 +53,12 @@
       "repository": "https://github.com/miroapp/miro-ai",
       "license": "MIT",
       "keywords": [
-        "miro",
-        "tasks",
-        "todos",
-        "progress-tracking",
-        "project-management",
-        "kanban",
-        "workflow"
+        "miro", "whiteboard", "boards", "diagrams", "flowchart", "mindmap", "uml",
+        "mermaid", "plantuml", "documents", "tables", "stickies", "wireframes",
+        "prototypes", "visualization", "collaboration", "design-to-code", "mcp",
+        "prd", "specs", "documentation", "planning", "frames", "cards", "shapes",
+        "connectors", "images", "extraction", "design", "requirements", "tasks",
+        "tracking", "todos", "project-management", "kanban", "sync", "progress"
       ],
       "tags": [
         "development",
@@ -81,7 +72,7 @@
       "description": "Create customer-specific Miro plugins during sales calls. Rapid plugin generation for Solution Architects.",
       "source": "./claude-plugins/miro-solutions",
       "category": "development",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"
@@ -90,13 +81,13 @@
       "repository": "https://github.com/miroapp/miro-ai",
       "license": "MIT",
       "keywords": [
-        "miro",
-        "solutions",
-        "sales",
-        "plugin-generator",
-        "gtm",
-        "customer-demo",
-        "integration"
+        "miro", "whiteboard", "boards", "diagrams", "flowchart", "mindmap", "uml",
+        "mermaid", "plantuml", "documents", "tables", "stickies", "wireframes",
+        "prototypes", "visualization", "collaboration", "design-to-code", "mcp",
+        "prd", "specs", "documentation", "planning", "frames", "cards", "shapes",
+        "connectors", "images", "extraction", "design", "requirements", "tasks",
+        "tracking", "todos", "project-management", "kanban", "sync",
+        "solutions", "sales", "plugin-generator", "gtm", "demo", "customer", "platform"
       ],
       "tags": [
         "development",
@@ -119,13 +110,13 @@
       "repository": "https://github.com/miroapp/miro-ai",
       "license": "MIT",
       "keywords": [
-        "miro",
-        "research",
-        "visualization",
-        "glean",
-        "documentation",
-        "diagrams",
-        "knowledge-synthesis"
+        "miro", "whiteboard", "boards", "diagrams", "flowchart", "mindmap", "uml",
+        "mermaid", "plantuml", "documents", "tables", "stickies", "wireframes",
+        "prototypes", "visualization", "collaboration", "design-to-code", "mcp",
+        "prd", "specs", "documentation", "planning", "frames", "cards", "shapes",
+        "connectors", "images", "extraction", "design", "requirements", "tasks",
+        "tracking", "todos", "project-management", "kanban", "sync",
+        "research", "glean", "knowledge-synthesis"
       ],
       "tags": [
         "productivity",
@@ -148,13 +139,14 @@
       "repository": "https://github.com/miroapp/miro-ai",
       "license": "MIT",
       "keywords": [
-        "miro",
-        "code-review",
-        "pr-review",
-        "github",
-        "security-review",
-        "architecture",
-        "visualization"
+        "miro", "whiteboard", "boards", "diagrams", "flowchart", "mindmap", "uml",
+        "mermaid", "plantuml", "documents", "tables", "stickies", "wireframes",
+        "prototypes", "visualization", "collaboration", "design-to-code", "mcp",
+        "prd", "specs", "documentation", "planning", "frames", "cards", "shapes",
+        "connectors", "images", "extraction", "design", "requirements", "tasks",
+        "tracking", "todos", "project-management", "kanban", "sync",
+        "code-review", "pr-review", "pull-request", "github", "security-review",
+        "architecture", "diff"
       ],
       "tags": [
         "development",
@@ -169,7 +161,7 @@
       "description": "Extract and save Miro Specs to local files for AI-assisted planning and implementation. Downloads documents, diagrams, prototypes, and images.",
       "source": "./claude-plugins/miro-spec",
       "category": "productivity",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"
@@ -178,14 +170,12 @@
       "repository": "https://github.com/miroapp/miro-ai",
       "license": "MIT",
       "keywords": [
-        "miro",
-        "specs",
-        "specifications",
-        "extraction",
-        "documentation",
-        "planning",
-        "requirements",
-        "prototypes"
+        "miro", "whiteboard", "boards", "diagrams", "flowchart", "mindmap", "uml",
+        "mermaid", "plantuml", "documents", "tables", "stickies", "wireframes",
+        "prototypes", "visualization", "collaboration", "design-to-code", "mcp",
+        "prd", "specs", "documentation", "planning", "frames", "cards", "shapes",
+        "connectors", "images", "extraction", "design", "requirements", "tasks",
+        "tracking", "todos", "project-management", "kanban", "sync"
       ],
       "tags": [
         "productivity",
