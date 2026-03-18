@@ -83,11 +83,12 @@ For clients that don't have a dedicated Miro plugin or extension, add this to yo
 
 #### VSCode + GitHub Copilot
 
-1. Install the MCP extension for VSCode
-2. Open Command Palette (`Cmd/Ctrl + Shift + P`)
-3. Run **MCP: Add Server**
-4. Enter URL: `https://mcp.miro.com/`
-5. Complete OAuth flow
+Install from the [GitHub MCP Registry](https://github.com/mcp/miroapp/mcp-server):
+
+1. On the registry page, click **Install MCP Server**
+2. Select **Install in VS Code** (or VS Code Insiders)
+3. VS Code will open and prompt you to confirm the server installation
+4. Complete the OAuth flow when prompted
 
 #### Other Clients
 
