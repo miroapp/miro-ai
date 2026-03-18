@@ -40,68 +40,9 @@ Common issues and solutions for Miro AI integrations.
 
 ## Duplicate MCP Servers
 
-### Multiple Miro Servers Active
+If you're seeing duplicate Miro tools, repeated auth prompts, or your AI is confused about which Miro server to use, you likely have multiple Miro MCP server instances active.
 
-**Symptoms:**
-- Duplicate Miro tools in the tool list
-- Being prompted to authenticate with Miro multiple times
-- AI unsure which set of Miro tools to use
-- Multiple Miro entries in your MCP server list
-
-**Cause:** There are three ways Miro MCP can be configured, and each creates an independent server instance with its own auth session:
-
-| Source | Typical scope | Who it's for |
-|--------|--------------|--------------|
-| **Plugin / extension** (from miro-ai repo) | User | Everyone — recommended for clients that support it |
-| **Manual JSON config** (`"url": "https://mcp.miro.com/"`) | User or project | Clients without plugin/extension support |
-| **Local dev server** (`http://localhost:...`) | Project | MCP server developers only |
-
-If more than one is active in the same client, you get duplicate tools and auth conflicts — even though they point to the same server.
-
-**How to check:** Look at your client's MCP server list. If you see more than one Miro entry (excluding a local dev server you intentionally configured), you have duplicates.
-
-**Fix — use only one method per client:**
-
-#### If your client has a Miro plugin or extension
-
-For **Claude Code**, **Cursor**, **Gemini CLI**, and **Kiro**: the plugin/extension already manages the MCP connection. Remove any manual config:
-
-**Claude Code:**
-```bash
-claude mcp remove miro --scope user
-claude mcp remove miro --scope local
-```
-If you named the server differently, check `claude mcp list` for the actual name and substitute it.
-
-**Cursor:**
-1. Open Settings (`Cmd/Ctrl + ,`)
-2. Navigate to **Features** > **MCP Servers**
-3. Delete any manually-added "miro" entry pointing to `https://mcp.miro.com/`
-
-**Gemini CLI:**
-Remove any manually-added `miro` server entry from your MCP configuration in `settings.json`.
-
-Restart your client after removal.
-
-#### If your client has no plugin
-
-For **VSCode + Copilot**, **Windsurf**, and other clients without a dedicated Miro plugin: manual JSON config is the correct approach. Just ensure you have only **one** `miro` entry.
-
-If a Miro plugin becomes available for your client later, switch to it and remove the manual entry.
-
-#### If you're also running a local dev server
-
-Use a **distinct name** (e.g., `miro-local`) at **project scope** so it doesn't collide with the production server:
-
-```json
-{
-  "mcpServers": {
-    "miro-local": {
-      "url": "http://localhost:9111/"
-    }
-  }
-}
-```
+See the [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) guide in Miro's Developer docs for causes and client-specific cleanup steps.
 
 ## Authentication Issues
 

@@ -11,8 +11,9 @@ This guide covers configuring Miro MCP (Model Context Protocol) for any compatib
 ## Choose Your Installation Method
 
 > **Important:** Use only **one** method per client. Combining a plugin/extension install
-> with manual JSON config creates duplicate MCP servers, each with its own auth session.
-> This results in duplicate tools and confused AI responses.
+> with manual JSON config creates duplicate MCP servers. See the
+> [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers)
+> guide for details.
 
 ### Clients with Plugin / Extension Support
 
@@ -27,12 +28,7 @@ These clients have a dedicated Miro integration that manages the MCP connection 
 
 Restart Claude Code and authenticate when prompted.
 
-If you previously configured Miro MCP manually, remove it:
-
-```bash
-claude mcp remove miro --scope user
-claude mcp remove miro --scope local
-```
+If you previously configured Miro MCP manually, [remove the duplicate](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers).
 
 For manual configuration (development only), see [CONTRIBUTING.md](../../CONTRIBUTING.md#claude-code-plugins).
 
@@ -42,7 +38,7 @@ For manual configuration (development only), see [CONTRIBUTING.md](../../CONTRIB
 2. Run **Add Plugin** and search for "Miro"
 3. Restart Cursor and complete OAuth when prompted
 
-If you previously added Miro via Settings > Features > MCP Servers, remove that entry to avoid duplicates.
+If you previously added Miro via Settings > Features > MCP Servers, [remove that entry](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) to avoid duplicates.
 
 #### Gemini CLI
 
@@ -75,7 +71,7 @@ For clients that don't have a dedicated Miro plugin or extension, add this to yo
 ```
 
 > If a Miro plugin or extension becomes available for your client later, switch to it
-> and remove the manual entry to avoid duplicate servers.
+> and remove the manual entry to [avoid duplicate servers](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers).
 
 #### VSCode + GitHub Copilot
 
@@ -96,22 +92,6 @@ The following clients support Miro MCP with the standard JSON configuration abov
 - OpenAI Codex
 
 Refer to each client's documentation for their specific MCP configuration file location.
-
-## For MCP Server Developers
-
-If you're developing or testing the Miro MCP server locally, add the local server at **project scope** (not user scope) with a **distinct name**:
-
-```json
-{
-  "mcpServers": {
-    "miro-local": {
-      "url": "http://localhost:9111/"
-    }
-  }
-}
-```
-
-This keeps the local dev server isolated to your workspace and avoids collisions with the production plugin or manual config.
 
 ## OAuth Authentication
 

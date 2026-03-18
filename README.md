@@ -60,7 +60,7 @@ Optional plugins:
 /plugin install miro-review@miro-ai      # Code review workflows
 ```
 
-**Restart Claude Code** after installation. If you previously configured Miro MCP manually, [remove the duplicate](docs/troubleshooting.md#duplicate-mcp-servers) to avoid conflicts — the plugin already manages the MCP connection for you.
+**Restart Claude Code** after installation. If you previously configured Miro MCP manually, [remove the duplicate](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) to avoid conflicts — the plugin already manages the MCP connection for you.
 
 See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 
@@ -140,7 +140,7 @@ cp -r miro-ai/cursor-plugins/miro ~/.cursor/plugins/miro
 
 > **Important:** If you previously added Miro MCP manually (via Settings > MCP Servers),
 > remove that entry — the plugin already manages the MCP connection for you.
-> See [Avoiding Duplicate Servers](#avoiding-duplicate-servers).
+> See [Avoiding Duplicate Servers](#avoiding-duplicate-servers) for details.
 
 See [Cursor Plugins](docs/cursor/overview.md) for full documentation.
 
@@ -199,15 +199,9 @@ Want to modify plugins, test changes locally, or build your own? See [CONTRIBUTI
 
 ### Avoiding Duplicate Servers
 
-Each installation method (plugin/extension, manual JSON config, local dev server) creates an **independent MCP connection** with its own OAuth session. Running more than one at a time causes duplicate tools, repeated auth prompts, and confused AI responses.
+If your client has a Miro plugin or extension, use **only** that — do not also add `https://mcp.miro.com/` manually. Each installation method creates an independent MCP connection with its own OAuth session, and running more than one causes duplicate tools and auth confusion.
 
-**Rules of thumb:**
-
-1. **If your client has a Miro plugin or extension** (Claude Code, Cursor, Gemini CLI, Kiro) — use only that. Do not also add `https://mcp.miro.com/` to your MCP config manually.
-2. **If your client has no plugin** (VSCode + Copilot, Windsurf, etc.) — manual config is the correct approach. If a plugin becomes available later, switch to it and remove the manual entry.
-3. **If you're running a local dev server** — add it at **project scope** with a distinct name (e.g., `miro-local`) so it doesn't collide with the production server.
-
-See [Troubleshooting: Duplicate Servers](docs/troubleshooting.md#duplicate-mcp-servers) for diagnosis and cleanup steps.
+See the [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) guide in Miro's Developer docs for diagnosis and cleanup steps.
 
 ---
 
