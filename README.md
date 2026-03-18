@@ -269,6 +269,7 @@ See the [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server
 ### Platform Guides
 - [Claude Code Plugins](docs/claude-code/overview.md)
 - [Gemini CLI Extension](docs/gemini-cli/overview.md)
+- [Cursor Plugins](docs/cursor/overview.md)
 - [Agent Skills](docs/agent-skills/overview.md)
 - [Kiro Powers](docs/kiro/overview.md)
 
