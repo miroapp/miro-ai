@@ -29,9 +29,8 @@ This repo provides everything you need to connect AI tools to Miro:
 | **Claude Code** | Plugins |
 | **Gemini CLI** | Extensions |
 | **Kiro** | Power |
-| **Cursor** | Plugins |
 | **Agent Skills** | Skills |
-| **VSCode, Windsurf, etc.** | MCP Config |
+| **Cursor, VSCode, Windsurf, etc.** | MCP Config |
 
 ---
 
@@ -124,32 +123,9 @@ See [Agent Skills Overview](docs/agent-skills/overview.md) | [agentskills.io](ht
 </details>
 
 <details>
-<summary><strong>Cursor</strong></summary>
+<summary><strong>Other MCP Clients</strong> (Cursor, VSCode + Copilot, Windsurf, Lovable, Replit, etc.)</summary>
 
-**Marketplace** (recommended):
-1. In Cursor, run `/add-plugin` and search for "Miro"
-2. Or browse [cursor.com/marketplace](https://cursor.com/marketplace)
-
-**Local development** (not officially documented — [community workaround](https://forum.cursor.com/t/cursor-2-5-plugins/152124)):
-
-```bash
-git clone https://github.com/miroapp/miro-ai.git
-cp -r miro-ai/cursor-plugins/miro ~/.cursor/plugins/miro
-# Restart Cursor
-```
-
-> **Important:** If you previously added Miro MCP manually (via Settings > MCP Servers),
-> remove that entry — the plugin already manages the MCP connection for you.
-> See [Avoiding Duplicate Servers](#avoiding-duplicate-servers) for details.
-
-See [Cursor Plugins](docs/cursor/overview.md) for full documentation.
-
-</details>
-
-<details>
-<summary><strong>Other MCP Clients</strong> (VSCode + Copilot, Windsurf, Lovable, Replit, etc.)</summary>
-
-For clients that don't have a dedicated Miro plugin or extension, add to your MCP client configuration file:
+Add to your MCP client configuration file:
 
 ```json
 {
@@ -259,16 +235,6 @@ See the [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server
 | miro-research | Research visualization |
 | miro-review | Code review workflows |
 
-### Cursor
-
-| Plugin | Description |
-|--------|-------------|
-| miro | Core MCP integration with 5 commands and skills |
-| miro-tasks | Task tracking with hooks and scripts |
-| miro-research | Research visualization with MCP |
-| miro-review | Code review workflows |
-| miro-spec | Design spec extraction |
-
 ### Agent Skills
 
 | Skill | Description |
@@ -303,7 +269,6 @@ See the [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server
 ### Platform Guides
 - [Claude Code Plugins](docs/claude-code/overview.md)
 - [Gemini CLI Extension](docs/gemini-cli/overview.md)
-- [Cursor Plugins](docs/cursor/overview.md)
 - [Agent Skills](docs/agent-skills/overview.md)
 - [Kiro Powers](docs/kiro/overview.md)
 

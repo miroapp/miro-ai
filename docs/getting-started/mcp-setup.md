@@ -32,14 +32,6 @@ If you previously configured Miro MCP manually, [remove the duplicate](https://d
 
 For manual configuration (development only), see [CONTRIBUTING.md](../../CONTRIBUTING.md#claude-code-plugins).
 
-#### Cursor
-
-1. Open Command Palette (`Cmd/Ctrl + Shift + P`)
-2. Run **Add Plugin** and search for "Miro"
-3. Restart Cursor and complete OAuth when prompted
-
-If you previously added Miro via Settings > Features > MCP Servers, [remove that entry](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) to avoid duplicates.
-
 #### Gemini CLI
 
 ```bash
@@ -72,6 +64,22 @@ For clients that don't have a dedicated Miro plugin or extension, add this to yo
 
 > If a Miro plugin or extension becomes available for your client later, switch to it
 > and remove the manual entry to [avoid duplicate servers](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers).
+
+#### Cursor
+
+1. Open Settings (`Cmd/Ctrl + ,`)
+2. Navigate to **Features** > **MCP Servers**
+3. Click **Add Server** and add:
+
+```json
+{
+  "miro": {
+    "url": "https://mcp.miro.com/"
+  }
+}
+```
+
+4. Click **Connect** and complete OAuth
 
 #### VSCode + GitHub Copilot
 
