@@ -29,9 +29,8 @@ This repo provides everything you need to connect AI tools to Miro:
 | **Claude Code** | Plugins |
 | **Gemini CLI** | Extensions |
 | **Kiro** | Power |
-| **Cursor** | Plugins |
 | **Agent Skills** | Skills |
-| **VSCode, Windsurf, etc.** | MCP Config |
+| **Cursor, VSCode, Windsurf, etc.** | MCP Config |
 
 ---
 
@@ -60,7 +59,7 @@ Optional plugins:
 /plugin install miro-review@miro-ai      # Code review workflows
 ```
 
-**Restart Claude Code** after installation. If you previously configured Miro MCP manually, [remove the duplicate](docs/troubleshooting.md#duplicate-mcp-servers) to avoid conflicts.
+**Restart Claude Code** after installation. If you previously configured Miro MCP manually, [remove the duplicate](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) to avoid conflicts — the plugin already manages the MCP connection for you.
 
 See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 
@@ -124,26 +123,7 @@ See [Agent Skills Overview](docs/agent-skills/overview.md) | [agentskills.io](ht
 </details>
 
 <details>
-<summary><strong>Cursor</strong></summary>
-
-**Marketplace** (recommended):
-1. In Cursor, run `/add-plugin` and search for "Miro"
-2. Or browse [cursor.com/marketplace](https://cursor.com/marketplace)
-
-**Local development** (not officially documented — [community workaround](https://forum.cursor.com/t/cursor-2-5-plugins/152124)):
-
-```bash
-git clone https://github.com/miroapp/miro-ai.git
-cp -r miro-ai/cursor-plugins/miro ~/.cursor/plugins/miro
-# Restart Cursor
-```
-
-See [Cursor Plugins](docs/cursor/overview.md) for full documentation.
-
-</details>
-
-<details>
-<summary><strong>Other MCP Clients</strong> (VSCode, Windsurf, etc.)</summary>
+<summary><strong>Other MCP Clients</strong> (Cursor, VSCode + Copilot, Windsurf, Lovable, Replit, etc.)</summary>
 
 Add to your MCP client configuration file:
 
@@ -156,6 +136,9 @@ Add to your MCP client configuration file:
   }
 }
 ```
+
+> **Note:** If a Miro plugin or extension becomes available for your client later,
+> switch to it and remove the manual entry to avoid duplicate servers.
 
 See [MCP Setup Guide](docs/getting-started/mcp-setup.md) for client-specific paths.
 
@@ -189,6 +172,12 @@ Test your setup with these example prompts:
 ### Developer Mode
 
 Want to modify plugins, test changes locally, or build your own? See [CONTRIBUTING.md](CONTRIBUTING.md#local-development-setup) for dev setup instructions.
+
+### Avoiding Duplicate Servers
+
+If your client has a Miro plugin or extension, use **only** that — do not also add `https://mcp.miro.com/` manually. Each installation method creates an independent MCP connection with its own OAuth session, and running more than one causes duplicate tools and auth confusion.
+
+See the [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) guide in Miro's Developer docs for diagnosis and cleanup steps.
 
 ---
 
@@ -245,16 +234,6 @@ Want to modify plugins, test changes locally, or build your own? See [CONTRIBUTI
 | miro-tasks | Task tracking commands |
 | miro-research | Research visualization |
 | miro-review | Code review workflows |
-
-### Cursor
-
-| Plugin | Description |
-|--------|-------------|
-| miro | Core MCP integration with 5 commands and skills |
-| miro-tasks | Task tracking with hooks and scripts |
-| miro-research | Research visualization with MCP |
-| miro-review | Code review workflows |
-| miro-spec | Design spec extraction |
 
 ### Agent Skills
 
