@@ -444,7 +444,9 @@ Plugins are auto-generated from Claude plugins via `bun run convert:cursor`. The
 
 ## Copilot Cowork Packages
 
- Copilot Cowork packages are auto-generated from Claude plugins. Only the `miro` plugin is converted for this target. The generated package lives in `copilot-cowork-plugins/miro/` and is committed to the repo. Cowork icons under `assets/copilot-cowork/` are packaging assets, not Claude plugin source files.
+Copilot Cowork packages are auto-generated from Claude plugins. Only the `miro` plugin is converted for this target. The generated package folder lives in `copilot-cowork-plugins/miro/` and is committed to the repo. Cowork icons under `assets/copilot-cowork/` are packaging assets, not Claude plugin source files.
+
+This section documents the developer workflow for generating, validating, and packaging the Cowork app package. The committed folder under `copilot-cowork-plugins/miro/` and the zip created in `dist/` are packaging artifacts, not a public end-user installation path.
 
 ### Development Workflow
 
@@ -492,7 +494,7 @@ The converter always writes the Copilot brand as `Miro Cowork`, but it must not 
 
 ### Package Contents
 
-The generated package includes:
+The generated package artifacts include:
 
 - `manifest.json`
 - `color.png`
