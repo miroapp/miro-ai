@@ -3,6 +3,7 @@ import { validateFrontmatter } from "./frontmatter-validator";
 import { validateBashScripts } from "./bash-validator";
 import { validateClaudePlugins } from "./claude-validator";
 import { checkConsistency } from "./consistency-checker";
+import { validateCopilotCoworkPackages } from "./copilot-cowork-validator";
 import { checkVersions } from "./version-checker";
 
 const ROOT = process.cwd();
@@ -13,8 +14,15 @@ const frontmatterOnly = args.includes("--frontmatter-only");
 const bashOnly = args.includes("--bash-only");
 const claudeOnly = args.includes("--claude-only");
 const consistencyOnly = args.includes("--consistency-only");
+const copilotCoworkOnly = args.includes("--copilot-cowork-only");
 const versionOnly = args.includes("--version-only");
-const runAll = !frontmatterOnly && !bashOnly && !claudeOnly && !consistencyOnly && !versionOnly;
+const runAll =
+  !frontmatterOnly &&
+  !bashOnly &&
+  !claudeOnly &&
+  !consistencyOnly &&
+  !copilotCoworkOnly &&
+  !versionOnly;
 
 // ANSI colors
 const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
@@ -129,6 +137,22 @@ async function main() {
       console.log(`│ ${status} ${result.check}`);
       for (const detail of result.details) {
         console.log(`│   └─ ${dim(detail)}`);
+      }
+      if (!result.valid) totalErrors++;
+    }
+    printFooter();
+  }
+
+  // Copilot Cowork Package Validation
+  if (runAll || copilotCoworkOnly) {
+    printHeader("Copilot Cowork Packages");
+    const cowkorkResults = await validateCopilotCoworkPackages(ROOT);
+
+    for (const result of cowkorkResults.results) {
+      const status = result.valid ? green("✓") : red("✗");
+      console.log(`│ ${status} ${result.item}`);
+      for (const error of result.errors) {
+        console.log(`│   └─ ${dim(error)}`);
       }
       if (!result.valid) totalErrors++;
     }
