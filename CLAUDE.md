@@ -16,6 +16,8 @@ Miro AI Developer Tools - A plugin/integration repository connecting AI coding a
 
 ```
 miro-ai/
+├── .agents/
+│   └── skills/             # Repo-local helper skills for agent workflows
 ├── claude-plugins/           # Claude Code plugins
 │   ├── miro/                # Core MCP integration (commands, skills)
 │   ├── miro-tasks/          # Task tracking with hooks and scripts
@@ -33,6 +35,8 @@ miro-ai/
 ├── package.json              # Bun project config
 └── CONTRIBUTING.md
 ```
+
+Repo-local helper skills live in `.agents/skills/`. `.claude/skills` is a compatibility symlink for Claude-oriented tooling.
 
 # Validation
 

@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "copilot-cowork-manifest.schema.json",
+  "title": "Copilot Cowork Package Manifest",
+  "description": "Schema for validating generated Copilot Cowork package manifests",
+  "type": "object",
+  "required": [
+    "$schema",
+    "manifestVersion",
+    "version",
+    "id",
+    "packageName",
+    "developer",
+    "name",
+    "description",
+    "icons",
+    "accentColor",
+    "agentSkills"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://developer.microsoft.com/json-schemas/teams/vDevPreview/MicrosoftTeams.schema.json"
+    },
+    "manifestVersion": {
+      "type": "string",
+      "const": "devPreview"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^([0-9]|[1-9][0-9]*)\\.([0-9]|[1-9][0-9]*)\\.([0-9]|[1-9][0-9]*)$"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$"
+    },
+    "packageName": {
+      "type": "string",
+      "pattern": "^com\\.cowork\\.plugin\\.[a-z0-9-]+$"
+    },
+    "developer": {
+      "type": "object",
+      "required": ["name", "websiteUrl", "privacyUrl", "termsOfUseUrl"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "websiteUrl": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "privacyUrl": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "termsOfUseUrl": {
+          "type": "string",
+          "pattern": "^https://"
+        }
+      },
+      "additionalProperties": false
+    },
+    "name": {
+      "type": "object",
+      "required": ["short", "full"],
+      "properties": {
+        "short": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "full": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "description": {
+      "type": "object",
+      "required": ["short", "full"],
+      "properties": {
+        "short": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "full": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "icons": {
+      "type": "object",
+      "required": ["color", "outline"],
+      "properties": {
+        "color": {
+          "type": "string",
+          "const": "color.png"
+        },
+        "outline": {
+          "type": "string",
+          "const": "outline.png"
+        }
+      },
+      "additionalProperties": false
+    },
+    "accentColor": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "agentSkills": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["folder"],
+        "properties": {
+          "folder": {
+            "type": "string",
+            "pattern": "^\\./skills/[^/]+$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "agentConnectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "displayName", "description", "toolSource"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "toolSource": {
+            "type": "object",
+            "required": ["remoteMcpServer"],
+            "properties": {
+              "remoteMcpServer": {
+                "type": "object",
+                "required": ["mcpServerUrl", "authorization"],
+                "properties": {
+                  "mcpServerUrl": {
+                    "type": "string",
+                    "pattern": "^https?://"
+                  },
+                  "authorization": {
+                    "type": "object",
+                    "required": ["type"],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["None", "OAuthPluginVault", "ApiKeyPluginVault"]
+                      },
+                      "referenceId": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "additionalProperties": false,
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "type": {
+                              "enum": ["OAuthPluginVault", "ApiKeyPluginVault"]
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": ["referenceId"]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "composeExtensions": {
+      "type": "array"
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validDomains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

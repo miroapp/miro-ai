@@ -1,0 +1,47 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/vDevPreview/MicrosoftTeams.schema.json",
+  "manifestVersion": "devPreview",
+  "version": "1.0.2",
+  "id": "1b72f048-929d-554f-9995-9bc8e90f4c4f",
+  "packageName": "com.cowork.plugin.miro",
+  "developer": {
+    "name": "Miro",
+    "websiteUrl": "https://miro.com",
+    "privacyUrl": "https://miro.com/legal/privacy-policy/",
+    "termsOfUseUrl": "https://miro.com/legal/terms-of-service/"
+  },
+  "name": {
+    "short": "Miro Cowork",
+    "full": "Miro Cowork"
+  },
+  "description": {
+    "short": "Secure access to Miro boards. Enables AI to read board context, create diagrams,",
+    "full": "Secure access to Miro boards. Enables AI to read board context, create diagrams, and generate code with enterprise-grade security."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#4A90D9",
+  "agentSkills": [
+    {
+      "folder": "./skills/miro-mcp"
+    }
+  ],
+  "agentConnectors": [
+    {
+      "id": "miro",
+      "displayName": "Miro Cowork MCP Server",
+      "description": "Remote MCP server providing tools for Miro Cowork",
+      "toolSource": {
+        "remoteMcpServer": {
+          "mcpServerUrl": "https://mcp.miro.com/",
+          "authorization": {
+            "type": "OAuthPluginVault",
+            "referenceId": "miro-miro-auth"
+          }
+        }
+      }
+    }
+  ]
+}
