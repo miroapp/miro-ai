@@ -481,10 +481,11 @@ This section documents the developer workflow for generating, validating, and pa
 
 ### Copilot Naming and Identity Mapping
 
-Copilot branding is separate from the source Claude plugin key. For `miro`, the mapping is fixed and must stay stable across rebuilds:
+Copilot branding is separate from the source Claude plugin key. For `miro`, the mapping is fixed and must stay stable across rebuilds. Cowork-specific display text comes from the Cowork config, not from the source Claude plugin manifest.
 
 - source plugin key and output folder: `miro`
 - Copilot display name: `Miro Cowork`
+- Copilot description source: `validation/src/copilot-cowork-config.ts`
 - stable manifest `id`: `1b72f048-929d-554f-9995-9bc8e90f4c4f`
 - stable manifest `packageName`: `com.cowork.plugin.miro`
 - stable connector `id`: `miro`

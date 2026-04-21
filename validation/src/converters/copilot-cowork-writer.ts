@@ -181,7 +181,6 @@ function buildManifest(
   existingManifest: CopilotCoworkManifest | null
 ): CopilotCoworkManifest {
   const pluginVersion = plugin.manifest.version ?? "1.0.0";
-  const pluginDescription = plugin.manifest.description ?? config.appDisplayName;
 
   const manifest: CopilotCoworkManifest = {
     $schema: COWORK_SCHEMA_URL,
@@ -200,8 +199,8 @@ function buildManifest(
       full: config.appDisplayName.slice(0, 100),
     },
     description: {
-      short: pluginDescription.slice(0, 80),
-      full: pluginDescription,
+      short: config.appDescription.short,
+      full: config.appDescription.full,
     },
     icons: {
       color: "color.png",

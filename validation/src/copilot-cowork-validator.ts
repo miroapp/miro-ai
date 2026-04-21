@@ -13,6 +13,10 @@ interface CopilotCoworkManifest {
     short: string;
     full: string;
   };
+  description: {
+    short: string;
+    full: string;
+  };
   agentSkills: Array<{
     folder: string;
   }>;
@@ -159,6 +163,14 @@ export async function validateCopilotCoworkPackages(
       identityErrors.push(
         `Manifest name.full mismatch: expected "${config.appDisplayName}", found "${manifest.name.full}"`
       );
+    }
+    if (manifest.description.short !== config.appDescription.short) {
+      identityErrors.push(
+        `Manifest description.short mismatch: expected "${config.appDescription.short}", found "${manifest.description.short}"`
+      );
+    }
+    if (manifest.description.full !== config.appDescription.full) {
+      identityErrors.push("Manifest description.full does not match the Copilot mapping");
     }
   }
 
