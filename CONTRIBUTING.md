@@ -9,6 +9,7 @@ Thank you for your interest in contributing to Miro AI. This guide covers develo
 - [Kiro Powers](#kiro-powers)
 - [Gemini CLI Extensions](#gemini-cli-extensions)
 - [Cursor Plugins](#cursor-plugins)
+- [Copilot Cowork Packages](#copilot-cowork-packages)
 - [General Guidelines](#general-guidelines)
 
 ---
@@ -66,6 +67,8 @@ See [Validation Documentation](docs/validation/README.md) for detailed informati
 
 ```
 miro-ai/
+├── .agents/
+│   └── skills/             # Repo-local helper skills for Codex/agent workflows
 ├── claude-plugins/           # Claude Code plugins (source of truth)
 │   ├── miro/                # Core MCP integration
 │   ├── miro-tasks/          # Task tracking
@@ -77,6 +80,8 @@ miro-ai/
 │   ├── miro-tasks/
 │   ├── miro-research/
 │   └── miro-review/
+├── copilot-cowork-plugins/   # Copilot Cowork packages (auto-generated)
+│   └── miro/
 ├── skills/                   # Agent Skills (auto-generated from claude-plugins)
 ├── cursor-plugins/           # Cursor plugins (auto-generated from claude-plugins)
 ├── powers/                   # Kiro powers
@@ -91,6 +96,8 @@ miro-ai/
 │   └── mcp/                 # MCP reference
 └── README.md
 ```
+
+Repo-local helper skills live in `.agents/skills/`. `.claude/skills` is kept as a compatibility symlink for Claude-oriented tooling.
 
 ---
 
@@ -432,6 +439,70 @@ Plugins are auto-generated from Claude plugins via `bun run convert:cursor`. The
 4. Verify plugins load and test MCP connection.
 
 > **Note:** Local plugin loading is a [community workaround](https://forum.cursor.com/t/cursor-2-5-plugins/152124), not officially documented. The official install method is via the Cursor Marketplace (`/add-plugin`).
+
+---
+
+## Copilot Cowork Packages
+
+Copilot Cowork packages are auto-generated from Claude plugins. Only the `miro` plugin is converted for this target. The generated package folder lives in `copilot-cowork-plugins/miro/` and is committed to the repo. Cowork icons under `assets/copilot-cowork/` are packaging assets, not Claude plugin source files.
+
+This section documents the developer workflow for generating, validating, and packaging the Cowork app package. The committed folder under `copilot-cowork-plugins/miro/` and the zip created in `dist/` are packaging artifacts, not a public end-user installation path.
+
+### Development Workflow
+
+1. **Edit the source Claude plugin:**
+   ```bash
+   vim claude-plugins/miro/skills/miro-mcp/SKILL.md
+   ```
+
+2. **Keep the required Cowork icons in the package asset folder:**
+   ```bash
+   ls assets/copilot-cowork/miro/color.png assets/copilot-cowork/miro/outline.png
+   ```
+
+3. **Regenerate the package folder:**
+   ```bash
+   bun run convert:copilot-cowork
+   ```
+
+4. **Create the local zip archive:**
+   ```bash
+   bun run package:copilot-cowork
+   ```
+   This writes `dist/miro-copilot-cowork-<version>.zip`. The `dist/` directory is gitignored, so local archives never show up in commits.
+
+5. **Validate before committing:**
+   ```bash
+   bun run validate
+   ```
+
+6. **After merge to `main`, download the generated zip artifact from GitHub Actions.**
+   You can also trigger the same packaging flow manually from the Actions UI with `Run workflow`.
+
+### Copilot Naming and Identity Mapping
+
+Copilot branding is separate from the source Claude plugin key. For `miro`, the mapping is fixed and must stay stable across rebuilds. Cowork-specific display text comes from the Cowork config, not from the source Claude plugin manifest.
+
+- source plugin key and output folder: `miro`
+- Copilot display name: `Miro Cowork`
+- Copilot description source: `validation/src/copilot-cowork-config.ts`
+- stable manifest `id`: `1b72f048-929d-554f-9995-9bc8e90f4c4f`
+- stable manifest `packageName`: `com.cowork.plugin.miro`
+- stable connector `id`: `miro`
+- stable connector `authorization.referenceId`: `miro-miro-auth`
+
+The converter always writes the Copilot brand as `Miro Cowork`, but it must not regenerate new IDs when `copilot-cowork-plugins/miro/manifest.json` already exists. If the generated manifest is missing, the converter bootstraps the same canonical IDs from the fixed Copilot mapping above.
+
+### Package Contents
+
+The generated package artifacts include:
+
+- `manifest.json`
+- `color.png`
+- `outline.png`
+- `skills/`
+- `commands/` (when present in the source plugin)
+- a local distributable zip via `bun run package:copilot-cowork`
 
 ---
 

@@ -7,6 +7,7 @@
     "validate": "bun validation/src/index.ts",
     "validate:claude": "for dir in claude-plugins/*/; do claude plugin validate \"$dir\"; done",
     "validate:bash": "find . -name '*.sh' -not -path './node_modules/*' -not -path './.husky/_/*' -exec shellcheck -x -S warning {} +",
+    "validate:copilot-cowork": "bun validation/src/index.ts --copilot-cowork-only",
     "validate:frontmatter": "bun validation/src/index.ts --frontmatter-only",
     "validate:consistency": "bun validation/src/index.ts --consistency-only",
     "validate:version": "bun validation/src/index.ts --version-only",
@@ -14,6 +15,8 @@
     "convert:gemini": "bun validation/src/converters/index.ts --gemini",
     "convert:skills": "bun validation/src/converters/index.ts --skills",
     "convert:cursor": "bun validation/src/converters/index.ts --cursor",
+    "convert:copilot-cowork": "bun validation/src/converters/index.ts --copilot-cowork",
+    "package:copilot-cowork": "bun validation/src/package-copilot-cowork.ts",
     "sync:cursor": "bun run convert:cursor && bun validation/src/sync-cursor.ts",
     "prepare": "husky"
   },
