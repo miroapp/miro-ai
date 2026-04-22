@@ -33,7 +33,8 @@ const COPILOT_COWORK_CONFIG: Record<string, CopilotCoworkPluginConfig> = {
         id: "miro",
         displayName: "Miro Cowork MCP Server",
         description: "Remote MCP server providing tools for Miro Cowork",
-        referenceId: "miro-miro-auth",
+        referenceId:
+          "MWZhMjgyNjUtNGZkOC00ZTVlLTg4ZjItYmU4ODgzNjkxZTNiIyM4NjA2NzZiNy0yNmJmLTRlN2YtOTczNC03YmJmYjIzN2ExOGM=",
       },
     },
   },

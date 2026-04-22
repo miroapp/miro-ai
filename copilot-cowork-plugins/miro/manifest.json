@@ -38,7 +38,7 @@
           "mcpServerUrl": "https://mcp.miro.com/",
           "authorization": {
             "type": "OAuthPluginVault",
-            "referenceId": "miro-miro-auth"
+            "referenceId": "MWZhMjgyNjUtNGZkOC00ZTVlLTg4ZjItYmU4ODgzNjkxZTNiIyM4NjA2NzZiNy0yNmJmLTRlN2YtOTczNC03YmJmYjIzN2ExOGM="
           }
         }
       }

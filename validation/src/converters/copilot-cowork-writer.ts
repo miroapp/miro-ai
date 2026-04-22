@@ -137,9 +137,7 @@ function buildAgentConnectors(
       } = { type: authType };
 
       if (authType !== "None") {
-        authorization.referenceId =
-          existingConnector?.toolSource.remoteMcpServer.authorization.referenceId ??
-          connectorConfig.referenceId;
+        authorization.referenceId = connectorConfig.referenceId;
       }
 
       return [
