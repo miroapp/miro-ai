@@ -8,6 +8,7 @@ Thank you for your interest in contributing to Miro AI. This guide covers develo
 - [Claude Code Plugins](#claude-code-plugins)
 - [Kiro Powers](#kiro-powers)
 - [Gemini CLI Extensions](#gemini-cli-extensions)
+- [Codex Plugins](#codex-plugins)
 - [Cursor Plugins](#cursor-plugins)
 - [General Guidelines](#general-guidelines)
 
@@ -21,6 +22,7 @@ Thank you for your interest in contributing to Miro AI. This guide covers develo
 - [Bun](https://bun.sh/) — required for validation
 - [ShellCheck](https://www.shellcheck.net/) — optional, for bash script linting
 - Your AI tool of choice (Claude Code, Kiro, or Gemini CLI)
+- Codex for local plugin testing (optional)
 
 ### Clone and Setup
 
@@ -50,6 +52,7 @@ bun run validate
 | Bash scripts | ShellCheck + executable permission check |
 | All JSON files | Syntax validation |
 | MCP configurations | URL consistency across platforms |
+| Codex manifests | JSON schema + marketplace checks |
 
 **Individual validators:**
 
@@ -57,6 +60,7 @@ bun run validate
 bun run validate:claude       # Claude plugins only
 bun run validate:bash         # Bash scripts only
 bun run validate:frontmatter  # Markdown frontmatter only
+bun run validate:codex        # Codex manifests + marketplace
 bun run validate:consistency  # Cross-platform consistency only
 ```
 
@@ -75,8 +79,14 @@ miro-ai/
 ├── gemini-extensions/        # Gemini CLI extensions (auto-generated)
 │   ├── miro/
 │   ├── miro-tasks/
-│   ├── miro-research/
-│   └── miro-review/
+│   ├── miro-review/
+│   └── miro-spec/
+├── codex/                    # Codex plugins (auto-generated)
+│   ├── miro/
+│   ├── miro-tasks/
+│   ├── miro-review/
+│   └── miro-spec/
+├── .agents/plugins/          # Codex repo-local marketplace (auto-generated)
 ├── skills/                   # Agent Skills (auto-generated from claude-plugins)
 ├── cursor-plugins/           # Cursor plugins (auto-generated from claude-plugins)
 ├── powers/                   # Kiro powers
@@ -320,7 +330,7 @@ Extensions are auto-generated from Claude plugins via `bun run convert`. They li
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/commands/diagram.md
+   vim claude-plugins/miro/skills/miro-mcp/SKILL.md
    ```
 
 2. **Regenerate extensions:**
@@ -400,6 +410,58 @@ Skills are auto-generated from Claude plugin skills via `bun run convert:skills`
 ### Naming Convention
 
 All skill directory names under `claude-plugins/` must start with `miro-` (enforced by validation). This ensures unique names when published as Agent Skills.
+
+---
+
+## Codex Plugins
+
+See [Codex Plugins Overview](docs/codex/overview.md) for the generated platform reference.
+
+Plugins are auto-generated from Claude plugins via `bun run convert:codex`. The Codex target is intentionally narrow: it generates only `codex/miro/` plus a repo-local marketplace at `.agents/plugins/marketplace.json`.
+
+### Development Workflow
+
+1. **Edit the source Claude plugin:**
+   ```bash
+   vim claude-plugins/miro/skills/miro-mcp/SKILL.md
+   ```
+
+2. **Regenerate plugins:**
+   ```bash
+   bun run convert:codex                      # Generate Codex output
+   bun run convert -- --codex --plugin=miro  # Single plugin preview
+   bun run convert -- --codex --dry-run      # Preview changes
+   ```
+
+3. **Validate generated output:**
+   ```bash
+   bun run validate:codex
+   bun run validate:consistency
+   ```
+
+4. **Test in Codex:**
+   - Open the repository in Codex so it can discover `.agents/plugins/marketplace.json`
+   - Install the generated `miro` plugin from the `miro-ai` marketplace
+   - Verify plugin `$` skills appear for `$miro:miro-mcp`
+   - Verify the Codex slash menu still shows only built-in commands
+
+### Plugin Structure
+
+The generated Codex output in `codex/miro/`:
+
+```
+miro/
+├── .codex-plugin/plugin.json  # Codex manifest
+├── skills/                    # Converted native skills
+├── .mcp.json                  # MCP config (miro only)
+└── README.md                  # Generated platform README
+```
+
+### Notes
+
+- Codex plugins do not support a `commands` manifest component. This repository does not convert Claude commands for Codex.
+- Codex CLI slash commands are built-ins. Use `$miro:miro-mcp` plus the Miro MCP tools.
+- Only `codex/miro/.mcp.json` and `codex/miro/skills/miro-mcp/` should exist in generated Codex output.
 
 ---
 

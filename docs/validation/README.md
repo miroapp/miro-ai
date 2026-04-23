@@ -21,6 +21,8 @@ bun run validate # Run all validations
 | Bash scripts | Syntax + permissions | ShellCheck |
 | All JSON files | Syntax | JSON.parse |
 | MCP configs | URL consistency | Custom checker |
+| Codex plugin manifests | JSON schema | Ajv |
+| Codex marketplace | JSON schema + path checks | Ajv |
 
 ## Commands
 
@@ -29,6 +31,7 @@ bun run validate              # All validations
 bun run validate:claude       # Claude plugins only (uses CLI)
 bun run validate:bash         # Bash scripts only (shellcheck)
 bun run validate:frontmatter  # Markdown frontmatter only
+bun run validate:codex        # Codex manifests + marketplace
 bun run validate:consistency  # Cross-platform consistency only
 ```
 

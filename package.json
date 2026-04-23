@@ -14,6 +14,7 @@
     "convert:gemini": "bun validation/src/converters/index.ts --gemini",
     "convert:skills": "bun validation/src/converters/index.ts --skills",
     "convert:cursor": "bun validation/src/converters/index.ts --cursor",
+    "convert:codex": "bun validation/src/converters/index.ts --codex",
     "sync:cursor": "bun run convert:cursor && bun validation/src/sync-cursor.ts",
     "prepare": "husky"
   },

@@ -28,6 +28,7 @@ This repo provides everything you need to connect AI tools to Miro:
 |---------|-------------|
 | **Claude Code** | Plugins |
 | **Gemini CLI** | Extensions |
+| **Codex** | Local plugins |
 | **Kiro** | Power |
 | **Agent Skills** | Skills |
 | **Cursor, VSCode, Windsurf, etc.** | MCP Config |
@@ -82,8 +83,8 @@ This installs the root `gemini-extension.json`, which gives Gemini access to the
 git clone https://github.com/miroapp/miro-ai.git
 gemini extensions install ./miro-ai/gemini-extensions/miro
 gemini extensions install ./miro-ai/gemini-extensions/miro-tasks
-gemini extensions install ./miro-ai/gemini-extensions/miro-research
 gemini extensions install ./miro-ai/gemini-extensions/miro-review
+gemini extensions install ./miro-ai/gemini-extensions/miro-spec
 ```
 
 Restart Gemini CLI and authenticate when prompted.
@@ -173,6 +174,8 @@ Test your setup with these example prompts:
 
 Want to modify plugins, test changes locally, or build your own? See [CONTRIBUTING.md](CONTRIBUTING.md#local-development-setup) for dev setup instructions.
 
+Codex plugins are generated locally into `codex/*/` with the repo marketplace at `.agents/plugins/marketplace.json`. See [Codex Plugins](docs/codex/overview.md) for the generated structure and [CONTRIBUTING.md](CONTRIBUTING.md#codex-plugins) for regeneration and local testing.
+
 ### Avoiding Duplicate Servers
 
 If your client has a Miro plugin or extension, use **only** that — do not also add `https://mcp.miro.com/` manually. Each installation method creates an independent MCP connection with its own OAuth session, and running more than one causes duplicate tools and auth confusion.
@@ -232,8 +235,14 @@ See the [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server
 |-----------|-------------|
 | miro | Core MCP integration with commands and skills |
 | miro-tasks | Task tracking commands |
-| miro-research | Research visualization |
 | miro-review | Code review workflows |
+| miro-spec | Spec extraction workflows |
+
+### Codex
+
+| Plugin | Description |
+|--------|-------------|
+| miro | Core MCP integration with the native `$miro:miro-mcp` skill and MCP access |
 
 ### Agent Skills
 

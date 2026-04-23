@@ -23,6 +23,10 @@ Claude Code plugins provide slash commands, skills, and automation for Miro inte
 
 - [Overview](gemini-cli/overview.md) - Extension setup and usage
 
+### Codex
+
+- [Overview](codex/overview.md) - Generated local plugin structure and usage
+
 ### Cursor
 
 - [Overview](cursor/overview.md) - Plugin setup and usage
