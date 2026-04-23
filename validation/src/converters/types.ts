@@ -2,9 +2,9 @@ export interface PluginManifest {
   name: string;
   version?: string;
   description?: string;
-  author?: { name: string; email?: string };
+  author?: { name: string; email?: string; url?: string };
   homepage?: string;
-  repository?: string;
+  repository?: string | { type?: string; url?: string };
   license?: string;
   keywords?: string[];
   commands?: string[];
@@ -92,7 +92,7 @@ export interface ConversionWarning {
 
 export interface ConversionResult {
   plugin: string;
-  target: "gemini" | "skills" | "cursor";
+  target: "gemini" | "skills" | "cursor" | "codex";
   success: boolean;
   filesWritten: string[];
   warnings: ConversionWarning[];

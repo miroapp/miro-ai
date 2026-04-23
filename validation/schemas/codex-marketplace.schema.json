@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "codex-marketplace.schema.json",
+  "title": "Codex Marketplace Manifest",
+  "description": "Schema for validating repo-local Codex marketplaces",
+  "type": "object",
+  "required": ["name", "interface", "plugins"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "interface": {
+      "type": "object",
+      "required": ["displayName"],
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "source", "policy", "category"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "source": {
+            "type": "object",
+            "required": ["source", "path"],
+            "properties": {
+              "source": {
+                "type": "string",
+                "enum": ["local"]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^\\./codex/[a-z0-9-]+$"
+              }
+            },
+            "additionalProperties": true
+          },
+          "policy": {
+            "type": "object",
+            "required": ["installation", "authentication"],
+            "properties": {
+              "installation": {
+                "type": "string",
+                "enum": ["NOT_AVAILABLE", "AVAILABLE", "INSTALLED_BY_DEFAULT"]
+              },
+              "authentication": {
+                "type": "string",
+                "enum": ["ON_INSTALL", "ON_USE"]
+              }
+            },
+            "additionalProperties": true
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

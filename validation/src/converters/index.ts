@@ -1,6 +1,17 @@
 #!/usr/bin/env bun
+import { rm } from "fs/promises";
 import path from "path";
 import { readAllPlugins } from "./claude-reader";
+import {
+  isCodexGeneratedPlugin,
+  CODEX_PLUGIN_ORDER,
+  isSharedGeneratedPlugin,
+  SHARED_GENERATED_PLUGIN_ORDER,
+} from "./codex-config";
+import {
+  writeCodexMarketplace,
+  writeCodexPlugin,
+} from "./codex-writer";
 import { writeCursorPlugin } from "./cursor-writer";
 import { writeGeminiExtension } from "./gemini-writer";
 import { writeAgentSkills } from "./skills-writer";
@@ -16,11 +27,14 @@ const pluginFilter = pluginFlag?.split("=")[1];
 const hasGeminiFlag = args.includes("--gemini");
 const hasSkillsFlag = args.includes("--skills");
 const hasCursorFlag = args.includes("--cursor");
+const hasCodexFlag = args.includes("--codex");
 // No flags = all targets; specific flag = only that target
-const hasAnyFlag = hasGeminiFlag || hasSkillsFlag || hasCursorFlag;
+const hasAnyFlag =
+  hasGeminiFlag || hasSkillsFlag || hasCursorFlag || hasCodexFlag;
 const targetGemini = hasGeminiFlag || !hasAnyFlag;
 const targetSkills = hasSkillsFlag || !hasAnyFlag;
 const targetCursor = hasCursorFlag || !hasAnyFlag;
+const targetCodex = hasCodexFlag || !hasAnyFlag;
 
 // ANSI colors (match validation/src/index.ts)
 const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
@@ -36,9 +50,6 @@ function printHeader(title: string) {
 function printFooter() {
   console.log(bold("└" + "─".repeat(63) + "┘"));
 }
-
-// Plugins excluded from Gemini conversion
-const GEMINI_EXCLUDED = new Set(["miro-solutions", "miro-research"]);
 
 // Plugins excluded from Cursor conversion
 const CURSOR_EXCLUDED = new Set(["miro-solutions", "miro-research"]);
@@ -98,7 +109,7 @@ async function main() {
     printHeader("Gemini Extensions");
     const geminiDir = path.join(ROOT, "gemini-extensions");
     for (const plugin of plugins) {
-      if (GEMINI_EXCLUDED.has(plugin.dirName)) {
+      if (!isSharedGeneratedPlugin(plugin.dirName)) {
         console.log(
           `│ ${yellow("⚠")} ${plugin.dirName} ${dim("(excluded, skipped)")}`
         );
@@ -169,6 +180,99 @@ async function main() {
         console.log(`│   └─ ${red("✗")} ${e}`);
       }
     }
+    printFooter();
+  }
+
+  // Codex Plugins conversion
+  if (targetCodex) {
+    printHeader("Codex Plugins");
+    const codexDir = path.join(ROOT, "codex");
+    const legacyCodexDir = path.join(ROOT, "plugins");
+    const selectedCodexPlugins = plugins.filter((plugin) =>
+      isCodexGeneratedPlugin(plugin.dirName)
+    );
+
+    for (const plugin of plugins) {
+      if (!isCodexGeneratedPlugin(plugin.dirName)) {
+        console.log(
+          `│ ${yellow("⚠")} ${plugin.dirName} ${dim("(excluded, skipped)")}`
+        );
+        continue;
+      }
+      const result = await writeCodexPlugin(plugin, codexDir, dryRun);
+      results.push(result);
+      const status = result.success ? green("✓") : red("✗");
+      console.log(
+        `│ ${status} ${plugin.dirName} → codex/${plugin.dirName}/ ${dim(`(${result.filesWritten.length} files)`)}`
+      );
+      for (const w of result.warnings) {
+        console.log(`│   └─ ${yellow("⚠")} ${w.message}`);
+      }
+      for (const e of result.errors) {
+        console.log(`│   └─ ${red("✗")} ${e}`);
+      }
+    }
+
+    if (pluginFilter) {
+      console.log(
+        `│ ${yellow("⚠")} .agents/plugins/marketplace.json ${dim("(skipped when --plugin is used)")}`
+      );
+    } else {
+      if (!dryRun) {
+        for (const pluginName of SHARED_GENERATED_PLUGIN_ORDER) {
+          await rm(path.join(legacyCodexDir, pluginName), {
+            recursive: true,
+            force: true,
+          });
+        }
+
+        for (const pluginName of SHARED_GENERATED_PLUGIN_ORDER) {
+          if (!CODEX_PLUGIN_ORDER.includes(pluginName as (typeof CODEX_PLUGIN_ORDER)[number])) {
+            await rm(path.join(codexDir, pluginName), {
+              recursive: true,
+              force: true,
+            });
+          }
+        }
+      }
+
+      const marketplaceResult = await writeCodexMarketplace(
+        selectedCodexPlugins,
+        ROOT,
+        dryRun
+      );
+      if (marketplaceResult.errors.length === 0) {
+        console.log(
+          `│ ${green("✓")} ${marketplaceResult.fileWritten} ${dim("(curated repo marketplace)")}`
+        );
+        results.push({
+          plugin: "miro-ai",
+          target: "codex",
+          success: true,
+          filesWritten: marketplaceResult.fileWritten
+            ? [marketplaceResult.fileWritten]
+            : [],
+          warnings: [],
+          errors: [],
+        });
+      } else {
+        console.log(
+          `│ ${red("✗")} ${marketplaceResult.fileWritten ?? ".agents/plugins/marketplace.json"}`
+        );
+        for (const e of marketplaceResult.errors) {
+          console.log(`│   └─ ${red("✗")} ${e}`);
+        }
+        results.push({
+          plugin: "miro-ai",
+          target: "codex",
+          success: false,
+          filesWritten: [],
+          warnings: [],
+          errors: marketplaceResult.errors,
+        });
+      }
+    }
+
     printFooter();
   }
 
