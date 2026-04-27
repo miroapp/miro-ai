@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   validate:
@@ -34,3 +35,82 @@ jobs:
 
       - name: Run validation
         run: bun run validate
+
+  package-copilot-cowork:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Decide whether to package Copilot Cowork plugin
+        id: package-decision
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          plugin_path="claude-plugins/miro/.claude-plugin/plugin.json"
+          current_version="$(bun -e 'const plugin = await Bun.file(process.argv[1]).json(); console.log(plugin.version ?? "");' "$plugin_path")"
+          previous_version=""
+          should_package="false"
+          reason=""
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            previous_version="manual"
+            should_package="true"
+            reason="manual dispatch"
+          else
+            before_sha="${{ github.event.before }}"
+            previous_plugin_json="$(mktemp)"
+
+            if git show "${before_sha}:${plugin_path}" > "$previous_plugin_json" 2>/dev/null; then
+              previous_version="$(bun -e 'const plugin = await Bun.file(process.argv[1]).json(); console.log(plugin.version ?? "");' "$previous_plugin_json")"
+              if [[ "$current_version" != "$previous_version" ]]; then
+                should_package="true"
+                reason="version changed"
+              else
+                reason="version unchanged"
+              fi
+            else
+              previous_version="unavailable"
+              should_package="true"
+              reason="previous plugin.json unavailable"
+            fi
+
+            rm -f "$previous_plugin_json"
+          fi
+
+          echo "current_version=$current_version" >> "$GITHUB_OUTPUT"
+          echo "previous_version=$previous_version" >> "$GITHUB_OUTPUT"
+          echo "should_package=$should_package" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+
+      - name: Log packaging decision
+        if: ${{ always() }}
+        run: |
+          echo "Current version: ${{ steps.package-decision.outputs.current_version }}"
+          echo "Previous version: ${{ steps.package-decision.outputs.previous_version }}"
+          echo "Should package: ${{ steps.package-decision.outputs.should_package }}"
+          echo "Reason: ${{ steps.package-decision.outputs.reason }}"
+
+      - name: Install dependencies
+        if: ${{ steps.package-decision.outputs.should_package == 'true' }}
+        run: bun install
+
+      - name: Package Copilot Cowork plugin
+        if: ${{ steps.package-decision.outputs.should_package == 'true' }}
+        run: bun run package:copilot-cowork
+
+      - name: Upload Copilot Cowork artifact
+        if: ${{ steps.package-decision.outputs.should_package == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: miro-copilot-cowork-package-${{ steps.package-decision.outputs.current_version }}
+          path: dist/miro-copilot-cowork-${{ steps.package-decision.outputs.current_version }}.zip
+          if-no-files-found: error

@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import path from "path";
 import { readAllPlugins } from "./claude-reader";
+import { writeCopilotCoworkPlugin } from "./copilot-cowork-writer";
 import { writeCursorPlugin } from "./cursor-writer";
 import { writeGeminiExtension } from "./gemini-writer";
 import { writeAgentSkills } from "./skills-writer";
@@ -16,11 +17,14 @@ const pluginFilter = pluginFlag?.split("=")[1];
 const hasGeminiFlag = args.includes("--gemini");
 const hasSkillsFlag = args.includes("--skills");
 const hasCursorFlag = args.includes("--cursor");
+const hasCopilotCoworkFlag = args.includes("--copilot-cowork");
 // No flags = all targets; specific flag = only that target
-const hasAnyFlag = hasGeminiFlag || hasSkillsFlag || hasCursorFlag;
+const hasAnyFlag =
+  hasGeminiFlag || hasSkillsFlag || hasCursorFlag || hasCopilotCoworkFlag;
 const targetGemini = hasGeminiFlag || !hasAnyFlag;
 const targetSkills = hasSkillsFlag || !hasAnyFlag;
 const targetCursor = hasCursorFlag || !hasAnyFlag;
+const targetCopilotCowork = hasCopilotCoworkFlag;
 
 // ANSI colors (match validation/src/index.ts)
 const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
@@ -42,6 +46,9 @@ const GEMINI_EXCLUDED = new Set(["miro-solutions", "miro-research"]);
 
 // Plugins excluded from Cursor conversion
 const CURSOR_EXCLUDED = new Set(["miro-solutions", "miro-research"]);
+
+// Plugins included in Copilot Cowork conversion
+const COPILOT_COWORK_INCLUDED = new Set(["miro"]);
 
 async function main() {
   console.log(
@@ -161,6 +168,47 @@ async function main() {
       const status = result.success ? green("✓") : red("✗");
       console.log(
         `│ ${status} ${plugin.dirName} → cursor-plugins/${plugin.dirName}/ ${dim(`(${result.filesWritten.length} files)`)}`
+      );
+      for (const w of result.warnings) {
+        console.log(`│   └─ ${yellow("⚠")} ${w.message}`);
+      }
+      for (const e of result.errors) {
+        console.log(`│   └─ ${red("✗")} ${e}`);
+      }
+    }
+    printFooter();
+  }
+
+  // Copilot Cowork conversion
+  if (targetCopilotCowork) {
+    printHeader("Copilot Cowork Packages");
+    const copilotCoworkDir = path.join(ROOT, "copilot-cowork-plugins");
+
+    if (pluginFilter && !COPILOT_COWORK_INCLUDED.has(pluginFilter)) {
+      console.log(
+        `│ ${red("✗")} ${pluginFilter} ${dim("(Copilot Cowork conversion is only supported for miro)")}`
+      );
+      printFooter();
+      process.exit(1);
+    }
+
+    for (const plugin of plugins) {
+      if (!COPILOT_COWORK_INCLUDED.has(plugin.dirName)) {
+        console.log(
+          `│ ${yellow("⚠")} ${plugin.dirName} ${dim("(not supported, skipped)")}`
+        );
+        continue;
+      }
+
+      const result = await writeCopilotCoworkPlugin(
+        plugin,
+        copilotCoworkDir,
+        dryRun
+      );
+      results.push(result);
+      const status = result.success ? green("✓") : red("✗");
+      console.log(
+        `│ ${status} ${plugin.dirName} → copilot-cowork-plugins/${plugin.dirName}/ ${dim(`(${result.filesWritten.length} files)`)}`
       );
       for (const w of result.warnings) {
         console.log(`│   └─ ${yellow("⚠")} ${w.message}`);
