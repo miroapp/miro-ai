@@ -16,6 +16,7 @@ export interface McpServer {
   type?: string;
   url?: string;
   httpUrl?: string;
+  description?: string;
   headers?: Record<string, string>;
   oauth?: { enabled: boolean };
   disabled?: boolean;
@@ -92,7 +93,7 @@ export interface ConversionWarning {
 
 export interface ConversionResult {
   plugin: string;
-  target: "gemini" | "skills" | "cursor";
+  target: "gemini" | "skills" | "cursor" | "copilot-cowork";
   success: boolean;
   filesWritten: string[];
   warnings: ConversionWarning[];
