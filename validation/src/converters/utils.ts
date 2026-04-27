@@ -23,6 +23,10 @@ export function toKebabCase(s: string): string {
     .replace(/^-|-$/g, "");
 }
 
+export function escapeYamlString(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
+
 /**
  * Replace ${CLAUDE_PLUGIN_ROOT} with the target platform variable.
  */

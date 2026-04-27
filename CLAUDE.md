@@ -23,6 +23,7 @@ miro-ai/
 │   ├── miro-tasks/          # Task tracking with hooks and scripts
 │   ├── miro-solutions/      # Demo plugin generator (agents, templates)
 │   └── miro-research/       # Research visualization
+├── codex-plugins/            # Codex plugins (auto-generated)
 ├── cursor-plugins/           # Cursor plugins (auto-generated)
 ├── powers/                   # Kiro powers
 │   └── code-gen/            # Design-to-code (POWER.md + mcp.json)

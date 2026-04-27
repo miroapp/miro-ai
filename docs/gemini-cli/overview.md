@@ -18,8 +18,8 @@ This repository provides 4 per-plugin extensions in `gemini-extensions/`, each a
 gemini-extensions/
 ├── miro/                # Core MCP integration with commands and skills
 ├── miro-tasks/          # Task tracking commands and hooks
-├── miro-research/       # Research visualization
-└── miro-review/         # Code review workflows
+├── miro-review/         # Code review workflows
+└── miro-spec/           # Spec extraction workflows
 ```
 
 Each extension contains a `gemini-extension.json` plus any commands (TOML), skills, hooks, and agents from the source Claude plugin. Example (`gemini-extensions/miro/gemini-extension.json`):
@@ -55,8 +55,8 @@ This installs the root `gemini-extension.json`, giving Gemini access to the Miro
 git clone https://github.com/miroapp/miro-ai.git
 gemini extensions install ./miro-ai/gemini-extensions/miro
 gemini extensions install ./miro-ai/gemini-extensions/miro-tasks
-gemini extensions install ./miro-ai/gemini-extensions/miro-research
 gemini extensions install ./miro-ai/gemini-extensions/miro-review
+gemini extensions install ./miro-ai/gemini-extensions/miro-spec
 ```
 
 Restart Gemini CLI and authenticate when prompted.
@@ -69,8 +69,8 @@ For local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#gemini-cli-ex
 |-----------|-------------|
 | miro | Core MCP integration with commands and skills |
 | miro-tasks | Task tracking with commands and hooks |
-| miro-research | Research visualization |
 | miro-review | Code review workflows |
+| miro-spec | Spec extraction workflows |
 
 ### Authentication
 

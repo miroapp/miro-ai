@@ -1,0 +1,20 @@
+{
+  "name": "miro-ai",
+  "interface": {
+    "displayName": "Miro AI"
+  },
+  "plugins": [
+    {
+      "name": "miro",
+      "source": {
+        "source": "local",
+        "path": "./codex-plugins/miro"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
