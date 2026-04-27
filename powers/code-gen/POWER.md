@@ -3,6 +3,7 @@ name: "miro-codegen"
 displayName: "Miro Board Context for Codegen"
 description: "Uses Miro boards as the source of truth for architectural specs, UI diagrams, and project logic."
 keywords: ["miro", "diagram", "workflow", "whiteboard", "spec", "architecture"]
+author: "Miro"
 ---
 
 # Onboarding
