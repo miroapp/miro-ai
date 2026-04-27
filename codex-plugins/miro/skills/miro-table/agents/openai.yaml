@@ -1,0 +1,4 @@
+interface:
+  display_name: "Miro Table"
+  short_description: "Use when the user wants to create or update a structured table on a Miro board with text and select (color-coded dropdown) columns — task trackers, decision logs, risk registers, etc."
+  default_prompt: "Use $miro-table when this task matches the skill's guidance."

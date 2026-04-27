@@ -1,0 +1,4 @@
+interface:
+  display_name: "Miro Diagram"
+  short_description: "Use when the user wants to create a diagram (flowchart, mindmap, UML class, UML sequence, entity-relationship) on a Miro board from a natural-language description or Mermaid/PlantUML notation."
+  default_prompt: "Use $miro-diagram when this task matches the skill's guidance."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Miro Doc"
+  short_description: "Use when the user wants to create or edit a Google-Docs-style markdown document on a Miro board (meeting notes, project briefs, sprint plans, retros, decision logs)."
+  default_prompt: "Use $miro-doc when this task matches the skill's guidance."
