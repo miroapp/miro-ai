@@ -130,7 +130,7 @@
       "description": "Visual code reviews on Miro boards. Generates comprehensive review artifacts from GitHub PRs or local changes with security and architecture analysis.",
       "source": "./claude-plugins/miro-review",
       "category": "development",
-      "version": "1.0.3",
+      "version": "1.1.0",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"

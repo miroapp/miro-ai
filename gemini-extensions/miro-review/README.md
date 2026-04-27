@@ -4,61 +4,22 @@ Visual code reviews on Miro boards. Generates comprehensive review artifacts fro
 
 ## Features
 
-- **Multiple Review Types**: Standard, security-focused, and architecture-focused reviews
+- **Auto-activates** on natural-language review requests with a board URL
 - **Visual Artifacts**: Tables, documents, and diagrams created on Miro boards
-- **Flexible Sources**: GitHub PRs, local changes, or branch comparisons
+- **Flexible Sources**: GitHub PRs (current or external repo), local changes, or branch comparisons
 
-## Commands
+## Usage
 
-### `/miro-review:review` - Standard Code Review
+Prompt Claude in natural language with a Miro board URL and a source:
 
-Generate a comprehensive visual code review with file analysis, risk assessment, and architectural diagrams.
-
-```bash
-# PR in current repo
-/miro-review:review https://miro.com/app/board/abc123= 42
-
-# External repo PR
-/miro-review:review https://miro.com/app/board/abc123= facebook/react#12345
-
-# Local changes
-/miro-review:review https://miro.com/app/board/abc123= --local
-
-# Branch comparison
-/miro-review:review https://miro.com/app/board/abc123= --branch feature-login
+```
+review PR 42 on https://miro.com/app/board/abc123=
+review facebook/react#12345 on https://miro.com/app/board/abc123=
+review my local changes on https://miro.com/app/board/abc123=
+review branch feature-login against main on https://miro.com/app/board/abc123=
 ```
 
-**Creates:**
-- File changes table with status and risk levels
-- Summary document with overview and checklist
-- Architecture diagrams showing component relationships
-
-### `/miro-review:security` - Security Review
-
-Security-focused analysis looking for vulnerabilities and compliance concerns.
-
-```bash
-/miro-review:security https://miro.com/app/board/abc123= 42
-```
-
-**Creates:**
-- Security findings table with severity ratings
-- Security summary with compliance checklist
-- Attack surface diagram
-
-### `/miro-review:architecture` - Architecture Review
-
-Architecture-focused analysis of structural changes and design patterns.
-
-```bash
-/miro-review:architecture https://miro.com/app/board/abc123= 42
-```
-
-**Creates:**
-- Component impact table
-- Architecture summary with breaking changes
-- Component diagrams (before/after for refactoring)
-- Data flow and sequence diagrams
+The `miro-code-review` skill activates automatically and produces a file-changes table, one or more summary/architecture/security documents, and architecture diagrams scaled to the size of the change.
 
 ## MCP Integrations
 
@@ -70,8 +31,8 @@ Creates visual artifacts on Miro boards:
 
 ## Skills
 
-### `code-review`
-Knowledge base for effective code review:
+### `miro-code-review`
+Auto-activates when the user asks for a code review on a Miro board. Carries the full review workflow (parse source → extract diff → risk-score → build artifacts) plus reference material:
 - `references/risk-assessment.md` - File and change risk scoring criteria
 - `references/review-patterns.md` - Security, architecture, and quality patterns
 
@@ -86,7 +47,7 @@ Knowledge base for effective code review:
 This plugin is part of the miro-ai plugins collection. To use it:
 
 1. Ensure Miro MCP is configured (authentication via OAuth)
-2. Use the commands with a valid Miro board URL
+2. Prompt Claude with a board URL and a review source
 
 ## Output Example
 
