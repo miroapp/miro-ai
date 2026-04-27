@@ -13,7 +13,10 @@ Secure access to Miro boards. Enables AI to read board context, create diagrams,
 
 Skills:
 
-- `$miro:miro-mcp`
+- `$miro:miro-browse`
+- `$miro:miro-diagram`
+- `$miro:miro-doc`
+- `$miro:miro-table`
 
 ## Related
 

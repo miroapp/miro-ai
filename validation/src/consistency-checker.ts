@@ -240,7 +240,8 @@ export async function checkConsistency(
         : codexMcpPlacementErrors,
   });
 
-  // Check: Codex scope is only the core miro plugin with the native miro-mcp skill.
+  // Check: Codex scope is only the core miro plugin, and its skill set matches
+  // the source-of-truth in claude-plugins/miro/skills/.
   const codexScopeErrors: string[] = [];
   const codexPluginManifests = await fg("codex-plugins/*/.codex-plugin/plugin.json", {
     cwd: root,
@@ -301,13 +302,38 @@ export async function checkConsistency(
     codexScopeErrors.push(`${file}: Codex output must not include generated scripts`);
   }
 
-  const miroSkillPath = "codex-plugins/miro/skills/miro-mcp/SKILL.md";
-  const miroSkillAgentPath = "codex-plugins/miro/skills/miro-mcp/agents/openai.yaml";
-  if ((await fg(miroSkillPath, { cwd: root })).length === 0) {
-    codexScopeErrors.push(`${miroSkillPath} is missing`);
+  // Derive the expected skill set from the source-of-truth, so adding or
+  // removing a skill in claude-plugins/miro/skills/ flows through automatically.
+  const sourceSkillDirs = await fg("claude-plugins/miro/skills/*", {
+    cwd: root,
+    onlyDirectories: true,
+    deep: 1,
+  });
+  const expectedMiroSkills = sourceSkillDirs.map((dir) => path.basename(dir)).sort();
+
+  for (const skillName of expectedMiroSkills) {
+    const skillPath = `codex-plugins/miro/skills/${skillName}/SKILL.md`;
+    const skillAgentPath = `codex-plugins/miro/skills/${skillName}/agents/openai.yaml`;
+    if ((await fg(skillPath, { cwd: root })).length === 0) {
+      codexScopeErrors.push(`${skillPath} is missing`);
+    }
+    if ((await fg(skillAgentPath, { cwd: root })).length === 0) {
+      codexScopeErrors.push(`${skillAgentPath} is missing`);
+    }
   }
-  if ((await fg(miroSkillAgentPath, { cwd: root })).length === 0) {
-    codexScopeErrors.push(`${miroSkillAgentPath} is missing`);
+
+  const codexMiroSkillDirs = await fg("codex-plugins/miro/skills/*", {
+    cwd: root,
+    onlyDirectories: true,
+    deep: 1,
+  });
+  for (const dir of codexMiroSkillDirs) {
+    const skillName = path.basename(dir);
+    if (!expectedMiroSkills.includes(skillName)) {
+      codexScopeErrors.push(
+        `${dir}: skill not present in claude-plugins/miro/skills/ (stale Codex output)`
+      );
+    }
   }
 
   const marketplaceData = (await readJsonFile(
@@ -329,7 +355,7 @@ export async function checkConsistency(
     details:
       codexScopeErrors.length === 0
         ? [
-            "Codex output contains only codex-plugins/miro with the native miro-mcp skill and a single marketplace entry",
+            `Codex output contains only codex-plugins/miro with skills [${expectedMiroSkills.join(", ")}] and a single marketplace entry`,
         ]
         : codexScopeErrors,
   });

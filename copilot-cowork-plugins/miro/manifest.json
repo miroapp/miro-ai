@@ -25,7 +25,16 @@
   "accentColor": "#4A90D9",
   "agentSkills": [
     {
-      "folder": "./skills/miro-mcp"
+      "folder": "./skills/miro-browse"
+    },
+    {
+      "folder": "./skills/miro-diagram"
+    },
+    {
+      "folder": "./skills/miro-doc"
+    },
+    {
+      "folder": "./skills/miro-table"
     }
   ],
   "agentConnectors": [

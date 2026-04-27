@@ -27,7 +27,10 @@ npx skills add miroapp/miro-ai -y               # Skip confirmation prompts
 
 | Skill | Description |
 |-------|-------------|
-| miro-mcp | How to use Miro MCP tools — diagrams, documents, tables, context extraction |
+| miro-browse | Listing, filtering, and summarizing items on a Miro board |
+| miro-diagram | Creating diagrams (flowchart, mindmap, UML, ER) from text or Mermaid |
+| miro-doc | Creating and editing markdown documents on a Miro board |
+| miro-table | Creating, populating, and syncing structured tables on a Miro board |
 | miro-platform | Miro platform overview — canvas features, content types, AI capabilities |
 | miro-code-review | Code review workflows using Miro boards |
 
