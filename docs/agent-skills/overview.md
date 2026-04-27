@@ -33,6 +33,7 @@ npx skills add miroapp/miro-ai -y               # Skip confirmation prompts
 | miro-table | Creating, populating, and syncing structured tables on a Miro board |
 | miro-platform | Miro platform overview — canvas features, content types, AI capabilities |
 | miro-code-review | Visual code review from PRs, local changes, or branch comparisons on a Miro board |
+| miro-spec-guide | Extract Miro board specs (documents, diagrams, prototypes, tables, images) to local `.miro/specs/` files |
 
 ## How Skills Work
 
