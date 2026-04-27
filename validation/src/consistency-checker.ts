@@ -91,6 +91,17 @@ export async function checkConsistency(
     }
   }
 
+  // Codex plugins .mcp.json files
+  const codexMcpFiles = await fg("codex-plugins/*/.mcp.json", { cwd: root });
+  for (const file of codexMcpFiles) {
+    const data = (await readJsonFile(path.join(root, file))) as {
+      mcpServers?: Record<string, McpServerConfig>;
+    } | null;
+    if (data?.mcpServers) {
+      mcpConfigs.push({ file, servers: data.mcpServers });
+    }
+  }
+
   // Check: All Miro MCP URLs should point to the same base URL
   const miroUrls: { file: string; url: string }[] = [];
   for (const config of mcpConfigs) {
@@ -124,6 +135,7 @@ export async function checkConsistency(
     else if (config.file.includes("powers")) platform = "kiro";
     else if (config.file.includes("cursor-plugins")) platform = "cursor";
     else if (config.file.includes("gemini-extension") || config.file.includes("gemini")) platform = "gemini";
+    else if (config.file.includes("codex-plugins/")) platform = "codex";
 
     for (const server of Object.values(config.servers)) {
       const source = server.headers?.["X-AI-Source"];
@@ -140,6 +152,7 @@ export async function checkConsistency(
     kiro: "kiro-",
     cursor: "cursor-",
     gemini: "gemini-",
+    codex: "codex-",
   };
   const platformSources = new Map<string, Set<string>>();
   const badHeaders: string[] = [];
@@ -184,6 +197,10 @@ export async function checkConsistency(
     ...await fg("cursor-plugins/*/.mcp.json", { cwd: root }),
     ...await fg("cursor-plugins/*/.cursor-plugin/plugin.json", { cwd: root }),
     ...await fg("cursor-plugins/*/hooks/hooks.json", { cwd: root }),
+    ...await fg("codex-plugins/*/.mcp.json", { cwd: root }),
+    ...await fg("codex-plugins/*/.codex-plugin/plugin.json", { cwd: root }),
+    ...await fg("codex-plugins/*/hooks.json", { cwd: root }),
+    ".agents/plugins/marketplace.json",
   ];
 
   const jsonErrors: string[] = [];
@@ -200,6 +217,159 @@ export async function checkConsistency(
     check: "JSON syntax valid",
     valid: jsonErrors.length === 0,
     details: jsonErrors.length === 0 ? ["All JSON files are valid"] : jsonErrors,
+  });
+
+  // Check: Codex MCP placement
+  const codexMcpPlacementErrors: string[] = [];
+  for (const file of codexMcpFiles) {
+    if (file !== "codex-plugins/miro/.mcp.json") {
+      codexMcpPlacementErrors.push(`${file}: only codex-plugins/miro/.mcp.json should exist`);
+    }
+  }
+  if ((await fg("codex-plugins/*/.codex-plugin/plugin.json", { cwd: root })).length > 0 &&
+      !codexMcpFiles.includes("codex-plugins/miro/.mcp.json")) {
+    codexMcpPlacementErrors.push("codex-plugins/miro/.mcp.json is missing");
+  }
+
+  results.push({
+    check: "Codex MCP placement",
+    valid: codexMcpPlacementErrors.length === 0,
+    details:
+      codexMcpPlacementErrors.length === 0
+        ? ["Only codex-plugins/miro/.mcp.json is present"]
+        : codexMcpPlacementErrors,
+  });
+
+  // Check: Codex scope is only the core miro plugin with the native miro-mcp skill.
+  const codexScopeErrors: string[] = [];
+  const codexPluginManifests = await fg("codex-plugins/*/.codex-plugin/plugin.json", {
+    cwd: root,
+  });
+  const codexPluginDirs = await fg("codex-plugins/*", {
+    cwd: root,
+    onlyDirectories: true,
+    deep: 1,
+  });
+  const legacyCodexDirs = await fg("codex/*", {
+    cwd: root,
+    onlyDirectories: true,
+    deep: 1,
+  });
+  const legacyCodexPluginDirs = await fg("plugins/*", {
+    cwd: root,
+    onlyDirectories: true,
+    deep: 1,
+  });
+  const expectedManifest = "codex-plugins/miro/.codex-plugin/plugin.json";
+
+  for (const dir of codexPluginDirs) {
+    if (dir !== "codex-plugins/miro") {
+      codexScopeErrors.push(`${dir}: only codex-plugins/miro should exist in Codex output`);
+    }
+  }
+
+  for (const dir of legacyCodexDirs) {
+    codexScopeErrors.push(`${dir}: legacy Codex output must not remain under codex/`);
+  }
+
+  for (const dir of legacyCodexPluginDirs) {
+    codexScopeErrors.push(`${dir}: legacy Codex output must not remain under plugins/`);
+  }
+
+  for (const file of codexPluginManifests) {
+    if (file !== expectedManifest) {
+      codexScopeErrors.push(`${file}: only codex-plugins/miro/.codex-plugin/plugin.json should exist`);
+    }
+  }
+
+  if (codexPluginManifests.length > 0 && !codexPluginManifests.includes(expectedManifest)) {
+    codexScopeErrors.push(`${expectedManifest} is missing`);
+  }
+
+  const codexCommands = await fg("codex-plugins/*/commands/*.md", { cwd: root });
+  for (const file of codexCommands) {
+    codexScopeErrors.push(`${file}: Codex output must not include command docs`);
+  }
+
+  const codexHooks = await fg("codex-plugins/*/hooks.json", { cwd: root });
+  for (const file of codexHooks) {
+    codexScopeErrors.push(`${file}: Codex output must not include hooks`);
+  }
+
+  const codexScripts = await fg("codex-plugins/*/scripts/*", { cwd: root });
+  for (const file of codexScripts) {
+    codexScopeErrors.push(`${file}: Codex output must not include generated scripts`);
+  }
+
+  const miroSkillPath = "codex-plugins/miro/skills/miro-mcp/SKILL.md";
+  const miroSkillAgentPath = "codex-plugins/miro/skills/miro-mcp/agents/openai.yaml";
+  if ((await fg(miroSkillPath, { cwd: root })).length === 0) {
+    codexScopeErrors.push(`${miroSkillPath} is missing`);
+  }
+  if ((await fg(miroSkillAgentPath, { cwd: root })).length === 0) {
+    codexScopeErrors.push(`${miroSkillAgentPath} is missing`);
+  }
+
+  const marketplaceData = (await readJsonFile(
+    path.join(root, ".agents/plugins/marketplace.json")
+  )) as { plugins?: Array<{ name?: string }> } | null;
+  const marketplacePluginNames = marketplaceData?.plugins?.map((plugin) => plugin.name) ?? [];
+  if (
+    marketplacePluginNames.length > 0 &&
+    (marketplacePluginNames.length !== 1 || marketplacePluginNames[0] !== "miro")
+  ) {
+    codexScopeErrors.push(
+      `.agents/plugins/marketplace.json: expected only the "miro" Codex plugin entry, found ${marketplacePluginNames.join(", ")}`
+    );
+  }
+
+  results.push({
+    check: "Codex output scope",
+    valid: codexScopeErrors.length === 0,
+    details:
+      codexScopeErrors.length === 0
+        ? [
+            "Codex output contains only codex-plugins/miro with the native miro-mcp skill and a single marketplace entry",
+        ]
+        : codexScopeErrors,
+  });
+
+  // Check: Codex generated content should not contain Claude-only remnants
+  const codexTextFiles = await fg(
+    [
+      "codex-plugins/*/skills/*/SKILL.md",
+      "codex-plugins/*/skills/*/agents/openai.yaml",
+      "codex-plugins/*/scripts/*.sh",
+      "codex-plugins/*/README.md",
+    ],
+    { cwd: root }
+  );
+  const codexContentErrors: string[] = [];
+  const forbiddenPatterns: Array<[string, RegExp]> = [
+    ["AskUserQuestion", /\bAskUserQuestion\b/],
+    ["TaskCreate", /\bTaskCreate\b/],
+    ["TaskUpdate", /\bTaskUpdate\b/],
+    ["Write tool", /\bWrite tool\b/],
+    ["Read tool", /\bRead tool\b/],
+    ["${CLAUDE_PLUGIN_ROOT}", /\$\{CLAUDE_PLUGIN_ROOT\}/],
+  ];
+
+  for (const file of codexTextFiles) {
+    const content = await readFile(path.join(root, file), "utf-8");
+    for (const [label, pattern] of forbiddenPatterns) {
+      if (pattern.test(content)) {
+        codexContentErrors.push(`${file}: contains ${label}`);
+      }
+    }
+  }
+
+  results.push({
+    check: "Codex generated content is platform-adapted",
+    valid: codexContentErrors.length === 0,
+    details:
+      codexContentErrors.length === 0
+        ? ["No Claude-only command/tool references found in generated Codex output"]
+        : codexContentErrors,
   });
 
   return {

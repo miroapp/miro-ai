@@ -1,0 +1,73 @@
+{
+  "name": "miro",
+  "version": "1.0.2",
+  "description": "Secure access to Miro boards. Enables AI to read board context, create diagrams, and generate code with enterprise-grade security.",
+  "author": {
+    "name": "Miro",
+    "email": "support@miro.com",
+    "url": "https://miro.com"
+  },
+  "homepage": "https://miro.com",
+  "license": "MIT",
+  "keywords": [
+    "miro",
+    "whiteboard",
+    "boards",
+    "diagrams",
+    "flowchart",
+    "mindmap",
+    "uml",
+    "mermaid",
+    "plantuml",
+    "documents",
+    "tables",
+    "stickies",
+    "wireframes",
+    "prototypes",
+    "visualization",
+    "collaboration",
+    "design-to-code",
+    "mcp",
+    "prd",
+    "specs",
+    "documentation",
+    "planning",
+    "frames",
+    "cards",
+    "shapes",
+    "connectors",
+    "images",
+    "extraction",
+    "design",
+    "requirements",
+    "tasks",
+    "tracking",
+    "todos",
+    "project-management",
+    "kanban",
+    "sync"
+  ],
+  "interface": {
+    "displayName": "Miro",
+    "shortDescription": "Secure access to Miro boards. Enables AI to read board context, create diagrams, and generate code with enterprise-grade security.",
+    "longDescription": "Secure access to Miro boards. Enables AI to read board context, create diagrams, and generate code with enterprise-grade security.",
+    "developerName": "Miro",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://miro.com",
+    "privacyPolicyURL": "https://miro.com/legal/privacy-policy/",
+    "termsOfServiceURL": "https://miro.com/legal/terms-of-service/",
+    "defaultPrompt": [
+      "Explore a Miro board and summarize it",
+      "Create a diagram or doc on a Miro board",
+      "Create a task or decision table on a Miro board"
+    ]
+  },
+  "repository": "https://github.com/miroapp/miro-ai",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}

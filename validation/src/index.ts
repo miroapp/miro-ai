@@ -2,6 +2,7 @@
 import { validateFrontmatter } from "./frontmatter-validator";
 import { validateBashScripts } from "./bash-validator";
 import { validateClaudePlugins } from "./claude-validator";
+import { validateCodexPlugins } from "./codex-validator";
 import { checkConsistency } from "./consistency-checker";
 import { validateCopilotCoworkPackages } from "./copilot-cowork-validator";
 import { checkVersions } from "./version-checker";
@@ -13,6 +14,7 @@ const args = process.argv.slice(2);
 const frontmatterOnly = args.includes("--frontmatter-only");
 const bashOnly = args.includes("--bash-only");
 const claudeOnly = args.includes("--claude-only");
+const codexOnly = args.includes("--codex-only");
 const consistencyOnly = args.includes("--consistency-only");
 const copilotCoworkOnly = args.includes("--copilot-cowork-only");
 const versionOnly = args.includes("--version-only");
@@ -20,6 +22,7 @@ const runAll =
   !frontmatterOnly &&
   !bashOnly &&
   !claudeOnly &&
+  !codexOnly &&
   !consistencyOnly &&
   !copilotCoworkOnly &&
   !versionOnly;
@@ -92,6 +95,29 @@ async function main() {
     }
     if (fmResults.results.length === 0) {
       console.log(dim("│ No frontmatter files found"));
+    }
+    printFooter();
+  }
+
+  // Codex Plugin Validation
+  if (runAll || codexOnly) {
+    printHeader("Codex Plugin Validation");
+    const codexResults = await validateCodexPlugins(ROOT);
+
+    for (const result of codexResults.results) {
+      const relPath = result.file.replace(ROOT + "/", "");
+      if (result.valid) {
+        console.log(`│ ${green("✓")} ${relPath}`);
+      } else {
+        console.log(`│ ${red("✗")} ${relPath}`);
+        for (const error of result.errors) {
+          console.log(`│   └─ ${error}`);
+        }
+        totalErrors++;
+      }
+    }
+    if (codexResults.results.length === 0) {
+      console.log(dim("│ No Codex plugin files found"));
     }
     printFooter();
   }
