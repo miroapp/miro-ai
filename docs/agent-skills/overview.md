@@ -32,7 +32,7 @@ npx skills add miroapp/miro-ai -y               # Skip confirmation prompts
 | miro-doc | Creating and editing markdown documents on a Miro board |
 | miro-table | Creating, populating, and syncing structured tables on a Miro board |
 | miro-platform | Miro platform overview — canvas features, content types, AI capabilities |
-| miro-code-review | Code review workflows using Miro boards |
+| miro-code-review | Visual code review from PRs, local changes, or branch comparisons on a Miro board |
 
 ## How Skills Work
 
