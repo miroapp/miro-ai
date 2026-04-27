@@ -30,21 +30,15 @@ The miro-spec plugin downloads all specification content from Miro boards (docum
 
 ## Usage
 
-### Extract from Board URL
+Prompt Claude in natural language with a Miro board or item URL:
 
-Extract all specification items from a board:
-
-```bash
-/miro-spec:get https://miro.com/app/board/uXjVK123abc=/
+```
+extract specs from https://miro.com/app/board/uXjVK123abc=/
+download the design doc at https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612345
+pull all PRD content from https://miro.com/app/board/uXjVK123abc=/ into .miro/specs/
 ```
 
-### Extract from Item URL
-
-Extract a single item (document, diagram, prototype, etc.):
-
-```bash
-/miro-spec:get https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612345
-```
+The `miro-spec-guide` skill activates automatically and extracts content from the board (or single item) into `.miro/specs/`.
 
 ### Output Structure
 
@@ -89,20 +83,17 @@ Once specs are extracted, you can:
 4. **Validation:** Compare implementation against saved specifications
 
 Example workflow:
-```
-1. Extract specs: /miro-spec:get [board-url]
-2. Review .miro/specs/index.json to see what was extracted
-3. Ask AI to plan implementation using specs in .miro/specs/
-4. AI reads relevant files during planning and coding
-```
+
+1. Ask Claude to extract specs from a board URL.
+2. Review `.miro/specs/index.json` to see what was extracted.
+3. Ask Claude to plan implementation using specs in `.miro/specs/`.
+4. Claude reads relevant files during planning and coding.
 
 ## Examples
 
 ### Extract Product Requirements
 
-```bash
-/miro-spec:get https://miro.com/app/board/uXjVK-product-spec=/
-```
+Prompt: "extract specs from https://miro.com/app/board/uXjVK-product-spec=/"
 
 Output:
 ```
@@ -113,9 +104,7 @@ Saved to .miro/specs/
 
 ### Extract Single Design Document
 
-```bash
-/miro-spec:get https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612345
-```
+Prompt: "download the design doc at https://miro.com/app/board/uXjVK123abc=/?moveToWidget=3458764612345"
 
 Output:
 ```
@@ -124,11 +113,17 @@ Downloaded 3 images
 Saved to .miro/specs/
 ```
 
+## Skills
+
+### `miro-spec-guide`
+Auto-activates when the user asks to extract Miro specs to local files. Carries the full extraction workflow (parse URL → discover items via `context_explore` → per-item extract → subagent for prototype screens → `index.json` bookkeeping → verification) plus reference material:
+- `references/spec-storage.md` — Detailed file format documentation
+
 ## Directory Management
 
 ### Clean Extraction
 
-When running extraction, if `.miro/specs/` already has content, you'll be prompted:
+When extraction starts, if `.miro/specs/` already has content, you'll be prompted:
 - **Clean and extract fresh:** Removes existing files, starts fresh
 - **Add to existing:** Keeps existing files, adds new ones
 - **Cancel:** Aborts operation

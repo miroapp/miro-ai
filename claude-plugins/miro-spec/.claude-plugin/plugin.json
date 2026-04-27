@@ -1,6 +1,6 @@
 {
   "name": "miro-spec",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Extract and save Miro specs to local files for AI-assisted planning and implementation",
   "author": {
     "name": "Miro",
@@ -17,7 +17,5 @@
     "connectors", "images", "extraction", "design", "requirements", "tasks",
     "tracking", "todos", "project-management", "kanban", "sync"
   ],
-  "commands": [
-    "./commands/get.md"
-  ]
+  "skills": "./skills/"
 }

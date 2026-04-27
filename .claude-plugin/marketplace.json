@@ -161,7 +161,7 @@
       "description": "Extract and save Miro Specs to local files for AI-assisted planning and implementation. Downloads documents, diagrams, prototypes, and images.",
       "source": "./claude-plugins/miro-spec",
       "category": "productivity",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "author": {
         "name": "Miro",
         "email": "support@miro.com"
