@@ -1,0 +1,4 @@
+interface:
+  display_name: "Miro Code Review"
+  short_description: "Use when the user wants to create a visual code review on a Miro board from a GitHub PR (current or external repo), local uncommitted changes, or a branch comparison — produces a file-changes table, summary/architecture/security docs, and architecture diagrams."
+  default_prompt: "Use $miro-code-review when this task matches the skill's guidance."

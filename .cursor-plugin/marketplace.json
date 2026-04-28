@@ -15,21 +15,6 @@
       "name": "miro",
       "source": "cursor-plugins/miro",
       "description": "Secure access to Miro boards. Enables AI to read board context, create diagrams, and generate code with enterprise-grade security."
-    },
-    {
-      "name": "miro-tasks",
-      "source": "cursor-plugins/miro-tasks",
-      "description": "Track your coding progress on a Miro board. Automatically syncs todos and task status to visual cards."
-    },
-    {
-      "name": "miro-review",
-      "source": "cursor-plugins/miro-review",
-      "description": "Visual code reviews on Miro boards from GitHub PRs or local changes."
-    },
-    {
-      "name": "miro-spec",
-      "source": "cursor-plugins/miro-spec",
-      "description": "Extract and save Miro Specs to local files for AI-assisted planning and implementation."
     }
   ]
 }

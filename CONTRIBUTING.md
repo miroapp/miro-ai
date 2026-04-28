@@ -74,16 +74,10 @@ miro-ai/
 ├── .agents/
 │   └── skills/             # Repo-local helper skills for Codex/agent workflows
 ├── claude-plugins/           # Claude Code plugins (source of truth)
-│   ├── miro/                # Core MCP integration
-│   ├── miro-tasks/          # Task tracking
-│   ├── miro-solutions/      # Demo plugin generator
-│   ├── miro-research/       # Research visualization
-│   └── miro-review/         # Code review workflows
+│   └── miro/                # Core MCP integration with bundled skills
+│       └── skills/          # browse, code-review, code-spec, diagram, doc, table
 ├── gemini-extensions/        # Gemini CLI extensions (auto-generated)
-│   ├── miro/
-│   ├── miro-tasks/
-│   ├── miro-research/
-│   └── miro-review/
+│   └── miro/
 ├── codex-plugins/            # Codex plugins (auto-generated)
 │   └── miro/
 ├── .agents/plugins/          # Codex repo-local marketplace (auto-generated)
@@ -117,11 +111,7 @@ Repo-local helper skills live in `.agents/skills/`. `.claude/skills` is kept as 
 Start Claude Code with your plugin directory loaded directly:
 
 ```bash
-# Single plugin
 claude --plugin-dir ./claude-plugins/miro
-
-# Multiple plugins
-claude --plugin-dir ./claude-plugins/miro --plugin-dir ./claude-plugins/miro-tasks
 ```
 
 This approach:
@@ -179,9 +169,6 @@ If you're modifying `.claude-plugin/marketplace.json`:
 2. **Install plugins from it:**
    ```bash
    /plugin install miro@miro-ai
-   /plugin install miro-tasks@miro-ai
-   /plugin install miro-solutions@miro-ai
-   /plugin install miro-research@miro-ai
    ```
 
 3. **Verify all plugins appear:**
@@ -334,7 +321,7 @@ Extensions are auto-generated from Claude plugins via `bun run convert`. They li
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/skills/miro-mcp/SKILL.md
+   vim claude-plugins/miro/skills/miro-browse/SKILL.md
    ```
 
 2. **Regenerate extensions:**
@@ -347,7 +334,6 @@ Extensions are auto-generated from Claude plugins via `bun run convert`. They li
 3. **Link an extension for local testing:**
    ```bash
    gemini extensions link ./gemini-extensions/miro
-   gemini extensions link ./gemini-extensions/miro-tasks
    ```
 
 4. **Restart Gemini CLI**
@@ -396,7 +382,7 @@ Skills are auto-generated from Claude plugin skills via `bun run convert:skills`
 
 1. **Edit the source Claude plugin skill:**
    ```bash
-   vim claude-plugins/miro/skills/miro-mcp/SKILL.md
+   vim claude-plugins/miro/skills/miro-browse/SKILL.md
    ```
 
 2. **Regenerate skills:**
@@ -427,7 +413,7 @@ Plugins are auto-generated from Claude plugins via `bun run convert:codex`. The 
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/skills/miro-mcp/SKILL.md
+   vim claude-plugins/miro/skills/miro-browse/SKILL.md
    ```
 
 2. **Regenerate plugins:**
@@ -446,7 +432,7 @@ Plugins are auto-generated from Claude plugins via `bun run convert:codex`. The 
 4. **Test in Codex:**
    - Open the repository in Codex so it can discover `.agents/plugins/marketplace.json`
    - Install the generated `miro` plugin from the `miro-ai` marketplace
-   - Verify plugin `$` skills appear for `$miro:miro-mcp`
+   - Verify plugin `$` skills appear for `$miro:miro-browse`
    - Verify the Codex slash menu still shows only built-in commands
 
 ### Plugin Structure
@@ -464,8 +450,8 @@ miro/
 ### Notes
 
 - Codex plugins do not support a `commands` manifest component. This repository does not convert Claude commands for Codex.
-- Codex CLI slash commands are built-ins. Use `$miro:miro-mcp` plus the Miro MCP tools.
-- Only `codex-plugins/miro/.mcp.json` and `codex-plugins/miro/skills/miro-mcp/` should exist in generated Codex output.
+- Codex CLI slash commands are built-ins. Use `$miro:<skill-name>` plus the Miro MCP tools.
+- Only `codex-plugins/miro/.mcp.json` and `codex-plugins/miro/skills/` should exist in generated Codex output.
 
 ---
 
@@ -473,13 +459,13 @@ miro/
 
 See [Cursor Plugins Overview](docs/cursor/overview.md) for user-facing documentation.
 
-Plugins are auto-generated from Claude plugins via `bun run convert:cursor`. They live in `cursor-plugins/*/` with proper Cursor plugin structure (`.cursor-plugin/plugin.json`, commands, skills, hooks, scripts). All plugins are converted except `miro-solutions` (sales-only, template-dependent).
+Plugins are auto-generated from Claude plugins via `bun run convert:cursor`. They live in `cursor-plugins/*/` with proper Cursor plugin structure (`.cursor-plugin/plugin.json`, commands, skills, hooks, scripts).
 
 ### Development Workflow
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/commands/diagram.md
+   vim claude-plugins/miro/skills/miro-diagram/SKILL.md
    ```
 
 2. **Regenerate plugins:**
@@ -511,7 +497,7 @@ This section documents the developer workflow for generating, validating, and pa
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/skills/miro-mcp/SKILL.md
+   vim claude-plugins/miro/skills/miro-browse/SKILL.md
    ```
 
 2. **Keep the required Cowork icons in the package asset folder:**

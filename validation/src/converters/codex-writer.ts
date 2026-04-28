@@ -63,8 +63,11 @@ function adaptTextForCodex(content: string): string {
 
   result = applyReplacements(result, [
     ["using AskUserQuestion", "by asking the user directly"],
+    ["with AskUserQuestion", "by asking the user directly"],
     ["ask the user using AskUserQuestion", "ask the user directly"],
     ["ask user using AskUserQuestion", "ask the user directly"],
+    ["ask the user with AskUserQuestion", "ask the user directly"],
+    ["ask user with AskUserQuestion", "ask the user directly"],
     ["ask user to confirm by asking the user directly", "ask the user to confirm directly"],
     ["ask the user by asking the user directly", "ask the user directly"],
     ["ask user by asking the user directly", "ask the user directly"],

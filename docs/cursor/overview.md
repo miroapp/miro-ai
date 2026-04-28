@@ -41,38 +41,8 @@ On first use, you'll be prompted to authenticate with Miro via OAuth.
 
 | Component | Files |
 |-----------|-------|
-| Commands | `browse.md`, `diagram.md`, `doc.md`, `summarize.md`, `table.md` |
-| Skills | `miro-mcp` — MCP tools reference |
+| Skills | `miro-browse`, `miro-code-review`, `miro-code-spec`, `miro-diagram`, `miro-doc`, `miro-table` |
 | MCP | Miro MCP server (`https://mcp.miro.com/`) |
-
-### miro-tasks
-
-| Component | Files |
-|-----------|-------|
-| Commands | `enable.md`, `disable.md`, `status.md` |
-| Hooks | `stop` — auto-sync tasks on session end |
-| Scripts | Task tracking shell scripts |
-
-### miro-research
-
-| Component | Files |
-|-----------|-------|
-| Commands | `research.md` |
-| MCP | Glean MCP (optional) |
-
-### miro-review
-
-| Component | Files |
-|-----------|-------|
-| Commands | `review.md` |
-| Skills | `miro-code-review` — review patterns and risk assessment |
-
-### miro-spec
-
-| Component | Files |
-|-----------|-------|
-| Commands | `get.md` |
-| Skills | `miro-spec-guide` — design spec extraction |
 
 ## Differences from Claude Code Plugins
 
@@ -86,10 +56,6 @@ On first use, you'll be prompted to authenticate with Miro via OAuth.
 | Scripts | `${CLAUDE_PLUGIN_ROOT}` | `.` (relative paths) |
 | Templates | Supported | Not supported |
 | MCP config | Flat `{ "miro": {...} }` | Wrapped `{ "mcpServers": { "miro": {...} } }` |
-
-## Limitations
-
-Only **miro-solutions** is excluded from conversion (sales-only plugin with template dependencies).
 
 ## Development
 

@@ -54,42 +54,7 @@ function buildGeminiManifest(plugin: ClaudePlugin): Record<string, unknown> {
 const SCRIPT_INLINES: Record<
   string,
   { noArgs?: string; withArgs?: string }
-> = {
-  "command-status.sh": {
-    noArgs:
-      '!{if [ -f .miro/config.json ]; then cat .miro/config.json; else echo "Task tracking in Miro is disabled. Run /miro-tasks:enable <table-url> to enable it."; fi}',
-  },
-  "command-disable.sh": {
-    noArgs:
-      '!{rm -f .miro/config.json 2>/dev/null; echo "Task tracking in Miro is disabled."}',
-  },
-  "command-enable.sh": {
-    withArgs: `!{
-args="{{args}}"
-if [ -n "$args" ]; then
-  case "$args" in
-    *moveToWidget=*|*focusWidget=*)
-      mkdir -p .miro
-      printf '{\\n  "tableUrl": "%s"\\n}\\n' "$args" > .miro/config.json
-      echo "Enabled tracking for table $args"
-      ;;
-    *)
-      echo "ERROR: URL must contain moveToWidget or focusWidget parameter."
-      ;;
-  esac
-else
-  echo "NO_URL_PROVIDED"
-fi
-}`,
-  },
-};
-
-/** Fallback instructions appended after the enable !{...} block */
-const ENABLE_FALLBACK = `
-If the output above shows "Enabled tracking...", report success to the user and stop.
-If the output shows an error about the URL, tell the user the URL needs a moveToWidget or focusWidget parameter.
-
-Otherwise, follow these instructions to find a table URL:`;
+> = {};
 
 /**
  * Regex matching script reference lines after variable substitution:
@@ -140,7 +105,6 @@ function inlineScriptRefs(body: string, hasArgs: boolean): string {
     if (inline) {
       if (trailingArgs && inline.withArgs && hasArgs) {
         out.push(inline.withArgs);
-        out.push(ENABLE_FALLBACK);
       } else if (!trailingArgs && inline.noArgs) {
         out.push(inline.noArgs);
       } else {

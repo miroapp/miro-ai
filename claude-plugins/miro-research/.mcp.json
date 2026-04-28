@@ -1,6 +1,0 @@
-{
-  "glean": {
-    "type": "http",
-    "url": "https://miro-be.glean.com/mcp/default"
-  }
-}
