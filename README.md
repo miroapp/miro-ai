@@ -51,14 +51,7 @@ Select your AI tool below and follow the installation steps.
 /plugin install miro@miro-ai
 ```
 
-Optional plugins:
-
-```bash
-/plugin install miro-tasks@miro-ai      # Task tracking in Miro tables
-/plugin install miro-solutions@miro-ai   # Demo plugin generator
-/plugin install miro-research@miro-ai    # Research visualization
-/plugin install miro-review@miro-ai      # Code review workflows
-```
+The `miro` plugin bundles all skills (browse, code-review, code-spec, diagram, doc, table) and the Miro MCP server.
 
 **Restart Claude Code** after installation. If you previously configured Miro MCP manually, [remove the duplicate](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) to avoid conflicts — the plugin already manages the MCP connection for you.
 
@@ -77,14 +70,11 @@ gemini extensions install https://github.com/miroapp/miro-ai
 
 This installs the root `gemini-extension.json`, which gives Gemini access to the Miro MCP server (board reading, diagrams, tables, docs).
 
-**Full install** — for commands, skills, and hooks, clone the repo and install individual extensions:
+**Full install** — for skills and bundled MCP config, clone the repo and install the extension:
 
 ```bash
 git clone https://github.com/miroapp/miro-ai.git
 gemini extensions install ./miro-ai/gemini-extensions/miro
-gemini extensions install ./miro-ai/gemini-extensions/miro-tasks
-gemini extensions install ./miro-ai/gemini-extensions/miro-review
-gemini extensions install ./miro-ai/gemini-extensions/miro-spec
 ```
 
 Restart Gemini CLI and authenticate when prompted.
@@ -112,12 +102,12 @@ See [Kiro Powers](docs/kiro/overview.md) | [Official Docs](https://kiro.dev/docs
 Portable knowledge skills that work across AI coding tools (Claude Code, Cursor, VS Code + Copilot, Codex, etc.).
 
 ```bash
-npx skills add miroapp/miro-ai            # Interactive install
-npx skills add miroapp/miro-ai --list     # List available skills
-npx skills add miroapp/miro-ai --skill=miro-mcp  # Install specific skill
+npx skills add miroapp/miro-ai                       # Interactive install
+npx skills add miroapp/miro-ai --list                # List available skills
+npx skills add miroapp/miro-ai --skill=miro-browse   # Install specific skill
 ```
 
-Available skills: **miro-mcp**, **miro-platform**, **miro-code-review**
+Available skills: **miro-browse**, **miro-code-review**, **miro-code-spec**, **miro-diagram**, **miro-doc**, **miro-table**
 
 See [Agent Skills Overview](docs/agent-skills/overview.md) | [agentskills.io](https://agentskills.io)
 
@@ -194,17 +184,18 @@ See the [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server
 
 ## What Can You Do?
 
-### Commands (Claude Code)
+### Skills (Claude Code)
 
-| Command | What It Does |
-|---------|--------------|
-| `/miro:browse` | Explore board contents |
-| `/miro:diagram` | Create diagrams from text descriptions |
-| `/miro:doc` | Create markdown documents on boards |
-| `/miro:table` | Create tables with typed columns |
-| `/miro:summarize` | Extract documentation from boards |
-| `/miro-tasks:enable` | Enable automatic task tracking |
-| `/miro-research:research` | Research topics and visualize on Miro |
+Skills auto-activate when you describe what you want naturally. No slash commands required — just include a Miro board URL.
+
+| Skill | Triggers On |
+|-------|-------------|
+| `miro-browse` | "List the frames on …", "What's on this board …" |
+| `miro-code-review` | "Review PR 123 on …", "Visual review of this branch on …" |
+| `miro-code-spec` | "Extract specs from …", "Pull the design docs at …" |
+| `miro-diagram` | "Create a flowchart on …", "Add a sequence diagram to …" |
+| `miro-doc` | "Add a markdown doc to …", "Write a sprint plan on …" |
+| `miro-table` | "Make a task tracker table on …", "Sync these rows to …" |
 
 ### Capabilities (All Platforms)
 
@@ -223,34 +214,30 @@ See the [Duplicate MCP Servers](https://developers.miro.com/docs/miro-mcp-server
 
 | Plugin | Description |
 |--------|-------------|
-| [miro](docs/claude-code/miro.md) | Core MCP integration with 5 commands |
-| [miro-tasks](docs/claude-code/miro-tasks.md) | Automatic task tracking in Miro tables |
-| [miro-solutions](docs/claude-code/miro-solutions.md) | Create customer demo plugins |
-| [miro-research](docs/claude-code/miro-research.md) | Research and visualize findings on Miro |
-| miro-review | Visual code reviews on Miro boards |
+| [miro](docs/claude-code/miro.md) | Core MCP integration with 6 bundled skills (browse, code-review, code-spec, diagram, doc, table) |
 
 ### Gemini CLI
 
 | Extension | Description |
 |-----------|-------------|
-| miro | Core MCP integration with commands and skills |
-| miro-tasks | Task tracking commands |
-| miro-review | Code review workflows |
-| miro-spec | Spec extraction workflows |
+| miro | Core MCP integration with bundled skills |
 
 ### Codex
 
 | Plugin | Description |
 |--------|-------------|
-| miro | Core MCP integration with the native `$miro:miro-mcp` skill and MCP access |
+| miro | Core MCP integration with native `$miro:<skill>` activation and MCP access |
 
 ### Agent Skills
 
 | Skill | Description |
 |-------|-------------|
-| miro-mcp | Miro MCP tools — diagrams, documents, tables, context extraction |
-| miro-platform | Miro platform overview — canvas features, content types, AI capabilities |
-| miro-code-review | Code review workflows using Miro boards |
+| miro-browse | List, filter, summarize items on a Miro board |
+| miro-code-review | Visual code review from PRs, local changes, or branch comparisons |
+| miro-code-spec | Extract Miro specs (docs, diagrams, prototypes, tables, images) to `.miro/specs/` |
+| miro-diagram | Create diagrams (flowchart, mindmap, UML, ER) from text or Mermaid |
+| miro-doc | Create and edit markdown documents on a Miro board |
+| miro-table | Create, populate, and sync structured tables on a Miro board |
 
 ### Kiro
 

@@ -19,12 +19,12 @@ miro-ai/
 ├── .agents/
 │   └── skills/             # Repo-local helper skills for agent workflows
 ├── claude-plugins/           # Claude Code plugins
-│   ├── miro/                # Core MCP integration (commands, skills)
-│   ├── miro-tasks/          # Task tracking with hooks and scripts
-│   ├── miro-solutions/      # Demo plugin generator (agents, templates)
-│   └── miro-research/       # Research visualization
+│   └── miro/                # Core MCP integration with bundled skills (browse, code-review, code-spec, diagram, doc, table)
 ├── codex-plugins/            # Codex plugins (auto-generated)
+├── copilot-cowork-plugins/   # GitHub Copilot Cowork packages (auto-generated)
 ├── cursor-plugins/           # Cursor plugins (auto-generated)
+├── gemini-extensions/        # Gemini CLI extensions (auto-generated)
+├── skills/                   # Agent Skills mirror (auto-generated, agentskills.io)
 ├── powers/                   # Kiro powers
 │   └── code-gen/            # Design-to-code (POWER.md + mcp.json)
 ├── validation/               # Validation scripts and schemas

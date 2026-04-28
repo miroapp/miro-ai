@@ -59,7 +59,7 @@ function printFooter() {
 }
 
 // Plugins excluded from Cursor conversion
-const CURSOR_EXCLUDED = new Set(["miro-solutions", "miro-research"]);
+const CURSOR_EXCLUDED = new Set<string>();
 
 // Plugins included in Copilot Cowork conversion
 const COPILOT_COWORK_INCLUDED = new Set(["miro"]);

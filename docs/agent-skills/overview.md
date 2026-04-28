@@ -28,12 +28,11 @@ npx skills add miroapp/miro-ai -y               # Skip confirmation prompts
 | Skill | Description |
 |-------|-------------|
 | miro-browse | Listing, filtering, and summarizing items on a Miro board |
+| miro-code-review | Visual code review from PRs, local changes, or branch comparisons on a Miro board |
+| miro-code-spec | Extract Miro board specs (documents, diagrams, prototypes, tables, images) to local `.miro/specs/` files |
 | miro-diagram | Creating diagrams (flowchart, mindmap, UML, ER) from text or Mermaid |
 | miro-doc | Creating and editing markdown documents on a Miro board |
 | miro-table | Creating, populating, and syncing structured tables on a Miro board |
-| miro-platform | Miro platform overview — canvas features, content types, AI capabilities |
-| miro-code-review | Visual code review from PRs, local changes, or branch comparisons on a Miro board |
-| miro-spec-guide | Extract Miro board specs (documents, diagrams, prototypes, tables, images) to local `.miro/specs/` files |
 
 ## How Skills Work
 

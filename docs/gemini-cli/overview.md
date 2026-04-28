@@ -12,17 +12,14 @@ The Gemini CLI extension provides Miro MCP integration, enabling Gemini to:
 
 ## Extension Files
 
-This repository provides 4 per-plugin extensions in `gemini-extensions/`, each auto-generated from the corresponding Claude plugin via `bun run convert`:
+This repository provides one extension in `gemini-extensions/miro/`, auto-generated from the source Claude plugin via `bun run convert`:
 
 ```
 gemini-extensions/
-├── miro/                # Core MCP integration with commands and skills
-├── miro-tasks/          # Task tracking commands and hooks
-├── miro-review/         # Code review workflows
-└── miro-spec/           # Spec extraction workflows
+└── miro/                # Core MCP integration with bundled skills
 ```
 
-Each extension contains a `gemini-extension.json` plus any commands (TOML), skills, hooks, and agents from the source Claude plugin. Example (`gemini-extensions/miro/gemini-extension.json`):
+The extension contains a `gemini-extension.json` plus the converted skills from the source Claude plugin. Example (`gemini-extensions/miro/gemini-extension.json`):
 
 ```json
 {
@@ -47,16 +44,13 @@ Each extension contains a `gemini-extension.json` plus any commands (TOML), skil
 gemini extensions install https://github.com/miroapp/miro-ai
 ```
 
-This installs the root `gemini-extension.json`, giving Gemini access to the Miro MCP server (board reading, diagrams, tables, docs). It does **not** install the per-plugin extensions with commands, skills, and hooks.
+This installs the root `gemini-extension.json`, giving Gemini access to the Miro MCP server (board reading, diagrams, tables, docs). It does **not** install the bundled skills.
 
-**Full install** — clone the repo and install individual extensions:
+**Full install** — clone the repo and install the extension with skills:
 
 ```bash
 git clone https://github.com/miroapp/miro-ai.git
 gemini extensions install ./miro-ai/gemini-extensions/miro
-gemini extensions install ./miro-ai/gemini-extensions/miro-tasks
-gemini extensions install ./miro-ai/gemini-extensions/miro-review
-gemini extensions install ./miro-ai/gemini-extensions/miro-spec
 ```
 
 Restart Gemini CLI and authenticate when prompted.
@@ -67,10 +61,7 @@ For local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#gemini-cli-ex
 
 | Extension | Description |
 |-----------|-------------|
-| miro | Core MCP integration with commands and skills |
-| miro-tasks | Task tracking with commands and hooks |
-| miro-review | Code review workflows |
-| miro-spec | Spec extraction workflows |
+| miro | Core MCP integration with bundled skills (browse, code-review, code-spec, diagram, doc, table) |
 
 ### Authentication
 

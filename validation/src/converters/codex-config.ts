@@ -1,9 +1,4 @@
-export const SHARED_GENERATED_PLUGIN_ORDER = [
-  "miro",
-  "miro-tasks",
-  "miro-review",
-  "miro-spec",
-] as const;
+export const SHARED_GENERATED_PLUGIN_ORDER = ["miro"] as const;
 
 export type SharedGeneratedPluginName =
   (typeof SHARED_GENERATED_PLUGIN_ORDER)[number];

@@ -462,6 +462,4 @@ To share your plugin:
 
 ## Related
 
-- [miro plugin](miro.md) - Example of MCP integration
-- [miro-tasks plugin](miro-tasks.md) - Example of hooks
-- [miro-solutions plugin](miro-solutions.md) - Example of agents
+- [miro plugin](miro.md) - Example of MCP integration with bundled skills
