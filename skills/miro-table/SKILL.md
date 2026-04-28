@@ -1,9 +1,6 @@
 ---
 name: miro-table
-description: >-
-  Use when the user wants to create or update a structured table on a Miro board
-  with text and select (color-coded dropdown) columns — task trackers, decision
-  logs, risk registers, etc.
+description: Use when the user wants to create or update a structured table on a Miro board with text and select (color-coded dropdown) columns — task trackers, decision logs, risk registers, etc.
 ---
 
 # Create Table on Miro Board

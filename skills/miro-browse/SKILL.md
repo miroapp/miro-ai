@@ -1,9 +1,6 @@
 ---
 name: miro-browse
-description: >-
-  Use when the user wants to list, explore, or filter items on a Miro board
-  (frames, sticky notes, cards, shapes, text, images, documents, embeds), or
-  wants to discover what's on a board before diving in.
+description: Use when the user wants to list, explore, or filter items on a Miro board (frames, sticky notes, cards, shapes, text, images, documents, embeds), or wants to discover what's on a board before diving in.
 ---
 
 # Browse Miro Board Contents

@@ -317,7 +317,6 @@ export async function writeCopilotCoworkPlugin(
     await copyFileToOutput(colorIconPath, "color.png");
     await copyFileToOutput(outlineIconPath, "outline.png");
     await copyRelativeGlob("skills/**/*");
-    await copyRelativeGlob("commands/**/*");
   } catch (e) {
     if (!errors.some((error) => error.includes("Missing required icon"))) {
       errors.push(`Failed to write Copilot Cowork package: ${(e as Error).message}`);

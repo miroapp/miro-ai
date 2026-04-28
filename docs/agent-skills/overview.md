@@ -70,7 +70,7 @@ Agent Skills work with any tool that supports the [agentskills.io specification]
 | Agents | No | Yes |
 | Portability | Any compatible tool | Claude Code only |
 
-Skills are auto-generated from Claude plugin skills via `bun run convert:skills`. The source of truth is `claude-plugins/*/skills/`.
+Skills are auto-generated from Claude plugin skills via the bulk `bun run convert` pipeline. The source of truth is `claude-plugins/*/skills/`.
 
 ## Related
 

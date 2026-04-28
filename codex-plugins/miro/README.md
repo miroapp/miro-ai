@@ -1,6 +1,6 @@
 # Miro
 
-Generated from `claude-plugins/miro/` by `bun run convert:codex`.
+Generated from `claude-plugins/miro/` by `bun run convert`.
 
 ## Overview
 

@@ -190,16 +190,12 @@ export async function checkConsistency(
     ".claude-plugin/marketplace.json",
     ".cursor-plugin/marketplace.json",
     ...await fg("claude-plugins/*/.claude-plugin/plugin.json", { cwd: root }),
-    ...await fg("claude-plugins/*/.claude-plugin/hooks.json", { cwd: root }),
     ...await fg("gemini-extensions/*/gemini-extension.json", { cwd: root }),
-    ...await fg("gemini-extensions/*/hooks/hooks.json", { cwd: root }),
     ...await fg("copilot-cowork-plugins/*/manifest.json", { cwd: root }),
     ...await fg("cursor-plugins/*/.mcp.json", { cwd: root }),
     ...await fg("cursor-plugins/*/.cursor-plugin/plugin.json", { cwd: root }),
-    ...await fg("cursor-plugins/*/hooks/hooks.json", { cwd: root }),
     ...await fg("codex-plugins/*/.mcp.json", { cwd: root }),
     ...await fg("codex-plugins/*/.codex-plugin/plugin.json", { cwd: root }),
-    ...await fg("codex-plugins/*/hooks.json", { cwd: root }),
     ".agents/plugins/marketplace.json",
   ];
 
