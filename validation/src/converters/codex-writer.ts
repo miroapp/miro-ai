@@ -1,4 +1,4 @@
-import { chmod, mkdir, readFile, rm, stat, writeFile } from "fs/promises";
+import { mkdir, readFile, rm, writeFile } from "fs/promises";
 import matter from "gray-matter";
 import path from "path";
 import {
@@ -123,10 +123,6 @@ function adaptTextForCodex(content: string): string {
   return result;
 }
 
-function escapeSkillInvocationsForShell(content: string): string {
-  return content.replace(/\$miro/g, "\\$miro");
-}
-
 function buildCodexManifest(plugin: ClaudePlugin): Record<string, unknown> {
   const description = plugin.manifest.description ?? "";
   const homepage = plugin.manifest.homepage ?? "https://miro.com";
@@ -247,7 +243,7 @@ function buildGeneratedReadme(plugin: ClaudePlugin): string {
   const sections = [
     `# ${title}`,
     "",
-    `Generated from \`claude-plugins/${plugin.dirName}/\` by \`bun run convert:codex\`.`,
+    `Generated from \`claude-plugins/${plugin.dirName}/\` by \`bun run convert\`.`,
     "",
     "## Overview",
     "",
@@ -327,22 +323,6 @@ export async function writeCodexPlugin(
       for (const ref of skill.references) {
         const refContent = await readFile(path.join(plugin.absPath, ref), "utf-8");
         await writeOut(ref, adaptTextForCodex(refContent));
-      }
-    }
-
-    for (const script of plugin.scripts) {
-      const content = escapeSkillInvocationsForShell(
-        adaptTextForCodex(script.content)
-      );
-
-      await writeOut(script.relPath, content);
-
-      if (!dryRun) {
-        const srcPath = path.join(plugin.absPath, script.relPath);
-        const srcStat = await stat(srcPath);
-        if (srcStat.mode & 0o111) {
-          await chmod(path.join(pluginDir, script.relPath), srcStat.mode);
-        }
       }
     }
 

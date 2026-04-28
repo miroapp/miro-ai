@@ -41,7 +41,7 @@ const targetGemini = hasGeminiFlag || !hasAnyFlag;
 const targetSkills = hasSkillsFlag || !hasAnyFlag;
 const targetCursor = hasCursorFlag || !hasAnyFlag;
 const targetCodex = hasCodexFlag || !hasAnyFlag;
-const targetCopilotCowork = hasCopilotCoworkFlag;
+const targetCopilotCowork = hasCopilotCoworkFlag || !hasAnyFlag;
 
 // ANSI colors (match validation/src/index.ts)
 const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
@@ -99,14 +99,7 @@ async function main() {
   }
 
   for (const p of plugins) {
-    const parts = [
-      `${p.commands.length} cmd`,
-      `${p.skills.length} skill`,
-      `${p.agents.length} agent`,
-    ];
-    if (p.hooks) parts.push("hooks");
-    if (p.scripts.length > 0) parts.push(`${p.scripts.length} script`);
-    if (p.templates.length > 0) parts.push(`${p.templates.length} tmpl`);
+    const parts = [`${p.skills.length} skill`];
     if (p.mcp) parts.push("mcp");
     console.log(`│ ${green("✓")} ${p.dirName} ${dim(`(${parts.join(", ")})`)}`);
   }

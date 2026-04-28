@@ -122,16 +122,27 @@ Once configured, you can interact with Miro boards:
 | `oauth.enabled` | Enable OAuth authentication |
 | `headers` | Custom HTTP headers |
 
-## Differences from Claude Code
+## Scope
 
-| Feature | Gemini CLI | Claude Code |
-|---------|------------|-------------|
-| Configuration | JSON extension file | Plugin system |
-| Commands | TOML commands (converted) | Markdown slash commands |
-| Skills | Knowledge skills (converted) | Knowledge skills |
-| Automation | Hooks (converted) | Hooks and agents |
+This repository follows a deliberate **skills + MCP only** convention — see [CONTRIBUTING → Scope and Conventions](../../CONTRIBUTING.md#scope-and-conventions). The generated Gemini extension contains:
 
-Gemini extensions are auto-generated from Claude plugins via `bun run convert`. Some advanced features may differ. See [Claude Code](../claude-code/overview.md) for the canonical plugin source.
+- `gemini-extension.json` — extension manifest with the MCP server
+- `skills/*/SKILL.md` (+ optional `references/`) — copied verbatim from the source plugin
+- `README.md` — copied from the source plugin
+
+No commands, agents, or hooks are emitted. The Gemini CLI extension format supports those, but this repo does not use them.
+
+## Differences from the Claude source
+
+| Field | Claude source | Gemini output |
+|-------|--------------|---------------|
+| Manifest | `.claude-plugin/plugin.json` + `.mcp.json` | Single `gemini-extension.json` |
+| MCP URL field | `url` | `httpUrl` |
+| OAuth | Implicit | `oauth: { enabled: true }` for HTTP servers |
+| MCP `X-AI-Source` header | `claude-code-plugin` | `gemini-extension` |
+| Skills | `skills/*/SKILL.md` | Identical — copied verbatim |
+
+Gemini extensions are auto-generated from Claude plugins via `bun run convert`. See [Claude Code](../claude-code/overview.md) for the canonical plugin source.
 
 ## Troubleshooting
 

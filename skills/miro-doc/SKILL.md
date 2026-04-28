@@ -1,9 +1,6 @@
 ---
 name: miro-doc
-description: >-
-  Use when the user wants to create or edit a Google-Docs-style markdown
-  document on a Miro board (meeting notes, project briefs, sprint plans, retros,
-  decision logs).
+description: Use when the user wants to create or edit a Google-Docs-style markdown document on a Miro board (meeting notes, project briefs, sprint plans, retros, decision logs).
 ---
 
 # Create Document on Miro Board

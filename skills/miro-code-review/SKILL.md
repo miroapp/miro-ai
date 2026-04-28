@@ -1,10 +1,6 @@
 ---
 name: miro-code-review
-description: >-
-  Use when the user wants to create a visual code review on a Miro board from a
-  GitHub PR (current or external repo), local uncommitted changes, or a branch
-  comparison — produces a file-changes table, summary/architecture/security
-  docs, and architecture diagrams.
+description: Use when the user wants to create a visual code review on a Miro board from a GitHub PR (current or external repo), local uncommitted changes, or a branch comparison — produces a file-changes table, summary/architecture/security docs, and architecture diagrams.
 ---
 
 # Visual Code Review

@@ -4,6 +4,7 @@ Thank you for your interest in contributing to Miro AI. This guide covers develo
 
 ## Quick Links
 
+- [Scope and Conventions](#scope-and-conventions)
 - [Local Development Setup](#local-development-setup)
 - [Claude Code Plugins](#claude-code-plugins)
 - [Kiro Powers](#kiro-powers)
@@ -15,15 +16,51 @@ Thank you for your interest in contributing to Miro AI. This guide covers develo
 
 ---
 
+## Scope and Conventions
+
+This repository ships **skills + MCP only**. We deliberately do not accept slash commands, autonomous agents, hooks, shell scripts, or template files in the source Claude plugin or in any generated downstream target.
+
+### What we ship
+
+| Component | Source | Generated targets |
+|-----------|--------|-------------------|
+| `skills/*/SKILL.md` (+ optional `references/`) | `claude-plugins/miro/skills/` | All targets — copied verbatim |
+| `.mcp.json` | `claude-plugins/miro/.mcp.json` | All targets — adapted to platform-native MCP shape |
+| Manifest | `claude-plugins/miro/.claude-plugin/plugin.json` | All targets — synthesized per platform |
+| `README.md` | `claude-plugins/miro/README.md` | Cursor, Gemini (verbatim); Codex (generated) |
+
+### What we do not ship
+
+- `commands/*.md` — slash commands. Use natural-language skill activation instead.
+- `agents/*.md` — autonomous subagents.
+- `.claude-plugin/hooks.json`, `hooks/hooks.json` — event hooks.
+- `scripts/*.sh` — shell scripts (only relevant if hooks or commands need them).
+- `templates/` — template files.
+
+The converters under `validation/src/converters/` only handle skills, MCP, and the manifest. The validators under `validation/src/` only enforce that contract. Adding a `commands/`, `agents/`, `hooks/`, `scripts/`, or `templates/` directory to the source plugin will not produce any output — the writers ignore those paths by design.
+
+### Why this scope
+
+- **Skills auto-activate** from natural language using their `description` field. They cover the same surface as slash commands without forcing users to memorize syntax (`/miro:browse <url>` becomes `list items on <url>`).
+- **MCP** gives the model direct tool access. Hooks and scripts mostly existed to bridge gaps that MCP now fills.
+- **One source of truth.** Vendors implement these primitives differently (Cursor flattens hook structure, Gemini converts commands to TOML, Codex omits commands entirely). Sticking to skills + MCP gives every target byte-identical content for the same source.
+- **Smaller blast radius.** Less converter code to maintain, fewer cross-platform edge cases, no platform-specific text adaptation beyond Codex's body rewrites.
+
+### If you need command-like behavior
+
+Author it as a skill with a clear trigger description. The skill body can prompt for a board URL or other inputs the way a slash command would. See `claude-plugins/miro/skills/miro-browse/SKILL.md` for the canonical pattern.
+
+If you have a use case that genuinely cannot be expressed as a skill + MCP, open a discussion before adding new component types — re-introducing commands/agents/hooks is a deliberate scope expansion, not a one-off feature add.
+
+---
+
 ## Local Development Setup
 
 ### Prerequisites
 
 - Git
-- [Bun](https://bun.sh/) — required for validation
-- [ShellCheck](https://www.shellcheck.net/) — optional, for bash script linting
-- Your AI tool of choice (Claude Code, Kiro, or Gemini CLI)
-- Codex for local plugin testing (optional)
+- [Bun](https://bun.sh/) — required for validation and converters
+- Your AI tool of choice (Claude Code, Cursor, Gemini CLI, Codex, Kiro)
 
 ### Clone and Setup
 
@@ -47,23 +84,23 @@ bun run validate
 |------------------|-----|
 | Claude plugin.json files | `claude plugin validate` CLI |
 | SKILL.md frontmatter | JSON schema (requires `description`) |
-| Command .md frontmatter | JSON schema (requires `description`) |
-| Agent .md frontmatter | JSON schema (requires `description`, `tools`) |
 | Kiro POWER.md frontmatter | JSON schema (requires `name`, `displayName`, `description`, `keywords`) |
-| Bash scripts | ShellCheck + executable permission check |
 | All JSON files | Syntax validation |
 | MCP configurations | URL consistency across platforms |
 | Codex manifests | JSON schema + marketplace checks |
+| Codex generated content | No Claude-only tool references leak through |
+| Copilot Cowork package | Manifest schema + identity + skills + connectors |
 
-**Individual validators:**
+**Individual validators (cross-cutting types):**
 
 ```bash
-bun run validate:claude       # Claude plugins only
-bun run validate:bash         # Bash scripts only
-bun run validate:frontmatter  # Markdown frontmatter only
-bun run validate:codex        # Codex manifests + marketplace
-bun run validate:consistency  # Cross-platform consistency only
+bun run validate:frontmatter     # Markdown frontmatter only
+bun run validate:bash            # Bash scripts only (shellcheck)
+bun run validate:consistency     # Cross-platform consistency only
+bun run validate:version         # Version bump check
 ```
+
+Per-plugin or per-target slices are intentionally not exposed as scripts — `bun run validate` and `bun run convert` are bulk operations. For ad-hoc debugging, call the CLI directly, e.g. `bun validation/src/index.ts --codex-only` or `bun validation/src/converters/index.ts --cursor --plugin=miro --dry-run`.
 
 See [Validation Documentation](docs/validation/README.md) for detailed information on schemas, troubleshooting, and extending validators.
 
@@ -142,20 +179,13 @@ This approach:
    ```
    You should see your plugin in the list.
 
-3. **Test commands:**
-   ```
-   /miro:diagram https://miro.com/app/board/test= "user login flow"
-   ```
-
-4. **Test skill activation:**
+3. **Test skill activation:**
    Ask a question that should trigger the skill:
    ```
-   "How do I create a diagram on Miro?"
+   "create a flowchart on https://miro.com/app/board/test= for the user login flow"
+   "list frames on https://miro.com/app/board/test="
    ```
-
-5. **Test hooks (if applicable):**
-   - Trigger the hook event (e.g., end a session for `Stop` hooks)
-   - Check that the hook script runs and returns expected output
+   The skill matching the request should activate without any `/` invocation.
 
 ### Testing the Marketplace Locally
 
@@ -190,40 +220,36 @@ If you're modifying `.claude-plugin/marketplace.json`:
 
 ### Plugin Structure Reference
 
+The miro plugin is intentionally minimal — see [Scope and Conventions](#scope-and-conventions).
+
 ```
 plugin-name/
 ├── .claude-plugin/
 │   └── plugin.json          # Plugin manifest (required)
-├── .mcp.json                # MCP server config (optional)
-├── hooks/                   # Hook definitions (optional)
-│   └── hooks.json
-├── commands/                # Slash commands
-│   └── command-name.md
-├── skills/                  # Knowledge skills
+├── .mcp.json                # MCP server config
+├── skills/                  # Knowledge skills with auto-activation
 │   └── skill-name/
 │       ├── SKILL.md
-│       └── references/
-├── agents/                  # Autonomous agents
-│   └── agent-name.md
-├── scripts/                 # Shell scripts for hooks
-└── templates/               # Template files
+│       └── references/      # (optional)
+└── README.md                # User-facing readme (optional)
 ```
+
+`commands/`, `agents/`, `hooks/`, `scripts/`, and `templates/` are not part of this repo's convention. Adding them produces no output — the converter ignores those directories.
 
 ### Validation Checklist
 
 Before submitting a PR, run `bun run validate` to automatically check:
 
-- [x] `plugin.json` is valid JSON
-- [x] All commands have `description` in frontmatter
-- [x] Skills have `SKILL.md` with `description` in frontmatter
-- [x] Scripts are executable (`chmod +x scripts/*.sh`)
-- [x] Bash scripts pass ShellCheck (if installed)
+- [x] `plugin.json` is valid JSON and matches Claude's plugin schema
+- [x] Each `SKILL.md` has `name` and `description` in frontmatter, and `name` matches the directory
+- [x] All skill directory names start with `miro-` (enforced)
+- [x] `.mcp.json` is valid JSON and the MCP URL is consistent with downstream targets
+- [x] No Claude-only tool names (`Write tool`, `TaskCreate`, `AskUserQuestion`, …) leak into Codex output
 
 **Manual verification still needed:**
 
-- [ ] Hooks return valid JSON if `parseJson: true`
-- [ ] MCP servers are reachable
-- [ ] Commands work end-to-end
+- [ ] MCP server is reachable from your environment
+- [ ] Each skill activates from its triggering phrase
 
 ### Debugging Tips
 
@@ -231,18 +257,14 @@ Before submitting a PR, run `bun run validate` to automatically check:
 - Check `plugin.json` syntax with `cat plugin.json | jq .`
 - Ensure you're using the correct path with `--plugin-dir`
 
-**Command not working?**
-- Verify frontmatter YAML is valid
-- Check that required fields (`description`) are present
-
 **Skill not activating?**
-- Make sure `SKILL.md` exists at the skill root
-- Check that the `description` field contains trigger keywords
+- Make sure `SKILL.md` exists at the skill root and `name` matches the directory
+- Check that the `description` field contains the trigger keywords the user is likely to use
+- The user phrasing should match the skill's "Use when..." description, not the skill name
 
-**Hook not running?**
-- Verify scripts are executable: `chmod +x scripts/*.sh`
-- Test script manually: `./scripts/hook.sh`
-- Check JSON output is valid if using `parseJson: true`
+**MCP tools missing?**
+- Confirm `.mcp.json` is valid JSON and the URL is reachable
+- Re-authenticate if the OAuth token has expired
 
 ---
 
@@ -315,7 +337,7 @@ Run `bun run validate` to automatically check:
 
 ## Gemini CLI Extensions
 
-Extensions are auto-generated from Claude plugins via `bun run convert`. They live in `gemini-extensions/*/`, each containing a `gemini-extension.json` plus converted commands (TOML), skills, hooks, and agents.
+Extensions are auto-generated from Claude plugins via `bun run convert`. They live in `gemini-extensions/*/`, each containing a `gemini-extension.json` plus the source skills copied verbatim. Per [Scope and Conventions](#scope-and-conventions), no commands, agents, or hooks are emitted.
 
 ### Development Workflow
 
@@ -324,11 +346,13 @@ Extensions are auto-generated from Claude plugins via `bun run convert`. They li
    vim claude-plugins/miro/skills/miro-browse/SKILL.md
    ```
 
-2. **Regenerate extensions:**
+2. **Regenerate all targets (bulk):**
    ```bash
-   bun run convert --gemini                    # All extensions
-   bun run convert --gemini --plugin=miro      # Single extension
-   bun run convert --gemini --dry-run          # Preview changes
+   bun run convert
+   ```
+   For ad-hoc debugging of a single target/plugin, call the CLI directly:
+   ```bash
+   bun validation/src/converters/index.ts --gemini --plugin=miro --dry-run
    ```
 
 3. **Link an extension for local testing:**
@@ -339,9 +363,9 @@ Extensions are auto-generated from Claude plugins via `bun run convert`. They li
 4. **Restart Gemini CLI**
 
 5. **Test:**
-   - Verify TOML commands load
+   - Verify the extension loads in Gemini CLI
    - Verify MCP tools are accessible
-   - Test agent workflows (if applicable)
+   - Trigger a skill via natural language
 
 ### Extension Structure
 
@@ -350,11 +374,8 @@ Each generated extension in `gemini-extensions/*/`:
 ```
 extension-name/
 ├── gemini-extension.json    # Extension manifest with MCP config
-├── commands/                # TOML commands (converted from .md)
-├── skills/                  # Knowledge skills (if any)
-├── hooks/                   # Hook definitions (if any)
-├── agents/                  # Agent definitions (if any)
-└── scripts/                 # Shell scripts (if any)
+├── skills/                  # Skills copied verbatim from the source plugin
+└── README.md                # Copied from the source plugin (if present)
 ```
 
 ### Validation Checklist
@@ -363,12 +384,13 @@ Run `bun run validate` to automatically check:
 
 - [x] JSON is valid
 - [x] MCP server URL is consistent with other platforms
+- [x] `X-AI-Source` header is `gemini-extension`
 
 **Manual verification still needed:**
 
 - [ ] Extension loads in Gemini CLI
-- [ ] TOML commands are accessible
 - [ ] MCP tools work end-to-end
+- [ ] Each skill activates from its triggering phrase
 
 ---
 
@@ -376,7 +398,7 @@ Run `bun run validate` to automatically check:
 
 See [Agent Skills Overview](docs/agent-skills/overview.md) for user-facing documentation.
 
-Skills are auto-generated from Claude plugin skills via `bun run convert:skills`. They live in `skills/*/` following the [agentskills.io specification](https://agentskills.io/specification).
+Skills are auto-generated from Claude plugin skills as part of the bulk `bun run convert` pipeline. They live in `skills/*/` following the [agentskills.io specification](https://agentskills.io/specification).
 
 ### Development Workflow
 
@@ -385,11 +407,13 @@ Skills are auto-generated from Claude plugin skills via `bun run convert:skills`
    vim claude-plugins/miro/skills/miro-browse/SKILL.md
    ```
 
-2. **Regenerate skills:**
+2. **Regenerate all targets (bulk):**
    ```bash
-   bun run convert:skills                       # All skills
-   bun run convert:skills --plugin=miro         # Single plugin's skills
-   bun run convert:skills --dry-run             # Preview changes
+   bun run convert
+   ```
+   For ad-hoc debugging of just the skills target, call the CLI directly:
+   ```bash
+   bun validation/src/converters/index.ts --skills --dry-run
    ```
 
 3. **Test locally:**
@@ -407,7 +431,7 @@ All skill directory names under `claude-plugins/` must start with `miro-` (enfor
 
 See [Codex Plugins Overview](docs/codex/overview.md) for the generated platform reference.
 
-Plugins are auto-generated from Claude plugins via `bun run convert:codex`. The Codex target is intentionally narrow: it generates only `codex-plugins/miro/` plus a repo-local marketplace at `.agents/plugins/marketplace.json`.
+Plugins are auto-generated from Claude plugins as part of the bulk `bun run convert` pipeline. The Codex target is intentionally narrow: it generates only `codex-plugins/miro/` plus a repo-local marketplace at `.agents/plugins/marketplace.json`.
 
 ### Development Workflow
 
@@ -416,18 +440,20 @@ Plugins are auto-generated from Claude plugins via `bun run convert:codex`. The 
    vim claude-plugins/miro/skills/miro-browse/SKILL.md
    ```
 
-2. **Regenerate plugins:**
+2. **Regenerate all targets (bulk):**
    ```bash
-   bun run convert:codex                      # Generate Codex output
-   bun run convert -- --codex --plugin=miro  # Single plugin preview
-   bun run convert -- --codex --dry-run      # Preview changes
+   bun run convert
+   ```
+   For ad-hoc debugging of just the Codex target, call the CLI directly:
+   ```bash
+   bun validation/src/converters/index.ts --codex --dry-run
    ```
 
 3. **Validate generated output:**
    ```bash
-   bun run validate:codex
-   bun run validate:consistency
+   bun run validate
    ```
+   Or scope to consistency only with `bun run validate:consistency`.
 
 4. **Test in Codex:**
    - Open the repository in Codex so it can discover `.agents/plugins/marketplace.json`
@@ -459,7 +485,7 @@ miro/
 
 See [Cursor Plugins Overview](docs/cursor/overview.md) for user-facing documentation.
 
-Plugins are auto-generated from Claude plugins via `bun run convert:cursor`. They live in `cursor-plugins/*/` with proper Cursor plugin structure (`.cursor-plugin/plugin.json`, commands, skills, hooks, scripts).
+Plugins are auto-generated from Claude plugins as part of the bulk `bun run convert` pipeline. They live in `cursor-plugins/*/` with `.cursor-plugin/plugin.json`, `.mcp.json`, and `skills/` only. Per [Scope and Conventions](#scope-and-conventions), no commands, agents, or hooks are emitted.
 
 ### Development Workflow
 
@@ -468,11 +494,13 @@ Plugins are auto-generated from Claude plugins via `bun run convert:cursor`. The
    vim claude-plugins/miro/skills/miro-diagram/SKILL.md
    ```
 
-2. **Regenerate plugins:**
+2. **Regenerate all targets (bulk):**
    ```bash
-   bun run convert:cursor                       # All cursor plugins
-   bun run convert:cursor --plugin=miro         # Single plugin
-   bun run convert:cursor --dry-run             # Preview changes
+   bun run convert
+   ```
+   For ad-hoc debugging of just the Cursor target, call the CLI directly:
+   ```bash
+   bun validation/src/converters/index.ts --cursor --plugin=miro --dry-run
    ```
 
 3. **Copy to local plugins dir and restart Cursor:**
@@ -505,9 +533,13 @@ This section documents the developer workflow for generating, validating, and pa
    ls assets/copilot-cowork/miro/color.png assets/copilot-cowork/miro/outline.png
    ```
 
-3. **Regenerate the package folder:**
+3. **Regenerate all targets (bulk):**
    ```bash
-   bun run convert:copilot-cowork
+   bun run convert
+   ```
+   For ad-hoc debugging of just the Cowork target, call the CLI directly:
+   ```bash
+   bun validation/src/converters/index.ts --copilot-cowork --dry-run
    ```
 
 4. **Create the local zip archive:**
@@ -546,7 +578,6 @@ The generated package artifacts include:
 - `color.png`
 - `outline.png`
 - `skills/`
-- `commands/` (when present in the source plugin)
 - a local distributable zip via `bun run package:copilot-cowork`
 
 ---
