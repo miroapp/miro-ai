@@ -49,7 +49,10 @@ export async function readClaudePlugin(
   if (!manifest) return null;
 
   const mcpPath = path.join(pluginDir, ".mcp.json");
-  const mcp = await tryReadJson<Record<string, McpServer>>(mcpPath);
+  const mcpFile = await tryReadJson<{ mcpServers?: Record<string, McpServer> }>(
+    mcpPath
+  );
+  const mcp = mcpFile?.mcpServers ?? null;
 
   const skills = await readSkills(pluginDir);
 
