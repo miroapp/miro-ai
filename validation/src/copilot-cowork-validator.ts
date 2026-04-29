@@ -243,11 +243,12 @@ export async function validateCopilotCoworkPackages(
   });
 
   const connectorErrors: string[] = [];
-  const sourceMcp = await readJsonFile<Record<string, McpServerConfig>>(
-    path.join(root, "claude-plugins", "miro", ".mcp.json")
-  );
+  const sourceMcpFile = await readJsonFile<{
+    mcpServers?: Record<string, McpServerConfig>;
+  }>(path.join(root, "claude-plugins", "miro", ".mcp.json"));
+  const sourceMcp = sourceMcpFile?.mcpServers ?? {};
   const expectedConnectors = new Map(
-    Object.entries(sourceMcp ?? {})
+    Object.entries(sourceMcp)
       .map(([serverName, config]) => [serverName, config.httpUrl ?? config.url])
       .filter(([, url]): url is string => Boolean(url))
       .sort(([a], [b]) => a.localeCompare(b))

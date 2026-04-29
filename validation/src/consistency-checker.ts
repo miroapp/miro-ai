@@ -37,15 +37,53 @@ export async function checkConsistency(
   // Collect all MCP server configurations
   const mcpConfigs: { file: string; servers: Record<string, McpServerConfig> }[] = [];
 
+  // Check: every .mcp.json across plugins/extensions must use the canonical
+  // {"mcpServers": {...}} wrapper. Reference: Claude Code MCP docs, Cursor MCP docs.
+  // Cursor in particular silently ignores files without this wrapper.
+  const mcpJsonFiles = await fg(
+    [
+      "claude-plugins/*/.mcp.json",
+      "cursor-plugins/*/.mcp.json",
+      "codex-plugins/*/.mcp.json",
+      "powers/*/mcp.json",
+    ],
+    { cwd: root }
+  );
+  const shapeErrors: string[] = [];
+  for (const file of mcpJsonFiles) {
+    const data = (await readJsonFile(path.join(root, file))) as
+      | Record<string, unknown>
+      | null;
+    if (!data || typeof data !== "object") {
+      shapeErrors.push(`${file}: not a valid JSON object`);
+      continue;
+    }
+    if (!("mcpServers" in data) || typeof data.mcpServers !== "object") {
+      shapeErrors.push(
+        `${file}: missing top-level "mcpServers" wrapper (canonical MCP config shape)`
+      );
+    }
+  }
+  // Gemini extension manifest is a different file but also requires mcpServers
+  // when MCP is configured; we treat absence of mcpServers as "no MCP" rather
+  // than a shape error since Gemini extensions can be MCP-less.
+  results.push({
+    check: "MCP config shape",
+    valid: shapeErrors.length === 0,
+    details:
+      shapeErrors.length === 0
+        ? [`All ${mcpJsonFiles.length} MCP config files use the canonical "mcpServers" wrapper`]
+        : shapeErrors,
+  });
+
   // Claude .mcp.json files
   const claudeMcpFiles = await fg("claude-plugins/*/.mcp.json", { cwd: root });
   for (const file of claudeMcpFiles) {
-    const data = await readJsonFile(path.join(root, file));
-    if (data && typeof data === "object") {
-      mcpConfigs.push({
-        file,
-        servers: data as Record<string, McpServerConfig>,
-      });
+    const data = (await readJsonFile(path.join(root, file))) as {
+      mcpServers?: Record<string, McpServerConfig>;
+    } | null;
+    if (data?.mcpServers) {
+      mcpConfigs.push({ file, servers: data.mcpServers });
     }
   }
 
