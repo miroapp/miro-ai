@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import type { ClaudePlugin, ConversionResult, ConversionWarning } from "./types";
 
@@ -35,57 +35,30 @@ function buildGeminiManifest(plugin: ClaudePlugin): Record<string, unknown> {
 }
 
 /**
- * Generate a Gemini extension from a Claude plugin.
+ * Generate the Gemini extension manifest at the repo root.
+ *
+ * Per Gemini CLI's extension model (https://geminicli.com/docs/extensions/reference/),
+ * the repo root IS the extension when users `gemini extensions install <owner/repo>`.
+ * Skills bundled in `<extension-root>/skills/` are auto-discovered. Since the
+ * agent-skills mirror at `skills/` already contains the source skills byte-identical
+ * to source, this writer only needs to emit the manifest — no skill copying needed.
  */
 export async function writeGeminiExtension(
   plugin: ClaudePlugin,
-  outputDir: string,
+  manifestPath: string,
   dryRun: boolean
 ): Promise<ConversionResult> {
   const warnings: ConversionWarning[] = [];
   const errors: string[] = [];
   const filesWritten: string[] = [];
-  const extDir = path.join(outputDir, plugin.dirName);
-
-  async function writeOut(relPath: string, content: string) {
-    const fullPath = path.join(extDir, relPath);
-    filesWritten.push(path.relative(outputDir, fullPath));
-    if (!dryRun) {
-      await mkdir(path.dirname(fullPath), { recursive: true });
-      await writeFile(fullPath, content, "utf-8");
-    }
-  }
 
   try {
     const manifest = buildGeminiManifest(plugin);
-    await writeOut(
-      "gemini-extension.json",
-      JSON.stringify(manifest, null, 2) + "\n"
-    );
-
-    for (const skill of plugin.skills) {
-      const raw = await readFile(
-        path.join(plugin.absPath, skill.relPath),
-        "utf-8"
-      );
-      await writeOut(skill.relPath, raw);
-      for (const ref of skill.references) {
-        const refContent = await readFile(
-          path.join(plugin.absPath, ref),
-          "utf-8"
-        );
-        await writeOut(ref, refContent);
-      }
-    }
-
-    try {
-      const readme = await readFile(
-        path.join(plugin.absPath, "README.md"),
-        "utf-8"
-      );
-      await writeOut("README.md", readme);
-    } catch {
-      // No README in source — skip
+    const content = JSON.stringify(manifest, null, 2) + "\n";
+    filesWritten.push(path.basename(manifestPath));
+    if (!dryRun) {
+      await mkdir(path.dirname(manifestPath), { recursive: true });
+      await writeFile(manifestPath, content, "utf-8");
     }
   } catch (e) {
     errors.push(`Failed to write gemini extension: ${(e as Error).message}`);

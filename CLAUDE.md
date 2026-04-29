@@ -23,8 +23,8 @@ miro-ai/
 ├── codex-plugins/            # Codex plugins (auto-generated)
 ├── copilot-cowork-plugins/   # GitHub Copilot Cowork packages (auto-generated)
 ├── cursor-plugins/           # Cursor plugins (auto-generated)
-├── gemini-extensions/        # Gemini CLI extensions (auto-generated)
-├── skills/                   # Agent Skills mirror (auto-generated, agentskills.io)
+├── gemini-extension.json     # Gemini CLI extension manifest at repo root (auto-generated)
+├── skills/                   # Agent Skills mirror (auto-generated, also serves as Gemini extension's bundled skills)
 ├── powers/                   # Kiro powers
 │   └── code-gen/            # Design-to-code (POWER.md + mcp.json)
 ├── validation/               # Validation scripts and schemas

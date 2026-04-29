@@ -107,10 +107,10 @@ async function main() {
 
   const results: ConversionResult[] = [];
 
-  // Gemini conversion
+  // Gemini conversion — manifest at repo root; skills served from `skills/`
   if (targetGemini) {
-    printHeader("Gemini Extensions");
-    const geminiDir = path.join(ROOT, "gemini-extensions");
+    printHeader("Gemini Extension");
+    const geminiManifestPath = path.join(ROOT, "gemini-extension.json");
     for (const plugin of plugins) {
       if (!isSharedGeneratedPlugin(plugin.dirName)) {
         console.log(
@@ -118,11 +118,15 @@ async function main() {
         );
         continue;
       }
-      const result = await writeGeminiExtension(plugin, geminiDir, dryRun);
+      const result = await writeGeminiExtension(
+        plugin,
+        geminiManifestPath,
+        dryRun
+      );
       results.push(result);
       const status = result.success ? green("✓") : red("✗");
       console.log(
-        `│ ${status} ${plugin.dirName} → gemini-extensions/${plugin.dirName}/ ${dim(`(${result.filesWritten.length} files)`)}`
+        `│ ${status} ${plugin.dirName} → gemini-extension.json ${dim(`(${result.filesWritten.length} file)`)}`
       );
       for (const w of result.warnings) {
         console.log(`│   └─ ${yellow("⚠")} ${w.message}`);

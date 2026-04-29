@@ -63,11 +63,8 @@ export async function checkConsistency(
     }
   }
 
-  // Gemini extensions (root + generated)
-  const geminiFiles = [
-    "gemini-extension.json",
-    ...(await fg("gemini-extensions/*/gemini-extension.json", { cwd: root })),
-  ];
+  // Gemini extension (root manifest)
+  const geminiFiles = ["gemini-extension.json"];
   for (const file of geminiFiles) {
     const geminiData = (await readJsonFile(path.join(root, file))) as {
       mcpServers?: Record<string, McpServerConfig>;
@@ -190,7 +187,6 @@ export async function checkConsistency(
     ".claude-plugin/marketplace.json",
     ".cursor-plugin/marketplace.json",
     ...await fg("claude-plugins/*/.claude-plugin/plugin.json", { cwd: root }),
-    ...await fg("gemini-extensions/*/gemini-extension.json", { cwd: root }),
     ...await fg("copilot-cowork-plugins/*/manifest.json", { cwd: root }),
     ...await fg("cursor-plugins/*/.mcp.json", { cwd: root }),
     ...await fg("cursor-plugins/*/.cursor-plugin/plugin.json", { cwd: root }),
