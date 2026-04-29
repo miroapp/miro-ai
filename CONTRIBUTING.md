@@ -44,7 +44,7 @@ The converters under `validation/src/converters/` only handle skills, MCP, and t
 - **Skills auto-activate** from natural language using their `description` field. They cover the same surface as slash commands without forcing users to memorize syntax (`/miro:browse <url>` becomes `list items on <url>`).
 - **MCP** gives the model direct tool access. Hooks and scripts mostly existed to bridge gaps that MCP now fills.
 - **One source of truth.** Vendors implement these primitives differently (Cursor flattens hook structure, Gemini converts commands to TOML, Codex omits commands entirely). Sticking to skills + MCP gives every target byte-identical content for the same source.
-- **Smaller blast radius.** Less converter code to maintain, fewer cross-platform edge cases, no platform-specific text adaptation beyond Codex's body rewrites.
+- **Smaller blast radius.** Less converter code to maintain, fewer cross-platform edge cases, no platform-specific text adaptation — source skills are authored in platform-neutral phrasing and copied verbatim to every target.
 
 ### If you need command-like behavior
 

@@ -1,11 +1,8 @@
 ---
 name: miro-code-spec
-description: >-
-  Use when the user wants to extract a Miro board's specs (documents, diagrams,
-  prototypes, tables, frames, images) to local `.miro/specs/` files for
-  AI-assisted planning and implementation — accepts a board URL or single-item
-  URL.
+description: Use when the user wants to extract a Miro board's specs (documents, diagrams, prototypes, tables, frames, images) to local `.miro/specs/` files for AI-assisted planning and implementation — accepts a board URL or single-item URL.
 ---
+
 # Extract Miro Specs
 
 Extract specification content from a Miro board or item and save to `.miro/specs/` so it can be referenced during planning and implementation without repeated API calls.
@@ -17,7 +14,7 @@ The user provides one URL: a board URL (extract all spec items) or an item URL w
 ### 1. Identify the URL from the user's request
 
 - If the user provided a Miro URL, use it.
-- If not, ask for one by asking the user directly.
+- If not, ask the user for one.
 
 ### 2. Parse URL to Determine Type
 
@@ -28,7 +25,7 @@ Extract `board_id` and optionally `item_id`:
 ### 3. Check/Prepare Output Directory
 
 - Check if `.miro/specs/` exists and has content.
-- If it has content, ask the user directly:
+- If it has content, ask the user:
   - "The `.miro/specs/` directory already contains files. What should I do?"
   - Options:
     - "Clean and extract fresh" — remove existing content
@@ -112,7 +109,7 @@ Create tasks according to this exact breakdown:
 
 ### 6. Initialize Metadata Index
 
-Create `.miro/specs/index.json` with initial structure by writing it to disk:
+Create `.miro/specs/index.json` with initial structure:
 ```json
 {
   "board_url": "original board URL",
@@ -131,7 +128,7 @@ This file will be updated progressively as each item is extracted.
 
 ### 7. Extract Content from Each Item
 
-**CRITICAL: You MUST write ALL content received from MCP tools to the file system. Do not skip the file-writing step.**
+**CRITICAL: You MUST write all content received from MCP tools to the file system immediately. Do not skip the file-writing step.**
 
 **Workflow for each item (with task tracking and progressive index updates):**
 
@@ -139,12 +136,12 @@ This file will be updated progressively as each item is extracted.
 1. Update your internal checklist to mark the item's entry as `in_progress`
 2. Call the appropriate MCP tool to get content
 3. **IMMEDIATELY** write the content to disk
-4. Read current `index.json`, add this item to items array, Write updated `index.json`
+4. Read current `index.json`, add this item to the items array, then write the updated `index.json`
 5. Update your internal checklist to mark the item's entry as `completed`
 
 **For prototype screens (MANDATORY subagent workflow):**
 - Launch a subagent for each screen to avoid context bloat
-- Subagent performs all 3 tasks: Get HTML → Extract images → Update URLs
+- The subagent performs all 3 steps: Get HTML → Extract images → Update URLs
 - Large HTML content stays in subagent context, never enters main context
 
 **Document items:**
@@ -169,7 +166,7 @@ This file will be updated progressively as each item is extracted.
 
 **Why subagent:** `context_get` returns large HTML that bloats the main agent's context. A subagent keeps this contained — the large HTML never enters the main conversation.
 
-For each prototype screen, launch a **single subagent** (subagent, `subagent_type: "general-purpose"`) that performs all 3 tasks sequentially. Pass the subagent all necessary context:
+For each prototype screen, launch a **single subagent** (with `subagent_type: "general-purpose"`) that performs all 3 steps sequentially. Pass the subagent all necessary context:
 
 **Subagent prompt template:**
 ```
@@ -188,8 +185,8 @@ Execute these 3 tasks in order:
 
 Task 1: Get and save HTML
 - Call `context_get` with the item URL
-- Save the returned raw HTML to .miro/specs/prototypes/[item_id]-screen.html to disk
-- Read index.json, add this item to items array, then write the updated index.json
+- Save the returned raw HTML to .miro/specs/prototypes/[item_id]-screen.html
+- Read index.json, add this item to items array, Write updated index.json
 
 Task 2: Extract images
 - Read the saved HTML file
@@ -199,14 +196,14 @@ Task 2: Extract images
   2. Call `image_get_url` with board_id and the full image URL as item_id
   3. Take the download URL from response
   4. Download: `curl -sL -o .miro/specs/images/[resource_id].png "[download_url]"`
-  5. Read index.json, add image entry to images array, then write the updated index.json:
+  5. Read index.json, add image entry to images array, Write updated index.json:
      {"id": "[resource_id]", "path": "images/[resource_id].png", "referenced_by": ["[item_id]"]}
 - If any download fails: log warning, continue with others
 
 Task 3: Update image URLs in HTML
 - Read the HTML file from .miro/specs/prototypes/[item_id]-screen.html
 - Replace ALL original image URLs with relative paths: src="../images/[resource_id].png"
-- Save the updated HTML to disk
+- Save the updated HTML
 - Verify all image src attributes now point to ../images/
 
 Report back: number of images found, downloaded, and any failures.
@@ -297,7 +294,7 @@ Update `index.json` with the calculated summary:
 
 1. **NOT CREATING TASKS**
    - ✗ Wrong: Extract all items without creating tasks
-   - ✓ Correct: internal checklist creation for every single item before extraction
+   - ✓ Correct: Create an internal checklist item for every single item before extraction
    - Result: Items get skipped, no visibility into progress
 
 2. **TREATING PROTOTYPE SCREENS AS 1 TASK**
@@ -341,9 +338,9 @@ Update `index.json` with the calculated summary:
 ## Implementation Notes
 
 **File Writing:**
-- **CRITICAL:** Every item retrieved from MCP MUST be written to disk to disk
+- **CRITICAL:** Every item retrieved from MCP MUST be written to disk
 - Pattern: MCP call → get content → write file → confirm saved
-- Never skip the file-writing step step — content only in memory is lost
+- Never skip the file-writing step — content only in memory is lost
 - Write all file types: .md, .html, .json, .png
 
 **Directory Operations:**
@@ -417,13 +414,13 @@ Benefits: images work offline, no API calls needed to view documents, faster loc
 
 ### Using Specs for Implementation Planning
 
-Once specs are extracted, the user can ask Codex to plan or implement against them. Example prompts:
+Once specs are extracted, the user can ask their AI assistant to plan or implement against them. Example prompts:
 
 - "Review the product requirements in `.miro/specs/documents/` and create a technical implementation plan"
 - "Reference the architecture diagram in `.miro/specs/diagrams/3458764612345.md` and implement the database schema"
 - "Compare the authentication flow I implemented against the spec in `.miro/specs/prototypes/3458764612346-screen.html`"
 
-Codex reads the relevant files automatically during planning. Always check `.miro/specs/index.json` first to see what was extracted.
+The AI assistant reads the relevant files automatically during planning. Always check `.miro/specs/index.json` first to see what was extracted.
 
 ### Best Practices
 

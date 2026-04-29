@@ -309,12 +309,8 @@ export async function checkConsistency(
 
   for (const skillName of expectedMiroSkills) {
     const skillPath = `codex-plugins/miro/skills/${skillName}/SKILL.md`;
-    const skillAgentPath = `codex-plugins/miro/skills/${skillName}/agents/openai.yaml`;
     if ((await fg(skillPath, { cwd: root })).length === 0) {
       codexScopeErrors.push(`${skillPath} is missing`);
-    }
-    if ((await fg(skillAgentPath, { cwd: root })).length === 0) {
-      codexScopeErrors.push(`${skillAgentPath} is missing`);
     }
   }
 
@@ -360,7 +356,6 @@ export async function checkConsistency(
   const codexTextFiles = await fg(
     [
       "codex-plugins/*/skills/*/SKILL.md",
-      "codex-plugins/*/skills/*/agents/openai.yaml",
       "codex-plugins/*/scripts/*.sh",
       "codex-plugins/*/README.md",
     ],
@@ -373,6 +368,7 @@ export async function checkConsistency(
     ["TaskUpdate", /\bTaskUpdate\b/],
     ["Write tool", /\bWrite tool\b/],
     ["Read tool", /\bRead tool\b/],
+    ["Task tool", /\bTask tool\b/],
     ["${CLAUDE_PLUGIN_ROOT}", /\$\{CLAUDE_PLUGIN_ROOT\}/],
   ];
 

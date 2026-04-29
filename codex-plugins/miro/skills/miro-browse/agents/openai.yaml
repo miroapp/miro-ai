@@ -1,4 +1,0 @@
-interface:
-  display_name: "Miro Browse"
-  short_description: "Use when the user wants to list, explore, or filter items on a Miro board (frames, sticky notes, cards, shapes, text, images, documents, embeds), or wants to discover what's on a board before diving in."
-  default_prompt: "Use $miro-browse when this task matches the skill's guidance."
