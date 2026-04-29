@@ -6,19 +6,15 @@ Claude Code plugins extend Claude's capabilities with slash commands, skills, ag
 
 Plugins are packages that add specialized functionality to Claude Code:
 
-- **Commands** - Slash commands (`/miro:diagram`) for quick actions
-- **Skills** - Knowledge that teaches Claude how to use tools effectively
-- **Agents** - Autonomous workflows for complex tasks
-- **Hooks** - Event-driven automation (e.g., run code when session ends)
+- **Skills** - Task-shaped knowledge that auto-loads based on the user's prompt (e.g. `miro-diagram` activates when the user asks to draw something on a board)
+- **MCP** - Bundled MCP server configuration so Claude can talk to Miro directly
 
 ## Why Use Plugins vs Direct MCP?
 
 | Feature | Direct MCP | Plugins |
 |---------|------------|---------|
 | Setup | Manual JSON config | One command install |
-| Commands | None | Pre-built slash commands |
-| Guidance | Generic tool use | Skills teach best practices |
-| Automation | None | Hooks for workflows |
+| Guidance | Generic tool use | Skills auto-load best practices for each task |
 
 Plugins provide a higher-level experience on top of raw MCP tools.
 
@@ -35,40 +31,23 @@ For local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#claude-code-p
 
 ## Available Plugins
 
-| Plugin | Description | Commands |
-|--------|-------------|----------|
-| [miro](miro.md) | Core MCP integration | `/miro:browse`, `/miro:diagram`, `/miro:doc`, `/miro:table`, `/miro:summarize` |
-| [miro-tasks](miro-tasks.md) | Task tracking in Miro tables | `/miro-tasks:enable`, `/miro-tasks:disable`, `/miro-tasks:status` |
-| [miro-solutions](miro-solutions.md) | Create customer demo plugins | `/miro-solutions:create-plugin` |
-
-## Plugin Dependencies
-
-Some plugins depend on others:
-
-```
-miro-tasks
-└── requires: miro (for Miro MCP tools)
-
-miro-solutions
-├── requires: miro (for Miro MCP tools)
-└── requires: plugin-dev (for plugin creation)
-```
-
-Install dependencies first, or install all plugins to ensure everything works.
+| Plugin | Description | Surface |
+|--------|-------------|---------|
+| [miro](miro.md) | Core MCP integration | Skills: `miro-browse`, `miro-code-review`, `miro-code-spec`, `miro-diagram`, `miro-doc`, `miro-table` |
 
 ## Quick Start
 
-After installing the `miro` plugin:
+After installing the `miro` plugin, prompt Claude in natural language with a board URL — the relevant skill loads automatically:
 
 ```
 # Create a diagram on a Miro board
-/miro:diagram https://miro.com/app/board/abc= user authentication flow
+create a flowchart for the user authentication flow on https://miro.com/app/board/abc=
 
 # Create a document
-/miro:doc https://miro.com/app/board/abc= meeting notes with action items
+add a meeting-notes doc with action items to https://miro.com/app/board/abc=
 
 # Browse board contents
-/miro:browse https://miro.com/app/board/abc=
+list items on https://miro.com/app/board/abc=
 ```
 
 ## Authentication
@@ -77,7 +56,5 @@ On first use, you'll be prompted to authenticate with Miro via OAuth. Select the
 
 ## Next Steps
 
-- [miro plugin](miro.md) - Core commands and skills
-- [miro-tasks plugin](miro-tasks.md) - Track tasks in Miro tables
-- [miro-solutions plugin](miro-solutions.md) - Create demo plugins for customers
+- [miro plugin](miro.md) - Core skills and MCP integration
 - [Plugin Development](plugin-development.md) - Build your own plugins

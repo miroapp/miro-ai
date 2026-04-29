@@ -1,6 +1,6 @@
 # miro Plugin
 
-Core Miro MCP integration for Claude Code. Create diagrams, documents, and tables on Miro boards.
+Core Miro MCP integration for Claude Code. Create diagrams, documents, and tables on Miro boards, and explore board contents — all driven by natural-language prompts that auto-activate the right skill.
 
 ## Installation
 
@@ -11,156 +11,111 @@ Core Miro MCP integration for Claude Code. Create diagrams, documents, and table
 
 ## Features
 
-- 5 built-in slash commands
-- MCP skill for effective tool usage
+- 6 task-focused skills (auto-loaded by relevance — no slash commands to memorize)
 - Automatic OAuth configuration
 - HTTP MCP server connection to `https://mcp.miro.com/`
 
-## Commands
-
-### /miro:browse
-
-List and explore items on a Miro board.
-
-**Usage:**
-```
-/miro:browse <board-url>
-```
-
-**Arguments:**
-- `board-url` (required) - Miro board URL
-
-**Example:**
-```
-/miro:browse https://miro.com/app/board/uXjVK123abc=/
-```
-
-Lists frames, documents, tables, and other items on the board.
-
----
-
-### /miro:diagram
-
-Create a diagram from a text description.
-
-**Usage:**
-```
-/miro:diagram <board-url> <description>
-```
-
-**Arguments:**
-- `board-url` (required) - Miro board URL
-- `description` (required) - What to diagram
-
-**Supported Diagram Types:**
-- `flowchart` - Processes, workflows, decision trees
-- `mindmap` - Hierarchical ideas, brainstorming
-- `uml_class` - Class diagrams, OOP relationships
-- `uml_sequence` - Sequence diagrams, interactions
-- `entity_relationship` - Database schemas, ER diagrams
-
-**Examples:**
-```
-/miro:diagram https://miro.com/app/board/abc= user login authentication flow
-
-/miro:diagram https://miro.com/app/board/abc= database schema for e-commerce: users, products, orders
-
-/miro:diagram https://miro.com/app/board/abc= class diagram for payment processing system
-```
-
-The diagram type is auto-detected from your description, or you can specify it explicitly.
-
----
-
-### /miro:doc
-
-Create a markdown document on a Miro board.
-
-**Usage:**
-```
-/miro:doc <board-url> <content-description>
-```
-
-**Arguments:**
-- `board-url` (required) - Miro board URL
-- `content-description` (required) - What to document
-
-**Supported Markdown:**
-- Headings (`# H1` through `###### H6`)
-- Bold (`**text**`)
-- Italic (`*text*`)
-- Unordered lists (`- item`)
-- Ordered lists (`1. item`)
-- Links (`[text](url)`)
-
-**Not Supported:**
-- Code blocks
-- Tables (use `/miro:table` instead)
-- Images
-
-**Example:**
-```
-/miro:doc https://miro.com/app/board/abc= sprint planning document with goals and team assignments
-```
-
----
-
-### /miro:table
-
-Create a table with typed columns.
-
-**Usage:**
-```
-/miro:table <board-url> <table-description>
-```
-
-**Arguments:**
-- `board-url` (required) - Miro board URL
-- `table-description` (required) - Columns and data to create
-
-**Column Types:**
-- `text` - Free-form text entry
-- `select` - Dropdown with predefined options (with colors)
-
-**Example:**
-```
-/miro:table https://miro.com/app/board/abc= task tracker with columns: Task (text), Assignee (text), Status (select: To Do, In Progress, Done), Priority (select: Low, Medium, High)
-```
-
----
-
-### /miro:summarize
-
-Generate documentation from board content.
-
-**Usage:**
-```
-/miro:summarize <board-url>
-```
-
-**Arguments:**
-- `board-url` (required) - Miro board URL
-
-**Workflow:**
-1. Uses `context_explore` to discover board contents (frames, documents, prototypes, tables, diagrams)
-2. Uses `context_get` with specific item URLs to extract detailed content
-
-**Example:**
-```
-/miro:summarize https://miro.com/app/board/abc=
-```
-
-Discovers board contents first, then offers to get details on specific items.
-
 ## Skills
 
-The plugin includes the `miro-mcp` skill which teaches Claude:
+The plugin ships six skills. Each one teaches Claude how to handle a specific kind of task on a Miro board, including which MCP tool to call, what to ask the user for, and how to format the result.
 
-- How to use each MCP tool effectively
-- Best practices for positioning content
-- Error handling patterns
-- Diagram description formats
-- Table column configuration
+### miro-browse
+
+**Activates when:** the user wants to list, explore, or filter items on a Miro board, or asks "what's on this board?".
+
+Uses `board_list_items` for filtered listing and `context_explore` / `context_get` for higher-level board summarization. Knows how to handle URLs with `moveToWidget` to scope to a specific frame or item.
+
+**Example prompts:**
+
+```
+list items on https://miro.com/app/board/uXjVK123abc=/
+
+show me only the frames on https://miro.com/app/board/uXjVK123abc=/
+
+summarize what's on https://miro.com/app/board/uXjVK123abc=/
+```
+
+### miro-code-review
+
+**Activates when:** the user wants a visual code review on a Miro board from a GitHub PR, local uncommitted changes, or a branch comparison.
+
+Generates file-changes table, summary/architecture/security docs, and architecture diagrams on the board.
+
+**Example prompts:**
+
+```
+review PR 123 on https://miro.com/app/board/abc=
+
+visual review of local changes on https://miro.com/app/board/abc=
+
+compare feat/payments against main on https://miro.com/app/board/abc=
+```
+
+### miro-code-spec
+
+**Activates when:** the user wants to extract a Miro board's specs (documents, diagrams, prototypes, tables, frames, images) to local `.miro/specs/` files.
+
+Accepts a board URL (extract all spec items) or a single-item URL with `moveToWidget`/`focusWidget` (extract that one item). Saves files for AI-assisted planning and implementation without repeated API calls.
+
+**Example prompts:**
+
+```
+extract specs from https://miro.com/app/board/abc=
+
+download the design doc at https://miro.com/app/board/abc=/?moveToWidget=345...
+
+pull all PRD content from https://miro.com/app/board/abc= into .miro/specs/
+```
+
+### miro-diagram
+
+**Activates when:** the user wants to create a diagram from a text description.
+
+**Supported diagram types:**
+- `flowchart` — Processes, workflows, decision trees
+- `mindmap` — Hierarchical ideas, brainstorming
+- `uml_class` — Class diagrams, OOP relationships
+- `uml_sequence` — Sequence diagrams, interactions
+- `entity_relationship` — Database schemas, ER diagrams
+
+The diagram type is auto-detected from the description, or you can specify explicitly. For precise control, the skill knows about `diagram_get_dsl` and Mermaid notation.
+
+**Example prompts:**
+
+```
+create a flowchart for user login authentication on https://miro.com/app/board/abc=
+
+add an ER diagram of users, products, orders, reviews to https://miro.com/app/board/abc=
+
+draw a class diagram for the payment processing system on https://miro.com/app/board/abc=
+```
+
+### miro-doc
+
+**Activates when:** the user wants to create or edit a Google-Docs-style markdown document on a board.
+
+**Supported markdown:** headings (H1–H6), bold, italic, unordered/ordered lists, links.
+**Not supported:** code blocks, tables (use `miro-table` instead), images, horizontal rules.
+
+The skill also knows the `doc_get` / `doc_update` find-and-replace pattern for editing existing documents.
+
+**Example prompt:**
+
+```
+create a sprint planning doc with goals and team assignments on https://miro.com/app/board/abc=
+```
+
+### miro-table
+
+**Activates when:** the user wants to create a table with typed columns (text, or color-coded select dropdowns).
+
+Built-in templates for task trackers, decision logs, and risk registers. The skill also covers `table_sync_rows` (with `key_column` upsert) and `table_list_rows` for reading and idempotently updating table data.
+
+**Example prompt:**
+
+```
+create a task tracker on https://miro.com/app/board/abc= with columns: Task, Assignee, Status (To Do/In Progress/Done), Priority (Low/Medium/High)
+```
 
 ## MCP Configuration
 
@@ -190,6 +145,7 @@ The plugin automatically configures the Miro MCP server:
 - Use select columns for status/priority fields
 - Define distinct colors for each option
 - Use meaningful column names
+- Set a stable `key_column` when syncing from external data
 
 ### For Documents
 - Structure with clear headings
@@ -199,5 +155,4 @@ The plugin automatically configures the Miro MCP server:
 ## Related
 
 - [Overview](overview.md) - Plugin system introduction
-- [miro-tasks](miro-tasks.md) - Task tracking integration
 - [Tools Reference](../mcp/tools-reference.md) - Full MCP tool documentation

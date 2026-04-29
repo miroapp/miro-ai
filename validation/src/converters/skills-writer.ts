@@ -1,11 +1,10 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
-import matter from "gray-matter";
 import path from "path";
 import type { ClaudePlugin, ConversionResult, ConversionWarning } from "./types";
 
 /**
  * Write Agent Skills (agentskills.io format) from a Claude plugin.
- * Copies SKILL.md + references/ to skills/{skill-name}/.
+ * Copies SKILL.md + references/ verbatim — no transformation.
  */
 export async function writeAgentSkills(
   plugin: ClaudePlugin,
@@ -16,12 +15,13 @@ export async function writeAgentSkills(
   const errors: string[] = [];
   const filesWritten: string[] = [];
 
-  async function writeOut(relPath: string, content: string) {
-    const fullPath = path.join(outputDir, relPath);
-    filesWritten.push(relPath);
+  async function copyOut(srcRel: string, destRel: string) {
+    const fullPath = path.join(outputDir, destRel);
+    filesWritten.push(destRel);
     if (!dryRun) {
+      const content = await readFile(path.join(plugin.absPath, srcRel));
       await mkdir(path.dirname(fullPath), { recursive: true });
-      await writeFile(fullPath, content, "utf-8");
+      await writeFile(fullPath, content);
     }
   }
 
@@ -36,26 +36,11 @@ export async function writeAgentSkills(
         continue;
       }
 
-      // Copy SKILL.md (read raw to preserve frontmatter)
-      const raw = await readFile(
-        path.join(plugin.absPath, skill.relPath),
-        "utf-8"
-      );
-      const { data, content } = matter(raw);
+      await copyOut(skill.relPath, `${skillName}/SKILL.md`);
 
-      // Ensure name field matches in output
-      data.name = skillName;
-      const output = matter.stringify(content, data);
-      await writeOut(`${skillName}/SKILL.md`, output);
-
-      // Copy references
       for (const ref of skill.references) {
-        const refContent = await readFile(
-          path.join(plugin.absPath, ref),
-          "utf-8"
-        );
         const refFileName = path.basename(ref);
-        await writeOut(`${skillName}/references/${refFileName}`, refContent);
+        await copyOut(ref, `${skillName}/references/${refFileName}`);
       }
     }
   } catch (e) {

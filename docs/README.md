@@ -11,12 +11,10 @@ Welcome to the Miro AI developer documentation. This guide covers connecting AI 
 
 ### Claude Code
 
-Claude Code plugins provide slash commands, skills, and automation for Miro integration.
+Claude Code plugins provide auto-activating skills and Miro MCP access. Skills trigger from natural language — no slash commands required.
 
 - [Overview](claude-code/overview.md) - What are plugins, how to install
-- [miro](claude-code/miro.md) - Core MCP integration with board commands
-- [miro-tasks](claude-code/miro-tasks.md) - Task tracking in Miro tables
-- [miro-solutions](claude-code/miro-solutions.md) - Create customer demo plugins
+- [miro](claude-code/miro.md) - Core MCP integration with bundled skills
 - [Plugin Development](claude-code/plugin-development.md) - Build your own plugins
 
 ### Gemini CLI

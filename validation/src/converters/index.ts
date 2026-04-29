@@ -41,7 +41,7 @@ const targetGemini = hasGeminiFlag || !hasAnyFlag;
 const targetSkills = hasSkillsFlag || !hasAnyFlag;
 const targetCursor = hasCursorFlag || !hasAnyFlag;
 const targetCodex = hasCodexFlag || !hasAnyFlag;
-const targetCopilotCowork = hasCopilotCoworkFlag;
+const targetCopilotCowork = hasCopilotCoworkFlag || !hasAnyFlag;
 
 // ANSI colors (match validation/src/index.ts)
 const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
@@ -59,7 +59,7 @@ function printFooter() {
 }
 
 // Plugins excluded from Cursor conversion
-const CURSOR_EXCLUDED = new Set(["miro-solutions", "miro-research"]);
+const CURSOR_EXCLUDED = new Set<string>();
 
 // Plugins included in Copilot Cowork conversion
 const COPILOT_COWORK_INCLUDED = new Set(["miro"]);
@@ -99,14 +99,7 @@ async function main() {
   }
 
   for (const p of plugins) {
-    const parts = [
-      `${p.commands.length} cmd`,
-      `${p.skills.length} skill`,
-      `${p.agents.length} agent`,
-    ];
-    if (p.hooks) parts.push("hooks");
-    if (p.scripts.length > 0) parts.push(`${p.scripts.length} script`);
-    if (p.templates.length > 0) parts.push(`${p.templates.length} tmpl`);
+    const parts = [`${p.skills.length} skill`];
     if (p.mcp) parts.push("mcp");
     console.log(`│ ${green("✓")} ${p.dirName} ${dim(`(${parts.join(", ")})`)}`);
   }
@@ -114,10 +107,10 @@ async function main() {
 
   const results: ConversionResult[] = [];
 
-  // Gemini conversion
+  // Gemini conversion — manifest at repo root; skills served from `skills/`
   if (targetGemini) {
-    printHeader("Gemini Extensions");
-    const geminiDir = path.join(ROOT, "gemini-extensions");
+    printHeader("Gemini Extension");
+    const geminiManifestPath = path.join(ROOT, "gemini-extension.json");
     for (const plugin of plugins) {
       if (!isSharedGeneratedPlugin(plugin.dirName)) {
         console.log(
@@ -125,11 +118,15 @@ async function main() {
         );
         continue;
       }
-      const result = await writeGeminiExtension(plugin, geminiDir, dryRun);
+      const result = await writeGeminiExtension(
+        plugin,
+        geminiManifestPath,
+        dryRun
+      );
       results.push(result);
       const status = result.success ? green("✓") : red("✗");
       console.log(
-        `│ ${status} ${plugin.dirName} → gemini-extensions/${plugin.dirName}/ ${dim(`(${result.filesWritten.length} files)`)}`
+        `│ ${status} ${plugin.dirName} → gemini-extension.json ${dim(`(${result.filesWritten.length} file)`)}`
       );
       for (const w of result.warnings) {
         console.log(`│   └─ ${yellow("⚠")} ${w.message}`);

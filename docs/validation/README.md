@@ -27,12 +27,19 @@ bun run validate # Run all validations
 ## Commands
 
 ```bash
-bun run validate              # All validations
-bun run validate:claude       # Claude plugins only (uses CLI)
-bun run validate:bash         # Bash scripts only (shellcheck)
+bun run validate              # All validations (bulk)
 bun run validate:frontmatter  # Markdown frontmatter only
-bun run validate:codex        # Codex manifests + marketplace
+bun run validate:bash         # Bash scripts only (shellcheck)
 bun run validate:consistency  # Cross-platform consistency only
+bun run validate:version      # Version bump check
+```
+
+Per-plugin / per-target slices (Claude, Codex, Copilot Cowork) are not exposed as scripts — they are debugging filters. Use the CLI directly when needed:
+
+```bash
+bun validation/src/index.ts --claude-only
+bun validation/src/index.ts --codex-only
+bun validation/src/index.ts --copilot-cowork-only
 ```
 
 ## Pre-commit Hook

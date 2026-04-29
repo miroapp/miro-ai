@@ -1,18 +1,17 @@
 # Cursor Plugins
 
-Cursor plugins provide commands, skills, hooks, and MCP integration for Miro — nearly identical to Claude Code's plugin system. Plugins are auto-generated from Claude Code plugin sources.
+Cursor plugins for Miro provide skills and MCP integration. Plugins are auto-generated from Claude Code plugin sources.
 
-## What Are Cursor Plugins?
+## Scope
 
-Cursor plugins use the same structure as Claude Code plugins:
+This repository follows a deliberate **skills + MCP only** convention — see [CONTRIBUTING → Scope and Conventions](../../CONTRIBUTING.md#scope-and-conventions). The generated Cursor plugin contains:
 
 - `.cursor-plugin/plugin.json` — plugin manifest
-- `commands/*.md` — slash commands with YAML frontmatter
-- `skills/*/SKILL.md` — knowledge skills with references
-- `agents/*.md` — autonomous agent definitions
-- `hooks/hooks.json` — event-driven automation
-- `.mcp.json` — MCP server configuration
-- `scripts/` — shell scripts for hooks and commands
+- `.mcp.json` — MCP server configuration (wrapped in `{ mcpServers: {...} }`)
+- `skills/*/SKILL.md` (+ optional `references/`) — knowledge skills with auto-activation
+- `README.md` — copied from the source Claude plugin
+
+No commands, agents, hooks, scripts, or templates are emitted. The Cursor plugin format supports those primitives, but this repo does not use them.
 
 ## Installation
 
@@ -41,62 +40,26 @@ On first use, you'll be prompted to authenticate with Miro via OAuth.
 
 | Component | Files |
 |-----------|-------|
-| Commands | `browse.md`, `diagram.md`, `doc.md`, `summarize.md`, `table.md` |
-| Skills | `miro-mcp` — MCP tools reference |
+| Skills | `miro-browse`, `miro-code-review`, `miro-code-spec`, `miro-diagram`, `miro-doc`, `miro-table` |
 | MCP | Miro MCP server (`https://mcp.miro.com/`) |
 
-### miro-tasks
+## Differences from the Claude source
 
-| Component | Files |
-|-----------|-------|
-| Commands | `enable.md`, `disable.md`, `status.md` |
-| Hooks | `stop` — auto-sync tasks on session end |
-| Scripts | Task tracking shell scripts |
-
-### miro-research
-
-| Component | Files |
-|-----------|-------|
-| Commands | `research.md` |
-| MCP | Glean MCP (optional) |
-
-### miro-review
-
-| Component | Files |
-|-----------|-------|
-| Commands | `review.md` |
-| Skills | `miro-code-review` — review patterns and risk assessment |
-
-### miro-spec
-
-| Component | Files |
-|-----------|-------|
-| Commands | `get.md` |
-| Skills | `miro-spec-guide` — design spec extraction |
-
-## Differences from Claude Code Plugins
-
-| Feature | Claude Code | Cursor |
-|---------|------------|--------|
-| Commands | `description`, `argument-hint`, `allowed-tools` | `name`, `description` |
-| Skills | Identical | Identical |
-| Agents | `name`, `description`, `tools`, `model` | `name`, `description` only |
-| Hook events | PascalCase (`Stop`, `PreToolUse`) | camelCase (`stop`, `preToolUse`) |
-| Hook structure | `[{hooks: [{type, command, parseJson}]}]` | `[{type, command}]` (flat) |
-| Scripts | `${CLAUDE_PLUGIN_ROOT}` | `.` (relative paths) |
-| Templates | Supported | Not supported |
-| MCP config | Flat `{ "miro": {...} }` | Wrapped `{ "mcpServers": { "miro": {...} } }` |
-
-## Limitations
-
-Only **miro-solutions** is excluded from conversion (sales-only plugin with template dependencies).
+| Field | Claude source | Cursor output |
+|-------|--------------|---------------|
+| Manifest path | `.claude-plugin/plugin.json` | `.cursor-plugin/plugin.json` (synthesized, adds `displayName`) |
+| MCP config shape | Flat `{ "miro": {...} }` | Wrapped `{ "mcpServers": { "miro": {...} } }` |
+| MCP `X-AI-Source` header | `claude-code-plugin` | `cursor-plugin` |
+| Skills | `skills/*/SKILL.md` | Identical — copied verbatim |
 
 ## Development
 
 Plugins are auto-generated from Claude plugins. To regenerate after source changes:
 
 ```bash
-bun run convert:cursor
+bun run convert
 ```
+
+This bulk command regenerates all targets (Cursor, Gemini, Codex, Skills, Copilot Cowork) from the Claude plugin source of truth.
 
 See [CONTRIBUTING.md](../../CONTRIBUTING.md#cursor-plugins) for the full development workflow.

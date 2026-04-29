@@ -125,16 +125,14 @@ Show me what's on my Miro board and describe each section.
 
 ### Documentation Workflow
 
-1. **Create the document**: `/miro:doc https://board-url project documentation`
-2. **Add content sections**: Ask for specific sections to be added
-3. **Refine and edit**: Request changes to specific sections
+1. **Create the document**: ask Claude to add a project doc on your board URL
+2. **Add content sections**: ask for specific sections to be added
+3. **Refine and edit**: request changes to specific sections
 
 ### Collaboration Workflow
 
-1. **Create a task table**: `/miro:table https://board-url sprint tasks`
-2. **Enable tracking**: `/miro-tasks:enable https://table-url`
-3. **Work on tasks**: As you complete work, tasks are tracked
-4. **Review status**: `/miro-tasks:status`
+1. **Create a task table**: ask Claude to add a sprint-tasks table on your board URL
+2. **Sync rows**: ask Claude to populate or sync rows from a task source
 
 ## Tips for Better Results
 

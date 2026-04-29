@@ -1,6 +1,6 @@
 # Miro
 
-Generated from `claude-plugins/miro/` by `bun run convert:codex`.
+Generated from `claude-plugins/miro/` by `bun run convert`.
 
 ## Overview
 
@@ -13,7 +13,12 @@ Secure access to Miro boards. Enables AI to read board context, create diagrams,
 
 Skills:
 
-- `$miro:miro-mcp`
+- `$miro:miro-browse`
+- `$miro:miro-code-review`
+- `$miro:miro-code-spec`
+- `$miro:miro-diagram`
+- `$miro:miro-doc`
+- `$miro:miro-table`
 
 ## Related
 

@@ -16,9 +16,6 @@ Example for Claude Code:
 docs/claude-code/
 ├── overview.md
 ├── miro.md
-├── miro-tasks.md
-├── miro-solutions.md
-├── miro-research.md
 └── plugin-development.md
 ```
 

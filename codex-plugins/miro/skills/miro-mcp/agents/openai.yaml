@@ -1,4 +1,0 @@
-interface:
-  display_name: "Miro Mcp"
-  short_description: "This skill teaches how to use Miro MCP tools effectively for creating diagrams, documents, tables, and extracting context from Miro boards. Use when the user asks about Miro capabilities, wants to create content on Miro boards, or needs to work with Miro board data."
-  default_prompt: "Use $miro:miro-mcp to choose the right Miro MCP tool and workflow for this task."
