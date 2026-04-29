@@ -8,7 +8,7 @@ This repository follows a deliberate **skills + MCP only** convention — see [C
 
 - `.codex-plugin/plugin.json` — plugin manifest and UI metadata
 - `.mcp.json` — MCP server configuration
-- `skills/*/SKILL.md` plus a generated `agents/openai.yaml` per skill — Codex requires this companion file for skill activation
+- `skills/*/SKILL.md` — copied verbatim from the source. Per [Codex Skills docs](https://developers.openai.com/codex/skills), `SKILL.md` frontmatter alone is sufficient for activation; the optional `agents/openai.yaml` companion is intentionally not emitted because we don't customize Codex-specific UI metadata, invocation policy, or tool dependencies beyond what's already in the SKILL.md frontmatter.
 - `README.md` — generated platform-specific readme
 
 No commands, agents (subagents), or hooks are emitted. Codex's plugin format does not support a `commands` manifest component anyway; slash commands in Codex CLI are built-ins. Use skill triggers and the Miro MCP tools directly.
@@ -27,14 +27,9 @@ No commands, agents (subagents), or hooks are emitted. Codex's plugin format doe
 |--------|-------------|---------|
 | `miro` | Core MCP integration | Skills `miro-browse`, `miro-code-review`, `miro-code-spec`, `miro-diagram`, `miro-doc`, `miro-table` plus the Miro MCP tools |
 
-## Codex-specific adaptations
+## Skill content
 
-Codex's mental model differs from Claude Code, so the generated SKILL.md bodies have a small set of text rewrites applied during `bun run convert` (Codex target):
-
-- Claude tool names (`Write tool`, `TaskCreate`, `AskUserQuestion`, `Read tool`, `Task tool`) are replaced with platform-neutral phrasing (`file-writing step`, `internal checklist`, `asking the user directly`, etc.).
-- "Claude Code" branding is replaced with "Codex" where it appears in user-facing text.
-
-The skill structure, frontmatter shape, and content semantics are otherwise identical to the source.
+Skills are copied verbatim from the Claude source — byte-identical to Cursor, Gemini, and the agent-skills mirror. Source skills are authored in platform-neutral phrasing (`file-writing step`, `internal checklist`, `ask the user directly`), so no per-target text adaptation is needed and no Codex-specific sidecar files are written. Codex activates each skill from its `SKILL.md` frontmatter directly.
 
 ## Availability
 

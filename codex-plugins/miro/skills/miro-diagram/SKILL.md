@@ -1,10 +1,8 @@
 ---
 name: miro-diagram
-description: >-
-  Use when the user wants to create a diagram (flowchart, mindmap, UML class,
-  UML sequence, entity-relationship) on a Miro board from a natural-language
-  description or Mermaid/PlantUML notation.
+description: Use when the user wants to create a diagram (flowchart, mindmap, UML class, UML sequence, entity-relationship) on a Miro board from a natural-language description or Mermaid/PlantUML notation.
 ---
+
 # Create Diagram on Miro Board
 
 Create a diagram on the specified Miro board using the provided description.

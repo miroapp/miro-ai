@@ -43,10 +43,3 @@ export const CODEX_PLUGIN_DEFAULT_PROMPTS: Record<
     "Create a task or decision table on a Miro board",
   ],
 };
-
-/**
- * Optional per-skill default-prompt overrides for Codex agent YAML.
- * Empty by default — codex-writer falls back to a generic prompt derived
- * from the skill name when no override is set.
- */
-export const CODEX_SKILL_AGENT_PROMPTS: Record<string, string> = {};

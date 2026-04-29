@@ -1,4 +1,0 @@
-interface:
-  display_name: "Miro Code Spec"
-  short_description: "Use when the user wants to extract a Miro board's specs (documents, diagrams, prototypes, tables, frames, images) to local `.miro/specs/` files for AI-assisted planning and implementation — accepts a board URL or single-item URL."
-  default_prompt: "Use $miro-code-spec when this task matches the skill's guidance."
