@@ -113,8 +113,7 @@ miro-ai/
 ├── claude-plugins/           # Claude Code plugins (source of truth)
 │   └── miro/                # Core MCP integration with bundled skills
 │       └── skills/          # browse, code-review, code-spec, diagram, doc, table
-├── gemini-extensions/        # Gemini CLI extensions (auto-generated)
-│   └── miro/
+├── gemini-extension.json     # Gemini CLI extension manifest at repo root (auto-generated)
 ├── codex-plugins/            # Codex plugins (auto-generated)
 │   └── miro/
 ├── .agents/plugins/          # Codex repo-local marketplace (auto-generated)
@@ -335,9 +334,9 @@ Run `bun run validate` to automatically check:
 
 ---
 
-## Gemini CLI Extensions
+## Gemini CLI Extension
 
-Extensions are auto-generated from Claude plugins via `bun run convert`. They live in `gemini-extensions/*/`, each containing a `gemini-extension.json` plus the source skills copied verbatim. Per [Scope and Conventions](#scope-and-conventions), no commands, agents, or hooks are emitted.
+Per Gemini CLI's [extension model](https://geminicli.com/docs/extensions/reference/), the repo root **is** the extension. `bun run convert` regenerates `gemini-extension.json` at the root from the source Claude plugin's manifest and `.mcp.json`. Skills come from the same root-level `skills/` directory used by the agent-skills mirror — no per-extension copy.
 
 ### Development Workflow
 
@@ -355,9 +354,9 @@ Extensions are auto-generated from Claude plugins via `bun run convert`. They li
    bun validation/src/converters/index.ts --gemini --plugin=miro --dry-run
    ```
 
-3. **Link an extension for local testing:**
+3. **Link the repo root for local testing:**
    ```bash
-   gemini extensions link ./gemini-extensions/miro
+   gemini extensions link .
    ```
 
 4. **Restart Gemini CLI**
@@ -367,15 +366,12 @@ Extensions are auto-generated from Claude plugins via `bun run convert`. They li
    - Verify MCP tools are accessible
    - Trigger a skill via natural language
 
-### Extension Structure
-
-Each generated extension in `gemini-extensions/*/`:
+### Extension Surface
 
 ```
-extension-name/
-├── gemini-extension.json    # Extension manifest with MCP config
-├── skills/                  # Skills copied verbatim from the source plugin
-└── README.md                # Copied from the source plugin (if present)
+miro-ai/                     # Repo root = Gemini extension root
+├── gemini-extension.json    # Manifest with MCP config (auto-generated)
+└── skills/                  # 6 skills, byte-identical to source
 ```
 
 ### Validation Checklist

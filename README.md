@@ -62,22 +62,11 @@ See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 <details>
 <summary><strong>Gemini CLI</strong></summary>
 
-**Quick start** — install the root extension for MCP access:
-
 ```bash
 gemini extensions install https://github.com/miroapp/miro-ai
 ```
 
-This installs the root `gemini-extension.json`, which gives Gemini access to the Miro MCP server (board reading, diagrams, tables, docs).
-
-**Full install** — for skills and bundled MCP config, clone the repo and install the extension:
-
-```bash
-git clone https://github.com/miroapp/miro-ai.git
-gemini extensions install ./miro-ai/gemini-extensions/miro
-```
-
-Restart Gemini CLI and authenticate when prompted.
+Gemini CLI installs the repo as an extension, registers the Miro MCP server from `gemini-extension.json`, and auto-discovers the 6 bundled skills from `skills/`. Restart Gemini CLI and authenticate when prompted.
 
 See [Gemini CLI Extension](docs/gemini-cli/overview.md) | [Official Docs](https://geminicli.com/docs/extensions/)
 
