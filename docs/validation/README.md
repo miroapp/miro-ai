@@ -28,13 +28,9 @@ bun run validate # Run all validations
 
 ```bash
 bun run validate              # All validations (bulk)
-bun run validate:frontmatter  # Markdown frontmatter only
-bun run validate:bash         # Bash scripts only (shellcheck)
-bun run validate:consistency  # Cross-platform consistency only
-bun run validate:version      # Version bump check
 ```
 
-Per-plugin / per-target slices (Claude, Codex, Copilot Cowork) are not exposed as scripts — they are debugging filters. Use the CLI directly when needed:
+Per-plugin / per-target / per-validator slices are not exposed as scripts — they are debugging filters. Use the CLI directly when needed:
 
 ```bash
 bun validation/src/index.ts --claude-only
