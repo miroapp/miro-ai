@@ -8,6 +8,9 @@
     "convert": "bun validation/src/converters/index.ts",
     "package:copilot-cowork": "bun validation/src/package-copilot-cowork.ts",
     "sync:cursor": "bun validation/src/converters/index.ts --cursor && bun validation/src/sync-cursor.ts",
+    "plugins:install:local": "bun validation/src/installer/install.ts --source=local",
+    "plugins:install:main": "bun validation/src/installer/install.ts --source=main",
+    "plugins:uninstall": "bun validation/src/installer/uninstall.ts",
     "prepare": "husky"
   },
   "devDependencies": {

@@ -27,9 +27,11 @@ miro-ai/
 ├── skills/                   # Agent Skills mirror (auto-generated, also serves as Gemini extension's bundled skills)
 ├── powers/                   # Kiro powers
 │   └── code-gen/            # Design-to-code (POWER.md + mcp.json)
-├── validation/               # Validation scripts and schemas
+├── validation/               # Validators, converters, installers
 │   ├── schemas/             # JSON schemas for frontmatter
-│   └── src/                 # TypeScript validators
+│   └── src/                 # TypeScript drivers
+│       ├── converters/      # bun run convert
+│       └── installer/       # bun run plugins:install:*
 ├── docs/                     # Documentation
 ├── .claude-plugin/           # Marketplace manifest
 ├── gemini-extension.json     # Gemini CLI extension

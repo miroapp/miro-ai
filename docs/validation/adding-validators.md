@@ -6,17 +6,22 @@ How to extend the validation system.
 
 ```
 validation/
-├── schemas/                    # JSON Schema definitions
+├── schemas/                       # JSON Schema definitions
 │   ├── skill-frontmatter.schema.json
 │   ├── command-frontmatter.schema.json
 │   ├── agent-frontmatter.schema.json
 │   └── power-frontmatter.schema.json
 └── src/
-    ├── index.ts                # Main entry point
+    ├── index.ts                   # Orchestrator — invoked by `bun run validate`
     ├── frontmatter-validator.ts
     ├── bash-validator.ts
     ├── claude-validator.ts
-    └── consistency-checker.ts
+    ├── codex-validator.ts
+    ├── copilot-cowork-validator.ts
+    ├── consistency-checker.ts
+    ├── version-checker.ts
+    ├── converters/                # `bun run convert` — not validators
+    └── installer/                 # `bun run plugins:install:*` — not validators
 ```
 
 ## Adding a New Frontmatter Schema

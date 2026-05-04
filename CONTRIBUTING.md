@@ -95,6 +95,20 @@ Individual filters are not exposed as scripts — `bun run validate` and `bun ru
 
 See [Validation Documentation](docs/validation/README.md) for detailed information on schemas, troubleshooting, and extending validators.
 
+### Installing the plugin into your tools
+
+Three driver scripts install or uninstall the miro plugin across Claude Code, Gemini CLI, Codex CLI, and Cursor in one go (always at user scope):
+
+```bash
+bun run plugins:install:local   # install from the working tree (runs `bun run convert` first)
+bun run plugins:install:main    # install from miroapp/miro-ai @ main
+bun run plugins:uninstall       # remove from all four targets
+```
+
+Each install is a clean re-install — the script removes any existing copy first, so re-running is safe. Targets whose CLI is missing from `PATH` are skipped with a warning; real failures abort that target and the command exits non-zero.
+
+For per-tool manual workflows (e.g. `claude --plugin-dir ./claude-plugins/miro` for live development), see the per-tool sections below.
+
 ### Repository Structure
 
 ```
@@ -114,9 +128,10 @@ miro-ai/
 ├── cursor-plugins/           # Cursor plugins (auto-generated from claude-plugins)
 ├── powers/                   # Kiro powers
 │   └── code-gen/            # Design-to-code
-├── validation/               # Validators and converters
+├── validation/               # Validators, converters, installer
 │   └── src/
-│       └── converters/      # bun run convert
+│       ├── converters/      # bun run convert
+│       └── installer/       # bun run plugins:install:*
 ├── docs/                     # Documentation
 │   ├── claude-code/         # Plugin docs
 │   ├── kiro/                # Power docs
