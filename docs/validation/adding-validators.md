@@ -142,7 +142,7 @@ results.push({
 bun run validate
 
 # Run specific validator
-bun run validate:frontmatter
+bun validation/src/index.ts --frontmatter-only
 
 # Test with a broken file to verify error detection
 ```

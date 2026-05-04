@@ -5,10 +5,6 @@
   "description": "Miro AI Developer Tools - plugins for Claude Code, Gemini CLI, Cursor, and Kiro",
   "scripts": {
     "validate": "bun validation/src/index.ts",
-    "validate:frontmatter": "bun validation/src/index.ts --frontmatter-only",
-    "validate:bash": "bun validation/src/index.ts --bash-only",
-    "validate:consistency": "bun validation/src/index.ts --consistency-only",
-    "validate:version": "bun validation/src/index.ts --version-only",
     "convert": "bun validation/src/converters/index.ts",
     "package:copilot-cowork": "bun validation/src/package-copilot-cowork.ts",
     "sync:cursor": "bun validation/src/converters/index.ts --cursor && bun validation/src/sync-cursor.ts",

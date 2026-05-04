@@ -91,16 +91,7 @@ bun run validate
 | Codex generated content | No Claude-only tool references leak through |
 | Copilot Cowork package | Manifest schema + identity + skills + connectors |
 
-**Individual validators (cross-cutting types):**
-
-```bash
-bun run validate:frontmatter     # Markdown frontmatter only
-bun run validate:bash            # Bash scripts only (shellcheck)
-bun run validate:consistency     # Cross-platform consistency only
-bun run validate:version         # Version bump check
-```
-
-Per-plugin or per-target slices are intentionally not exposed as scripts — `bun run validate` and `bun run convert` are bulk operations. For ad-hoc debugging, call the CLI directly, e.g. `bun validation/src/index.ts --codex-only` or `bun validation/src/converters/index.ts --cursor --plugin=miro --dry-run`.
+Individual filters are not exposed as scripts — `bun run validate` and `bun run convert` are bulk operations. For ad-hoc debugging, call the CLI directly, e.g. `bun validation/src/index.ts --codex-only` or `bun validation/src/converters/index.ts --cursor --plugin=miro --dry-run`.
 
 See [Validation Documentation](docs/validation/README.md) for detailed information on schemas, troubleshooting, and extending validators.
 
@@ -449,7 +440,6 @@ Plugins are auto-generated from Claude plugins as part of the bulk `bun run conv
    ```bash
    bun run validate
    ```
-   Or scope to consistency only with `bun run validate:consistency`.
 
 4. **Test in Codex:**
    - Open the repository in Codex so it can discover `.agents/plugins/marketplace.json`

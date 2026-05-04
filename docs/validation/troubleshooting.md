@@ -268,7 +268,7 @@ git commit --no-verify -m "message"
 ## Getting Help
 
 1. Run with verbose output: `bun run validate 2>&1 | less`
-2. Check specific validator: `bun run validate:frontmatter`
+2. Check specific validator: `bun validation/src/index.ts --frontmatter-only`
 3. Open an issue: [github.com/miroapp/miro-ai/issues](https://github.com/miroapp/miro-ai/issues)
 
 ## Related

@@ -131,7 +131,7 @@ Configure MCP servers in `.mcp.json` at the plugin root:
 }
 ```
 
-The converter rewrites `X-AI-Source` per target (`cursor-plugin`, `gemini-extension`, `codex-plugin`). The URL must stay consistent across all targets — this is checked by `validate:consistency`.
+The converter rewrites `X-AI-Source` per target (`cursor-plugin`, `gemini-extension`, `codex-plugin`). The URL must stay consistent across all targets — this is checked by `bun run validate`.
 
 ### MCP Server Types
 
@@ -175,7 +175,7 @@ The converter rewrites `X-AI-Source` per target (`cursor-plugin`, `gemini-extens
 
 - [ ] `plugin.json` is valid JSON and matches Claude's plugin schema (`bun run validate`)
 - [ ] Each `SKILL.md` has `name` matching the directory and a `description` with clear triggers
-- [ ] `.mcp.json` URL matches downstream targets (`bun run validate:consistency`)
+- [ ] `.mcp.json` URL matches downstream targets (`bun run validate`)
 - [ ] No Claude-only tool names (`Write tool`, `TaskCreate`, `AskUserQuestion`, …) leak into Codex output
 - [ ] `bun run convert` is idempotent — second run produces zero diff
 
