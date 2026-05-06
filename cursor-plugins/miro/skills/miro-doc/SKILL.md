@@ -30,8 +30,13 @@ The document supports:
    - If it's actual document content, use it directly
    - If it's a topic/request, generate appropriate document content
 3. If content is missing, ask what document they want to create
-4. Call `doc_create` with the board URL and the markdown content. Set `parent_id` to a frame ID if the document should sit inside a frame.
+4. Call `doc_create` with the board URL and the markdown content. To place the document inside a frame, pass the board URL with `?moveToWidget=<frame_id>` — the tool will detect the frame target automatically (no `parent_id` argument exists). When that URL is used, `x` and `y` become coordinates relative to the frame's top-left corner; pick values that fit inside the frame's width and height (default doc width is 800px).
 5. Report success with a link to the board
+
+## Coordinates
+
+- Board-level (URL has no `moveToWidget`): `x=0, y=0` is the board center.
+- Frame target (URL has `?moveToWidget=<frame_id>`): `x=0, y=0` is the frame's top-left corner. The doc's top-left is placed at the given `x, y`, and the doc must fit inside the frame's width and height. Targets that point at a non-frame item (sticky note, shape, diagram) are silently ignored, so the doc lands on the board.
 
 ## Examples
 

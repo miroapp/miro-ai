@@ -25,8 +25,13 @@ Identify from the user's request:
 3. Based on the table purpose, suggest appropriate columns:
    - Propose a default column structure
    - Let user customize or accept defaults
-4. Call `table_create` with the board URL, table name, and column definitions. Set `parent_id` to a frame ID if the table should sit inside a frame.
+4. Call `table_create` with the board URL, table name, and column definitions. To place the table inside a frame, pass the board URL with `?moveToWidget=<frame_id>` — the tool detects the frame target automatically (no `parent_id` argument exists). When that URL is used, `x` and `y` become coordinates relative to the frame's top-left corner; the table must fit within the frame's width and height.
 5. Report success and offer to add initial rows
+
+## Coordinates
+
+- **Board-level** (URL has no `moveToWidget`): board center is `(0, 0)`.
+- **Frame target** (URL has `?moveToWidget=<frame_id>`): `(0, 0)` is the frame's top-left corner. Targets that point at a non-frame item are silently ignored, so the table lands on the board.
 
 ## Common Table Templates
 

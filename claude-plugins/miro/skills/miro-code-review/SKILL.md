@@ -1,38 +1,69 @@
 ---
 name: miro-code-review
-description: Use when the user wants to create a visual code review on a Miro board from a GitHub PR (current or external repo), local uncommitted changes, or a branch comparison — produces a file-changes table, summary/architecture/security docs, and architecture diagrams.
+description: Use when the user wants to create a visual code review on a Miro board from a pull/merge request (GitHub, GitLab, or any forge), local uncommitted changes, or a branch comparison — produces a file-changes table, summary/architecture/security docs, and architecture diagrams, then links them back from the PR/MR.
 ---
 
 # Visual Code Review
 
-Generate a comprehensive visual code review on a Miro board from GitHub PRs, local changes, or branch comparisons. Includes architecture analysis, security review, and optionally enriches with enterprise documentation.
+Generate a comprehensive visual code review on a Miro board from a pull/merge request, local changes, or a branch comparison. Includes architecture analysis, security review, and optionally enriches with enterprise documentation. After the artifacts are created, link them back from the PR/MR description so reviewers can find them without leaving their forge.
 
-The user provides a Miro board URL plus one source: a PR number, `owner/repo#number`, a full PR URL, the keyword "local changes", or a branch name to compare against main.
+The user provides a Miro board URL plus one source: a PR/MR number, `owner/repo#number` (or `group/project!number`), a full PR/MR URL, the keyword "local changes", or a branch name to compare against the default branch. The skill is platform-agnostic: it detects the forge from the URL or the configured git remote and uses whichever CLI is available locally.
 
 ## Workflow
 
 ### 1. Identify the source from the user's request
 
-Determine the source type:
-- A bare number → GitHub PR in the current repo
-- `owner/repo#number` → External GitHub PR
-- A GitHub URL → Extract owner, repo, and PR number from the URL
-- "local changes" / uncommitted work → Local changes
-- A branch name → Branch comparison against main
+Determine the source type and infer the platform from the URL or configured git remote:
+
+- A bare number → PR/MR in the current repo (infer the platform from the configured git remote: `git remote get-url origin`)
+- `owner/repo#number` (or `group/project!number` for GitLab-style) → PR/MR in an external repo on the same platform as the current remote, unless a host is given
+- A full URL → extract host, owner/group, repo/project, and PR/MR number from the URL; the host determines the platform
+- "local changes" / uncommitted work → local diff only, no PR
+- A branch name → local diff against the default branch (`main` or whatever the remote shows as default)
+
+#### Tool selection
+
+Pick the CLI based on what's installed and what the source points at. Do not assume `gh`. Run `command -v <cli>` to check availability before invoking:
+
+- GitHub URLs / `github.com` remote → `gh` CLI if available
+- GitLab URLs / `gitlab.com` or self-hosted GitLab → `glab` CLI if available
+- If no first-party CLI is available for the detected platform, fall back to authenticated REST via `curl` using whatever credentials the user already has configured (e.g. `~/.netrc`, env var tokens like `$GITHUB_TOKEN`, `$GITLAB_TOKEN`)
+- For local / branch-comparison sources, plain `git` is sufficient — no platform CLI needed
+
+State the detected platform and tool in chat output before proceeding.
 
 ### 2. Extract Changes
 
-**For GitHub PR (current repo):**
+Fetch two things, regardless of platform:
+
+1. **Metadata**: title, description/body, author, list of changed files with additions/deletions per file
+2. **Unified diff** of the change
+
+Use whichever CLI matches the platform detected in §1; the JSON/text shape will differ between forges — normalize fields downstream.
+
+**GitHub example (`gh`):**
 ```bash
+# Current repo
 gh pr view $PR_NUMBER --json title,body,author,files,additions,deletions
 gh pr diff $PR_NUMBER
-```
 
-**For GitHub PR (external repo):**
-```bash
+# External repo
 gh pr view $PR_NUMBER --repo $OWNER/$REPO --json title,body,author,files,additions,deletions
 gh pr diff $PR_NUMBER --repo $OWNER/$REPO
 ```
+
+**GitLab example (`glab`):**
+```bash
+# Current project
+glab mr view $MR_NUMBER -F json
+glab mr diff $MR_NUMBER
+
+# External project
+glab mr view $MR_NUMBER -R $GROUP/$PROJECT -F json
+glab mr diff $MR_NUMBER -R $GROUP/$PROJECT
+```
+
+**REST fallback (any platform):** issue an authenticated `curl` to the platform's REST endpoint for the PR/MR and its diff. Use the user's configured token (`$GITHUB_TOKEN`, `$GITLAB_TOKEN`, etc.) and pass `Accept: application/vnd.github.v3.diff` (or platform equivalent) for the diff.
 
 **For Local Changes:**
 ```bash
@@ -42,8 +73,9 @@ git diff HEAD
 
 **For Branch Comparison:**
 ```bash
-git log main..HEAD --oneline
-git diff main...HEAD
+DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+git log $DEFAULT_BRANCH..HEAD --oneline
+git diff $DEFAULT_BRANCH...HEAD
 ```
 
 ### 3. Analyze Changes
@@ -275,14 +307,75 @@ Adjust starting x based on actual number of documents created.
 - Dependencies between changed files
 - Trust boundaries (for security-relevant changes)
 
+### 6. Post link back to PR/MR
+
+Once the artifacts are created, surface the link from the PR/MR itself so reviewers see it without leaving their forge.
+
+**Skip this step entirely** when:
+- The source is "local changes"
+- The source is a branch with no associated open PR/MR
+
+In those cases the link is reported only in chat output (see §Output below).
+
+#### Block format
+
+Append a delimited block to the existing PR/MR description. Reuse the same delimiters on every run so the block can be replaced cleanly:
+
+```
+<!-- miro-pr-docs:start -->
+## PR documentation
+
+PR details on Miro: <link>
+
+- <X> documents, <Y> diagrams, <Z> table rows
+- High-risk files: <count>
+- Security findings: <count>
+<!-- miro-pr-docs:end -->
+```
+
+**Link rules:**
+- If the original Miro URL contained `moveToWidget=<frameId>`, reuse that exact URL — clicking opens straight to the frame
+- Otherwise use the plain board URL
+
+**Idempotency:**
+- If the description already contains the `<!-- miro-pr-docs:start -->` … `<!-- miro-pr-docs:end -->` markers, replace the contents in place
+- Otherwise append the block at the end of the existing description, preserving everything else verbatim
+- Never overwrite the user-authored portion of the description
+
+#### Update the description
+
+Use the same CLI selection from §1. Read the current body, splice the new block, write it back.
+
+**GitHub example (`gh`):**
+```bash
+# Read current body
+BODY=$(gh pr view $PR_NUMBER --json body -q .body)
+# (splice: replace existing block or append) → produce $NEW_BODY
+gh pr edit $PR_NUMBER --body "$NEW_BODY"
+```
+
+**GitLab example (`glab`):**
+```bash
+BODY=$(glab mr view $MR_NUMBER -F json | jq -r .description)
+# (splice) → $NEW_BODY
+glab mr update $MR_NUMBER --description "$NEW_BODY"
+```
+
+**REST fallback:** read and PATCH the PR/MR body via the platform's REST API with the user's token.
+
+#### Permission failure fallback
+
+If editing the description fails because the user lacks permission (for example, when reviewing someone else's PR), post the same block as a single PR/MR comment instead. Mention this fallback in the chat output so the user knows the description was not changed.
+
 ## Output
 
 After completion, provide:
-1. Link to the Miro board
-2. Summary of elements created (X docs, Y diagrams, Z table rows)
-3. High-risk files requiring careful review
-4. Security findings (if any critical/high)
-5. Architecture concerns (if any breaking changes)
+1. Link to the Miro board (or frame, if `moveToWidget` was provided)
+2. Confirmation that the PR/MR description was updated, or that we left a comment as a fallback, or that the post step was skipped because the source was local / branchless
+3. Summary of elements created (X docs, Y diagrams, Z table rows)
+4. High-risk files requiring careful review
+5. Security findings (if any critical/high)
+6. Architecture concerns (if any breaking changes)
 
 ## Background
 

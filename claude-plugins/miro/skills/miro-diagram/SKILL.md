@@ -28,7 +28,7 @@ Automatically detect or let the user specify:
 2. If description is missing or unclear, ask what they want to diagram
 3. Determine the appropriate diagram type from the description (or ask if ambiguous)
 4. *(Optional, for precise control)* Call `diagram_get_dsl` first to fetch the DSL spec — useful when the user wants a structurally complex diagram and you'd rather author the DSL directly than rely on natural language.
-5. Call `diagram_create` with the board URL, the diagram description, and optionally the diagram type if specified. Set `parent_id` to a frame ID if the diagram should sit inside a frame.
+5. Call `diagram_create` with the board URL, the diagram description, and optionally the diagram type if specified. To place the diagram inside a frame, pass the board URL with `?moveToWidget=<frame_id>` — the tool detects the frame target automatically (no `parent_id` argument exists). When that URL is used, `x` and `y` become coordinates relative to the frame's top-left corner.
 6. Report success with a link to the board
 
 ## Examples
@@ -68,13 +68,16 @@ flowchart TD
     E --> F[Create Account]
 ```
 
-## Positioning on the Board
+## Positioning
 
-Board coordinates use a Cartesian system with center at `(0, 0)`. Positive X goes right, positive Y goes down.
+Two coordinate systems depending on whether the URL targets a frame:
 
-**Spacing recommendations** when placing multiple items:
+- **Board-level** (URL has no `moveToWidget`): Cartesian with the board center at `(0, 0)`. Positive x goes right, positive y goes down.
+- **Frame target** (URL has `?moveToWidget=<frame_id>`): coordinates are relative to the frame's top-left corner; `(0, 0)` is the frame's top-left. The diagram must fit within the frame's width and height. Targets that point at a non-frame item are silently ignored, so the diagram lands on the board.
+
+**Spacing recommendations** when placing multiple items at the board level:
 - Diagrams: 2000–3000 units apart
 - Documents: 500–1000 units apart
 - Tables: 1500–2000 units apart
 
-To place a diagram inside a frame, set `parent_id` to the frame's ID.
+When placing multiple items inside a single frame, fetch the frame's geometry first (e.g. via `context_get` with the frame URL) and lay them out in a grid that fits within the frame's width and height.
