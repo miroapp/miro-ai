@@ -1,9 +1,4 @@
-export const SHARED_GENERATED_PLUGIN_ORDER = [
-  "miro",
-  "miro-tasks",
-  "miro-review",
-  "miro-spec",
-] as const;
+export const SHARED_GENERATED_PLUGIN_ORDER = ["miro"] as const;
 
 export type SharedGeneratedPluginName =
   (typeof SHARED_GENERATED_PLUGIN_ORDER)[number];
@@ -47,9 +42,4 @@ export const CODEX_PLUGIN_DEFAULT_PROMPTS: Record<
     "Create a diagram or doc on a Miro board",
     "Create a task or decision table on a Miro board",
   ],
-};
-
-export const CODEX_SKILL_AGENT_PROMPTS: Record<string, string> = {
-  "miro-mcp":
-    "Use $miro:miro-mcp to choose the right Miro MCP tool and workflow for this task.",
 };

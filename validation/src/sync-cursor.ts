@@ -29,29 +29,38 @@ function copyDirSync(src: string, dest: string) {
   }
 }
 
-function main() {
-  console.log(bold("\nSync Cursor plugins → ~/.cursor/plugins/local/\n"));
+export function syncCursorPlugins(
+  srcDir: string = CURSOR_PLUGINS_SRC,
+  destDir: string = CURSOR_PLUGINS_DEST,
+  pluginNames?: string[]
+) {
+  console.log(bold(`\nSync Cursor plugins → ${destDir}/\n`));
+
+  if (!fs.existsSync(srcDir)) {
+    throw new Error(`Source directory not found: ${srcDir}`);
+  }
 
   const entries = fs
-    .readdirSync(CURSOR_PLUGINS_SRC, { withFileTypes: true })
+    .readdirSync(srcDir, { withFileTypes: true })
     .filter(
       (e) =>
         e.isDirectory() &&
+        (!pluginNames || pluginNames.includes(e.name)) &&
         fs.existsSync(
-          path.join(CURSOR_PLUGINS_SRC, e.name, ".cursor-plugin", "plugin.json")
+          path.join(srcDir, e.name, ".cursor-plugin", "plugin.json")
         )
     );
 
   if (entries.length === 0) {
-    console.log(red("No cursor plugins found in cursor-plugins/"));
-    process.exit(1);
+    const filterMsg = pluginNames ? ` matching ${JSON.stringify(pluginNames)}` : "";
+    throw new Error(`No cursor plugins found in ${srcDir}${filterMsg}`);
   }
 
-  fs.mkdirSync(CURSOR_PLUGINS_DEST, { recursive: true });
+  fs.mkdirSync(destDir, { recursive: true });
 
   for (const entry of entries) {
-    const src = path.join(CURSOR_PLUGINS_SRC, entry.name);
-    const dest = path.join(CURSOR_PLUGINS_DEST, entry.name);
+    const src = path.join(srcDir, entry.name);
+    const dest = path.join(destDir, entry.name);
     fs.rmSync(dest, { recursive: true, force: true });
     copyDirSync(src, dest);
     console.log(`  ${green("✓")} ${entry.name} ${dim(`→ ${dest}`)}`);
@@ -60,6 +69,11 @@ function main() {
   console.log(
     bold(`\n  ${entries.length} plugin(s) synced. Reload Cursor to pick up changes.\n`)
   );
+  return entries.length;
 }
 
-main();
+export { CURSOR_PLUGINS_SRC, CURSOR_PLUGINS_DEST };
+
+if (import.meta.main) {
+  syncCursorPlugins();
+}

@@ -19,17 +19,19 @@ miro-ai/
 ├── .agents/
 │   └── skills/             # Repo-local helper skills for agent workflows
 ├── claude-plugins/           # Claude Code plugins
-│   ├── miro/                # Core MCP integration (commands, skills)
-│   ├── miro-tasks/          # Task tracking with hooks and scripts
-│   ├── miro-solutions/      # Demo plugin generator (agents, templates)
-│   └── miro-research/       # Research visualization
+│   └── miro/                # Core MCP integration with bundled skills (browse, code-review, code-spec, diagram, doc, table)
 ├── codex-plugins/            # Codex plugins (auto-generated)
+├── copilot-cowork-plugins/   # GitHub Copilot Cowork packages (auto-generated)
 ├── cursor-plugins/           # Cursor plugins (auto-generated)
+├── gemini-extension.json     # Gemini CLI extension manifest at repo root (auto-generated)
+├── skills/                   # Agent Skills mirror (auto-generated, also serves as Gemini extension's bundled skills)
 ├── powers/                   # Kiro powers
 │   └── code-gen/            # Design-to-code (POWER.md + mcp.json)
-├── validation/               # Validation scripts and schemas
+├── validation/               # Validators, converters, installers
 │   ├── schemas/             # JSON schemas for frontmatter
-│   └── src/                 # TypeScript validators
+│   └── src/                 # TypeScript drivers
+│       ├── converters/      # bun run convert
+│       └── installer/       # bun run plugins:install:*
 ├── docs/                     # Documentation
 ├── .claude-plugin/           # Marketplace manifest
 ├── gemini-extension.json     # Gemini CLI extension

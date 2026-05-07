@@ -37,15 +37,53 @@ export async function checkConsistency(
   // Collect all MCP server configurations
   const mcpConfigs: { file: string; servers: Record<string, McpServerConfig> }[] = [];
 
+  // Check: every .mcp.json across plugins/extensions must use the canonical
+  // {"mcpServers": {...}} wrapper. Reference: Claude Code MCP docs, Cursor MCP docs.
+  // Cursor in particular silently ignores files without this wrapper.
+  const mcpJsonFiles = await fg(
+    [
+      "claude-plugins/*/.mcp.json",
+      "cursor-plugins/*/.mcp.json",
+      "codex-plugins/*/.mcp.json",
+      "powers/*/mcp.json",
+    ],
+    { cwd: root }
+  );
+  const shapeErrors: string[] = [];
+  for (const file of mcpJsonFiles) {
+    const data = (await readJsonFile(path.join(root, file))) as
+      | Record<string, unknown>
+      | null;
+    if (!data || typeof data !== "object") {
+      shapeErrors.push(`${file}: not a valid JSON object`);
+      continue;
+    }
+    if (!("mcpServers" in data) || typeof data.mcpServers !== "object") {
+      shapeErrors.push(
+        `${file}: missing top-level "mcpServers" wrapper (canonical MCP config shape)`
+      );
+    }
+  }
+  // Gemini extension manifest is a different file but also requires mcpServers
+  // when MCP is configured; we treat absence of mcpServers as "no MCP" rather
+  // than a shape error since Gemini extensions can be MCP-less.
+  results.push({
+    check: "MCP config shape",
+    valid: shapeErrors.length === 0,
+    details:
+      shapeErrors.length === 0
+        ? [`All ${mcpJsonFiles.length} MCP config files use the canonical "mcpServers" wrapper`]
+        : shapeErrors,
+  });
+
   // Claude .mcp.json files
   const claudeMcpFiles = await fg("claude-plugins/*/.mcp.json", { cwd: root });
   for (const file of claudeMcpFiles) {
-    const data = await readJsonFile(path.join(root, file));
-    if (data && typeof data === "object") {
-      mcpConfigs.push({
-        file,
-        servers: data as Record<string, McpServerConfig>,
-      });
+    const data = (await readJsonFile(path.join(root, file))) as {
+      mcpServers?: Record<string, McpServerConfig>;
+    } | null;
+    if (data?.mcpServers) {
+      mcpConfigs.push({ file, servers: data.mcpServers });
     }
   }
 
@@ -63,11 +101,8 @@ export async function checkConsistency(
     }
   }
 
-  // Gemini extensions (root + generated)
-  const geminiFiles = [
-    "gemini-extension.json",
-    ...(await fg("gemini-extensions/*/gemini-extension.json", { cwd: root })),
-  ];
+  // Gemini extension (root manifest)
+  const geminiFiles = ["gemini-extension.json"];
   for (const file of geminiFiles) {
     const geminiData = (await readJsonFile(path.join(root, file))) as {
       mcpServers?: Record<string, McpServerConfig>;
@@ -190,16 +225,11 @@ export async function checkConsistency(
     ".claude-plugin/marketplace.json",
     ".cursor-plugin/marketplace.json",
     ...await fg("claude-plugins/*/.claude-plugin/plugin.json", { cwd: root }),
-    ...await fg("claude-plugins/*/.claude-plugin/hooks.json", { cwd: root }),
-    ...await fg("gemini-extensions/*/gemini-extension.json", { cwd: root }),
-    ...await fg("gemini-extensions/*/hooks/hooks.json", { cwd: root }),
     ...await fg("copilot-cowork-plugins/*/manifest.json", { cwd: root }),
     ...await fg("cursor-plugins/*/.mcp.json", { cwd: root }),
     ...await fg("cursor-plugins/*/.cursor-plugin/plugin.json", { cwd: root }),
-    ...await fg("cursor-plugins/*/hooks/hooks.json", { cwd: root }),
     ...await fg("codex-plugins/*/.mcp.json", { cwd: root }),
     ...await fg("codex-plugins/*/.codex-plugin/plugin.json", { cwd: root }),
-    ...await fg("codex-plugins/*/hooks.json", { cwd: root }),
     ".agents/plugins/marketplace.json",
   ];
 
@@ -240,7 +270,8 @@ export async function checkConsistency(
         : codexMcpPlacementErrors,
   });
 
-  // Check: Codex scope is only the core miro plugin with the native miro-mcp skill.
+  // Check: Codex scope is only the core miro plugin, and its skill set matches
+  // the source-of-truth in claude-plugins/miro/skills/.
   const codexScopeErrors: string[] = [];
   const codexPluginManifests = await fg("codex-plugins/*/.codex-plugin/plugin.json", {
     cwd: root,
@@ -301,13 +332,34 @@ export async function checkConsistency(
     codexScopeErrors.push(`${file}: Codex output must not include generated scripts`);
   }
 
-  const miroSkillPath = "codex-plugins/miro/skills/miro-mcp/SKILL.md";
-  const miroSkillAgentPath = "codex-plugins/miro/skills/miro-mcp/agents/openai.yaml";
-  if ((await fg(miroSkillPath, { cwd: root })).length === 0) {
-    codexScopeErrors.push(`${miroSkillPath} is missing`);
+  // Derive the expected skill set from the source-of-truth, so adding or
+  // removing a skill in claude-plugins/miro/skills/ flows through automatically.
+  const sourceSkillDirs = await fg("claude-plugins/miro/skills/*", {
+    cwd: root,
+    onlyDirectories: true,
+    deep: 1,
+  });
+  const expectedMiroSkills = sourceSkillDirs.map((dir) => path.basename(dir)).sort();
+
+  for (const skillName of expectedMiroSkills) {
+    const skillPath = `codex-plugins/miro/skills/${skillName}/SKILL.md`;
+    if ((await fg(skillPath, { cwd: root })).length === 0) {
+      codexScopeErrors.push(`${skillPath} is missing`);
+    }
   }
-  if ((await fg(miroSkillAgentPath, { cwd: root })).length === 0) {
-    codexScopeErrors.push(`${miroSkillAgentPath} is missing`);
+
+  const codexMiroSkillDirs = await fg("codex-plugins/miro/skills/*", {
+    cwd: root,
+    onlyDirectories: true,
+    deep: 1,
+  });
+  for (const dir of codexMiroSkillDirs) {
+    const skillName = path.basename(dir);
+    if (!expectedMiroSkills.includes(skillName)) {
+      codexScopeErrors.push(
+        `${dir}: skill not present in claude-plugins/miro/skills/ (stale Codex output)`
+      );
+    }
   }
 
   const marketplaceData = (await readJsonFile(
@@ -329,7 +381,7 @@ export async function checkConsistency(
     details:
       codexScopeErrors.length === 0
         ? [
-            "Codex output contains only codex-plugins/miro with the native miro-mcp skill and a single marketplace entry",
+            `Codex output contains only codex-plugins/miro with skills [${expectedMiroSkills.join(", ")}] and a single marketplace entry`,
         ]
         : codexScopeErrors,
   });
@@ -338,7 +390,6 @@ export async function checkConsistency(
   const codexTextFiles = await fg(
     [
       "codex-plugins/*/skills/*/SKILL.md",
-      "codex-plugins/*/skills/*/agents/openai.yaml",
       "codex-plugins/*/scripts/*.sh",
       "codex-plugins/*/README.md",
     ],
@@ -351,6 +402,7 @@ export async function checkConsistency(
     ["TaskUpdate", /\bTaskUpdate\b/],
     ["Write tool", /\bWrite tool\b/],
     ["Read tool", /\bRead tool\b/],
+    ["Task tool", /\bTask tool\b/],
     ["${CLAUDE_PLUGIN_ROOT}", /\$\{CLAUDE_PLUGIN_ROOT\}/],
   ];
 

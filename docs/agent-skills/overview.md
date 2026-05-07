@@ -27,9 +27,12 @@ npx skills add miroapp/miro-ai -y               # Skip confirmation prompts
 
 | Skill | Description |
 |-------|-------------|
-| miro-mcp | How to use Miro MCP tools — diagrams, documents, tables, context extraction |
-| miro-platform | Miro platform overview — canvas features, content types, AI capabilities |
-| miro-code-review | Code review workflows using Miro boards |
+| miro-browse | Listing, filtering, and summarizing items on a Miro board |
+| miro-code-review | Visual code review from PRs, local changes, or branch comparisons on a Miro board |
+| miro-code-spec | Extract Miro board specs (documents, diagrams, prototypes, tables, images) to local `.miro/specs/` files |
+| miro-diagram | Creating diagrams (flowchart, mindmap, UML, ER) from text or Mermaid |
+| miro-doc | Creating and editing markdown documents on a Miro board |
+| miro-table | Creating, populating, and syncing structured tables on a Miro board |
 
 ## How Skills Work
 
@@ -67,7 +70,7 @@ Agent Skills work with any tool that supports the [agentskills.io specification]
 | Agents | No | Yes |
 | Portability | Any compatible tool | Claude Code only |
 
-Skills are auto-generated from Claude plugin skills via `bun run convert:skills`. The source of truth is `claude-plugins/*/skills/`.
+Skills are auto-generated from Claude plugin skills via the bulk `bun run convert` pipeline. The source of truth is `claude-plugins/*/skills/`.
 
 ## Related
 

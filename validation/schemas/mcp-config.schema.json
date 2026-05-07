@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "miro-ai/mcp-config",
+  "title": "MCP server configuration (.mcp.json)",
+  "description": "Canonical shape for plugin / extension .mcp.json files across Claude Code, Cursor, and Codex. Reference: https://code.claude.com/docs/en/mcp, https://cursor.com/docs/context/mcp.",
+  "type": "object",
+  "required": ["mcpServers"],
+  "additionalProperties": false,
+  "properties": {
+    "mcpServers": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Map of server name → server config. Keys are arbitrary identifiers used by the host.",
+      "patternProperties": {
+        "^[a-zA-Z][a-zA-Z0-9_-]*$": {
+          "$ref": "#/definitions/server"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions": {
+    "server": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["http", "sse", "stdio"]
+        },
+        "url": { "type": "string", "format": "uri" },
+        "httpUrl": { "type": "string", "format": "uri" },
+        "command": { "type": "string" },
+        "args": { "type": "array", "items": { "type": "string" } },
+        "env": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "oauth": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "anyOf": [
+        { "required": ["url"] },
+        { "required": ["httpUrl"] },
+        { "required": ["command"] }
+      ]
+    }
+  }
+}
