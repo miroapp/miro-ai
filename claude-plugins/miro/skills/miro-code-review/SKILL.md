@@ -402,7 +402,7 @@ Primary signal is the **label prefix**, because per-element styling is not guara
 
 - `[ADDED] <name>` — element introduced in this change. In an *after* diagram only (omitted from before).
 - `[REMOVED] <name>` — element deleted in this change. In a *before* diagram only (omitted from after).
-- `[MOD] <name>` — element kept but with a meaningful change to signature, body, or relationships. Present in both diagrams; prefix appears in the *after* only.
+- `[UPDATED] <name>` — element kept but with a meaningful change to signature, body, or relationships. Present in both diagrams; prefix appears in the *after* only.
 - Unmarked elements are unchanged context.
 
 Also emit Mermaid `classDef` directives as a best-effort visual layer — a renderer that honours them produces colour:
@@ -410,21 +410,13 @@ Also emit Mermaid `classDef` directives as a best-effort visual layer — a rend
 ```mermaid
 classDef added    fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
 classDef removed  fill:#fee2e2,stroke:#dc2626,stroke-width:2px,stroke-dasharray:5 5;
-classDef modified fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+classDef updated  fill:#fef3c7,stroke:#d97706,stroke-width:2px;
 class A,B added
 class C removed
-class D modified
+class D updated
 ```
 
 Prefixes alone must be self-sufficient: if Miro drops the classDef block, the reviewer still sees what changed from the label text.
-
-##### Legend
-
-After the first diagram (or pair) on the board, place a small text/sticky:
-
-> Legend: `[ADDED]` new in this change · `[REMOVED]` deleted · `[MOD]` modified · unmarked = unchanged context
-
-One legend per code-review board is enough.
 
 **Diagram Selection Guide:**
 
@@ -527,7 +519,7 @@ If the §4.5 bail-out applied, the entire output is the trivial-PR chat message 
 Otherwise, after completion provide:
 1. Link to the Miro board (or frame, if `moveToWidget` was provided)
 2. Confirmation that the PR/MR description was updated, or that we left a comment as a fallback, or that the post step was skipped because the source was local / branchless
-3. Summary of elements created (X docs, Y diagrams as N pairs + M single annotated, Z table rows) — base revision `<short LINK_BASE_SHA>`, head revision `<short LINK_SHA>` — and which artifact types were intentionally skipped per §4.5, with a one-line reason
+3. Summary of elements created (X docs, Y diagrams as N pairs + M single annotated, Z table rows). Mention base revision `<short LINK_BASE_SHA>` and head revision `<short LINK_SHA>` in this chat summary only — do **not** place these SHAs on the Miro board. Also note which artifact types were intentionally skipped per §4.5, with a one-line reason.
 4. High-risk files requiring careful review
 5. Security findings (if any critical/high)
 6. Architecture concerns (if any breaking changes)

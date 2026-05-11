@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/teams/vDevPreview/MicrosoftTeams.schema.json",
   "manifestVersion": "devPreview",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "id": "1b72f048-929d-554f-9995-9bc8e90f4c4f",
   "packageName": "com.cowork.plugin.miro",
   "developer": {
