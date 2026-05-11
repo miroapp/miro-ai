@@ -103,6 +103,32 @@ LINK_SHA=$(git rev-parse HEAD)
 
 REST fallback: read `head.sha` (GitHub) or `diff_refs.head_sha` (GitLab) from the same JSON payload already fetched above — no extra round-trip needed.
 
+- `LINK_BASE_SHA` — base commit SHA (the PR/MR target tip, or the merge-base for branch comparisons). Required by §5 "Showing change" to render before/after diagrams and to hyperlink "before" nodes to the prior revision:
+
+```bash
+# GitHub
+LINK_BASE_SHA=$(gh pr view $PR_NUMBER --json baseRefOid -q .baseRefOid)
+# external repo: add --repo $OWNER/$REPO
+
+# GitLab
+LINK_BASE_SHA=$(glab mr view $MR_NUMBER -F json | jq -r '.diff_refs.base_sha // .target_branch')
+# external project: add -R $GROUP/$PROJECT
+
+# Local diff (uncommitted): base is the current HEAD itself
+LINK_BASE_SHA=$(git rev-parse HEAD)
+
+# Branch comparison
+LINK_BASE_SHA=$(git merge-base origin/$DEFAULT_BRANCH HEAD)
+```
+
+To extract the pre-change content of a single file (needed when the unified diff alone doesn't carry enough surrounding structure, e.g. class hierarchies):
+
+```bash
+git show $LINK_BASE_SHA:path/to/file
+```
+
+If the base SHA is unreachable (shallow clone, history pruned, target branch not fetched), skip "before" diagrams and announce once in chat: `"base revision unavailable — only 'after' diagrams created"`.
+
 - `LINK_TEMPLATE` — pick by host shape; substitute `{path}` per reference, append `#L<start>-L<end>` line anchors when calling out a specific hunk:
   - GitHub-style: `https://{host}/{owner}/{repo}/blob/{sha}/{path}` (anchor: `#L{a}-L{b}`)
   - GitLab-style: `https://{host}/{group}/{project}/-/blob/{sha}/{path}` (anchor: `#L{a}-{b}`)
@@ -167,7 +193,7 @@ Skip §5 and §6 entirely.
 - **Summary doc** — create when the PR has non-trivial intent that isn't already captured in the PR title/body, OR when ≥ 2 high-risk items need callouts. Skip if it would just paraphrase the PR description.
 - **Architecture doc** — create only if structural changes are detected (new modules, modified public interfaces, dependency changes, breaking changes). Skip otherwise.
 - **Security doc** — create only when security-sensitive paths are touched (see §3 "Security Analysis"). Never create as a checklist-only artifact.
-- **Diagram** — create only when the change involves multi-component flow, control/data path changes, or structural relationships that are hard to grasp from the diff. Explicitly skip diagrams that would be a single node, two nodes with one arrow, or a literal restatement of the diff.
+- **Diagram** — create only when the change involves multi-component flow, control/data path changes, or structural relationships that are hard to grasp from the diff. Render as a **side-by-side before/after pair** by default (see §5 "Showing change"); use a **single annotated "after" diagram** only when the change is purely additive and touches ≤ 3 elements. Explicitly skip diagrams that would be a single node, two nodes with one arrow, or a literal restatement of the diff.
 
 **Announce the plan in chat** before creating anything, e.g.:
 
@@ -217,6 +243,8 @@ Use a **horizontal row layout** because tables and docs have fixed width but var
 | Medium | 6–15 | < 500 | 1–2 (summary + deep-dive if needed) | 1–3 |
 | Large | 16–30 | < 1500 | 2–3 (summary + architecture + security if applicable) | 2–4 |
 | Very Large | 30+ | ≥ 1500 | 3+ (by subsystem) | 3+ |
+
+> A side-by-side before/after pair counts as **one** diagram for the budgets above — the column limits conceptual artifacts, not raw board widgets.
 
 ---
 
@@ -357,37 +385,80 @@ For Very Large PRs, create per-subsystem documents (continue incrementing x by 8
 
 Create diagrams based on the type of changes. Position after the last document (continue x increments of 800).
 
+##### Showing change: before/after vs. annotated
+
+Every diagram must make the *delta* visible at a glance, not just the post-change state.
+
+- **Default: side-by-side before/after pair.** Build two diagrams of the same type with the same DSL conventions and place them adjacently on the same y-row. Build the "before" from the `LINK_BASE_SHA` revision (use `git show $LINK_BASE_SHA:path` when the unified diff doesn't carry enough surrounding structure), and the "after" from `LINK_SHA`.
+- **Single annotated "after" diagram instead** when *all* of these hold:
+  - The change is purely additive (no deleted files, no removed classes/components, no removed edges in the relevant subsystem), AND
+  - The additions do not rearrange existing relationships (no rewired callers, no moved responsibilities), AND
+  - There are ≤ 3 new nodes/edges to mark.
+- If `LINK_BASE_SHA` is unreachable (shallow clone, history pruned), degrade every pair to a single annotated "after" diagram and reuse the chat announcement from §2.
+
+##### Marking convention
+
+Primary signal is the **label prefix**, because per-element styling is not guaranteed by the Miro Mermaid renderer:
+
+- `[ADDED] <name>` — element introduced in this change. In an *after* diagram only (omitted from before).
+- `[REMOVED] <name>` — element deleted in this change. In a *before* diagram only (omitted from after).
+- `[MOD] <name>` — element kept but with a meaningful change to signature, body, or relationships. Present in both diagrams; prefix appears in the *after* only.
+- Unmarked elements are unchanged context.
+
+Also emit Mermaid `classDef` directives as a best-effort visual layer — a renderer that honours them produces colour:
+
+```mermaid
+classDef added    fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+classDef removed  fill:#fee2e2,stroke:#dc2626,stroke-width:2px,stroke-dasharray:5 5;
+classDef modified fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+class A,B added
+class C removed
+class D modified
+```
+
+Prefixes alone must be self-sufficient: if Miro drops the classDef block, the reviewer still sees what changed from the label text.
+
+##### Legend
+
+After the first diagram (or pair) on the board, place a small text/sticky:
+
+> Legend: `[ADDED]` new in this change · `[REMOVED]` deleted · `[MOD]` modified · unmarked = unchanged context
+
+One legend per code-review board is enough.
+
 **Diagram Selection Guide:**
 
-| Change Type | Diagram Type | Purpose |
-|-------------|--------------|---------|
-| Feature addition | `flowchart` | Show component interactions |
-| Refactoring | `uml_class` | Show structural changes |
-| API/integration | `uml_sequence` | Show interaction flow |
-| Database changes | `entity_relationship` | Show schema modifications |
-| Bug fix | `flowchart` | Show fix location in flow |
-| Data pipeline | `flowchart` | Show data flow |
+| Change Type | Diagram Type | Pattern | Purpose |
+|-------------|--------------|---------|---------|
+| Feature addition (purely additive) | `flowchart` | Single annotated (after) | Show new components and how they wire in |
+| Refactoring | `uml_class` | Side-by-side before/after | Structural rearrangement is the whole point |
+| API/integration change | `uml_sequence` | Side-by-side before/after | Flow shape changes |
+| DB migration / schema change | `entity_relationship` | Side-by-side before/after | Schema delta is the focus |
+| Bug fix | `flowchart` | Single annotated (after) | Mark the fix point in the flow |
+| Data pipeline restructure | `flowchart` | Side-by-side before/after | Data flow shape changes |
+| Mixed / large refactor | per-subsystem | Side-by-side per subsystem | One pair per affected boundary |
 
 **Diagram Positions:**
 
-Position diagrams after the last document. For a typical Large PR with 3 docs:
+A side-by-side pair occupies two adjacent x slots (gap = 2000 between pair members); the next diagram or pair starts another 2000 after the last slot used. A single annotated diagram occupies one slot. Let `N` = last document `x` + 800.
 
-| Diagram | Position | When to Create |
-|---------|----------|----------------|
-| Main flow/architecture | x=3200, y=0 | Always |
-| Component relationships | x=4000, y=0 | Medium+ PRs |
-| Sequence/interaction | x=4800, y=0 | API changes |
-| Data flow | x=5600, y=0 | Data pipeline changes |
-| Before/after comparison | x=6400, y=0 | Major refactoring |
+| Diagram (or pair) | Position(s) | When to create |
+|-------------------|-------------|----------------|
+| Main flow/architecture pair | `before` at x=N, `after` at x=N+2000 | Always |
+| Component relationships pair | next two slots | Medium+ PRs with structural change |
+| Sequence/interaction pair | next two slots | API/integration changes |
+| ER pair | next two slots | Data pipeline / schema changes |
+| Single annotated (additions only) | one slot | Purely additive change, ≤ 3 new elements |
 
-Adjust starting x based on actual number of documents created.
+Adjust `N` based on the actual number of documents created.
 
 **Each diagram should show:**
 - Affected components/modules (highlighted)
 - Data/control flow through changed code
 - Dependencies between changed files
 - Trust boundaries (for security-relevant changes)
-- Where a node corresponds to a single source file, append its URL on a second line of the label so a reader can copy it (paths only — diagram nodes are not clickable). Skip the URL when no remote is available.
+- Where a node corresponds to a single source file, append its URL on a second line of the label so a reader can copy it (paths only — diagram nodes are not clickable). Skip the URL when no remote is available. Use `LINK_BASE_SHA` in URLs on *before* diagrams; use `LINK_SHA` on *after* diagrams.
+- The change markers from §5 "Marking convention" applied to every modified/added/removed element — the diagram or pair must make the delta visible at a glance.
 
 ### 6. Post link back to PR/MR
 
@@ -456,7 +527,7 @@ If the §4.5 bail-out applied, the entire output is the trivial-PR chat message 
 Otherwise, after completion provide:
 1. Link to the Miro board (or frame, if `moveToWidget` was provided)
 2. Confirmation that the PR/MR description was updated, or that we left a comment as a fallback, or that the post step was skipped because the source was local / branchless
-3. Summary of elements created (X docs, Y diagrams, Z table rows) — and which artifact types were intentionally skipped per §4.5, with a one-line reason
+3. Summary of elements created (X docs, Y diagrams as N pairs + M single annotated, Z table rows) — base revision `<short LINK_BASE_SHA>`, head revision `<short LINK_SHA>` — and which artifact types were intentionally skipped per §4.5, with a one-line reason
 4. High-risk files requiring careful review
 5. Security findings (if any critical/high)
 6. Architecture concerns (if any breaking changes)
