@@ -220,19 +220,9 @@ Per-artifact rules:
 - **Documents**: use markdown links — `[path/to/file.ts](url)` for whole-file references and `[path/to/file.ts:42-58](url#L42-L58)` for hunk references. Apply this in *every* file mention (Overview, Key Changes, High-Risk Areas, Architecture > New Components / Modified Interfaces, Security > Security-Sensitive Changes, etc.).
 - **Diagrams**: keep node labels as plain paths — the Miro diagram tool does not document clickable nodes. When a node corresponds to a single source file, append the URL as a second line in the node label so a reader can copy it.
 
-**Positioning Notes:**
+**Positioning:**
 
-Use a **horizontal row layout** because tables and docs have fixed width but variable height, while diagrams are more complex:
-
-```
-[Table] → [Doc1] → [Doc2] → [Doc3] → [Diagram1] → [Diagram2]
-  x=0      x=1200   x=2000   x=2800     x=3600       x=5600
-```
-
-- **Tables**: Created at board center (0,0) - no x/y positioning support
-- **Documents**: Start at x=1200, increment by 800 for each doc
-- **Diagrams**: Continue after last doc position add extra 400, increment by 2000 for each diagram
-- All items at y=0 (same row)
+Prefer laying artifacts out in a single row so the reviewer can scan them left-to-right. Pass placement to the Miro MCP tools per their schemas.
 
 #### Scaling Guidelines
 
@@ -250,14 +240,14 @@ Use a **horizontal row layout** because tables and docs have fixed width but var
 
 #### File Changes Table
 
-Create first (appears at board center). Use Miro MCP tool to create a table with columns **in this order**:
+Create first (appears at board center). Using the Miro MCP table tool, create a table with four columns in this order:
 
-| Column | Type | Options |
-|--------|------|---------|
-| Status | select | Added (#00FF00), Modified (#FFA500), Deleted (#FF0000) |
-| File | text | Linked file URL (Miro auto-renders URLs in text cells as clickable). Use the plain path when no remote URL is available — see §5 "Linking conventions". |
-| Change | text | Brief summary of changes and key review points |
-| Risk | select | Low (#00FF00), Medium (#FFA500), High (#FF0000) |
+1. **Status** — a fixed-set column with values *Added*, *Modified*, *Deleted*, color-coded green / orange / red respectively.
+2. **File** — a text column containing the full source URL built per §5 "Linking conventions" (Miro renders URLs in text cells as clickable). Use the plain path when no remote URL is available.
+3. **Change** — a text column with a brief summary of changes and key review points.
+4. **Risk** — a fixed-set column with values *Low*, *Medium*, *High*, color-coded green / orange / red respectively.
+
+Pick the column types and option shape from the table tool's live schema.
 
 For very large PRs (30+ files), create separate tables:
 - High-risk changes table
@@ -267,7 +257,7 @@ For very large PRs (30+ files), create separate tables:
 
 #### Documents
 
-**Document 1: Main Summary (x=800, y=0)**
+**Document 1: Main Summary**
 
 Create when the §4.5 value gate for the summary doc passes. Skip if the PR description already covers the same ground.
 
@@ -300,7 +290,7 @@ Create when the §4.5 value gate for the summary doc passes. Skip if the PR desc
 - [Clarifying questions based on the diff]
 ```
 
-**Document 2: Architecture Analysis (x=1600, y=0)**
+**Document 2: Architecture Analysis**
 
 Create only when the §4.5 architecture-doc value gate passes — i.e. the diff introduces new modules, modifies public interfaces, changes dependencies, or adds breaking changes. Skip otherwise, even on Medium/Large PRs.
 
@@ -332,7 +322,7 @@ Create only when the §4.5 architecture-doc value gate passes — i.e. the diff 
 - [Scalability implications]
 ```
 
-**Document 3: Security Analysis (x=2400, y=0)**
+**Document 3: Security Analysis**
 
 Create only when security-sensitive paths are touched (auth, crypto, config, migrations, input handling). Never create as a checklist-only artifact on a PR with no security-relevant diff.
 
@@ -371,9 +361,9 @@ Create only when security-sensitive paths are touched (auth, crypto, config, mig
 - [Security improvements needed]
 ```
 
-**Additional Documents (x=3200, x=4000, etc.)**
+**Additional Documents**
 
-For Very Large PRs, create per-subsystem documents (continue incrementing x by 800):
+For Very Large PRs, create per-subsystem documents in the same row:
 - "API Changes Analysis"
 - "Database Migration Review"
 - "UI/Frontend Changes"
@@ -416,33 +406,31 @@ class C removed
 class D updated
 ```
 
-Prefixes alone must be self-sufficient: if Miro drops the classDef block, the reviewer still sees what changed from the label text. Do not create a legend widget on the board — the prefixes are self-explanatory and a separate legend just clutters the layout.
+Prefixes alone must be self-sufficient: if Miro drops the classDef block, the reviewer still sees what changed from the label text.
 
 **Diagram Selection Guide:**
 
 | Change Type | Diagram Type | Pattern | Purpose |
 |-------------|--------------|---------|---------|
-| Feature addition (purely additive) | `flowchart` | Single annotated (after) | Show new components and how they wire in |
-| Refactoring | `uml_class` | Side-by-side before/after | Structural rearrangement is the whole point |
-| API/integration change | `uml_sequence` | Side-by-side before/after | Flow shape changes |
-| DB migration / schema change | `entity_relationship` | Side-by-side before/after | Schema delta is the focus |
-| Bug fix | `flowchart` | Single annotated (after) | Mark the fix point in the flow |
-| Data pipeline restructure | `flowchart` | Side-by-side before/after | Data flow shape changes |
+| Feature addition (purely additive) | flowchart | Single annotated (after) | Show new components and how they wire in |
+| Refactoring | class diagram | Side-by-side before/after | Structural rearrangement is the whole point |
+| API/integration change | sequence diagram | Side-by-side before/after | Flow shape changes |
+| DB migration / schema change | ER diagram | Side-by-side before/after | Schema delta is the focus |
+| Bug fix | flowchart | Single annotated (after) | Mark the fix point in the flow |
+| Data pipeline restructure | flowchart | Side-by-side before/after | Data flow shape changes |
 | Mixed / large refactor | per-subsystem | Side-by-side per subsystem | One pair per affected boundary |
 
 **Diagram Positions:**
 
-A side-by-side pair occupies two adjacent x slots (gap = 2000 between pair members); the next diagram or pair starts another 2000 after the last slot used. A single annotated diagram occupies one slot. Let `N` = last document `x` + 800.
+Place a side-by-side pair adjacent to each other so the delta is visible at a glance. Otherwise let the row layout from §5 "Positioning" carry — pass placement to the Miro MCP diagram tool per its schema.
 
-| Diagram (or pair) | Position(s) | When to create |
-|-------------------|-------------|----------------|
-| Main flow/architecture pair | `before` at x=N, `after` at x=N+2000 | Always |
-| Component relationships pair | next two slots | Medium+ PRs with structural change |
-| Sequence/interaction pair | next two slots | API/integration changes |
-| ER pair | next two slots | Data pipeline / schema changes |
-| Single annotated (additions only) | one slot | Purely additive change, ≤ 3 new elements |
-
-Adjust `N` based on the actual number of documents created.
+| Diagram (or pair) | When to create |
+|-------------------|----------------|
+| Main flow/architecture pair | Always |
+| Component relationships pair | Medium+ PRs with structural change |
+| Sequence/interaction pair | API/integration changes |
+| ER pair | Data pipeline / schema changes |
+| Single annotated (additions only) | Purely additive change, ≤ 3 new elements |
 
 **Each diagram should show:**
 - Affected components/modules (highlighted)
@@ -563,16 +551,10 @@ When to use each artifact type:
 │                    MIRO BOARD LAYOUT                     │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
-│  x=-2000          x=0              x=2000      x=4000   │
-│  ┌─────────┐      ┌─────────┐      ┌─────────┐         │
-│  │ Summary │      │  Table  │      │ Diagram │  y=0    │
-│  │   Doc   │      │ (files) │      │  (arch) │         │
-│  └─────────┘      └─────────┘      └─────────┘         │
-│                                                         │
-│  ┌─────────┐                       ┌─────────┐         │
-│  │ Detail  │                       │ Diagram │  y=1500 │
-│  │   Doc   │                       │ (flow)  │         │
-│  └─────────┘                       └─────────┘         │
+│  ┌─────────┐      ┌─────────┐      ┌─────────┐          │
+│  │  Table  │  →   │   Docs  │  →   │ Diagrams│          │
+│  │ (files) │      │         │      │         │          │
+│  └─────────┘      └─────────┘      └─────────┘          │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
