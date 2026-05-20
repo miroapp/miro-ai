@@ -18,7 +18,7 @@ This installs all available Miro skills into your project. The CLI will prompt y
 
 ```bash
 npx skills add miroapp/miro-ai --list          # List available skills
-npx skills add miroapp/miro-ai --skill=miro-mcp  # Install a specific skill
+npx skills add miroapp/miro-ai --skill=miro-browse  # Install a specific skill
 npx skills add miroapp/miro-ai --all            # Install all skills
 npx skills add miroapp/miro-ai -y               # Skip confirmation prompts
 ```

@@ -34,8 +34,8 @@ Located in `validation/schemas/`:
 **Example:**
 ```yaml
 ---
-name: miro-mcp
-description: Use Miro MCP tools for creating diagrams, documents, and tables on Miro boards. Use when working with Miro board content.
+name: miro-browse
+description: Use when the user wants to explore, list, summarize, or inspect items on a Miro board.
 ---
 ```
 
