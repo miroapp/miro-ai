@@ -109,7 +109,7 @@ name: my--skill     # consecutive hyphens
 **Good:**
 ```yaml
 name: my-skill
-name: miro-mcp
+name: miro-browse
 name: data-analysis-2
 ```
 

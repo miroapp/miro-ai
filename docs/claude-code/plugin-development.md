@@ -31,7 +31,7 @@ The `plugin.json` manifest is required. Located at `.claude-plugin/plugin.json`:
 ```json
 {
   "name": "miro",
-  "version": "1.0.0",
+  "version": "x.y.z",
   "description": "What this plugin does",
   "author": {
     "name": "Miro",

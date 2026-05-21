@@ -16,11 +16,12 @@ The user provides one URL: a board URL (extract all spec items) or an item URL w
 - If the user provided a Miro URL, use it.
 - If not, ask the user for one.
 
-### 2. Parse URL to Determine Type
+### 2. Determine URL Scope
 
-Extract `board_id` and optionally `item_id`:
-- Board URL: contains only the board ID (e.g. `uXjVK123abc=`)
-- Item URL: contains `moveToWidget` or `focusWidget` parameter with item ID
+Decide whether the user gave a **board URL** (extract every spec item on the
+board) or a **single-item URL** — i.e. a board URL with a `moveToWidget` or
+`focusWidget` query parameter naming one item. Pass the URL through to Miro
+MCP as-is — MCP handles the URL.
 
 ### 3. Check/Prepare Output Directory
 
@@ -46,13 +47,11 @@ Extract `board_id` and optionally `item_id`:
 ### 4. Discover Items to Extract
 
 **For Board URLs:**
-- Use `context_explore` with the board URL.
-- Returns high-level items: frames, documents, prototypes, tables, diagrams, and possibly other types.
-- Each item includes its type, URL (with `moveToWidget` parameter), and title.
+- Use the Miro MCP board-overview tool with the board URL.
+- Each returned item includes its type, URL (with `moveToWidget` parameter), and title.
 - Collect all items with their types, URLs, and titles for extraction.
 
 **For Item URLs:**
-- Extract `item_id` from URL.
 - Create a single-item URL list.
 
 ### 5. Create Tasks for Extraction (MANDATORY)
@@ -62,7 +61,7 @@ Extract `board_id` and optionally `item_id`:
 Create an internal checklist item for EVERY item discovered so nothing is missed.
 
 **Task structure:**
-- **Subject:** "Extract [type]: [title]" (use title if available from `context_explore`, otherwise use id)
+- **Subject:** "Extract [type]: [title]" (use title if available from the board-overview tool, otherwise use id)
 - **Description:** Include item type, id, URL, and target file path
 - **activeForm:** "Extracting [type]: [title]" (use title if available, otherwise use id)
 
@@ -98,7 +97,7 @@ Create tasks according to this exact breakdown:
 **Critical:** Prototype screens are NOT 1 task, they are 3 tasks. If you create only 1 task per screen, images will be missed.
 
 **Naming Convention:**
-- Use titles from `context_explore` for readability
+- Use titles from the board-overview tool for readability
 - Use item IDs in file paths for uniqueness and filesystem safety
 
 **This task creation step ensures:**
@@ -145,26 +144,26 @@ This file will be updated progressively as each item is extracted.
 - Large HTML content stays in subagent context, never enters main context
 
 **Document items:**
-- Call `context_get` with the item URL → Returns Markdown content
-- **MUST write** content to `.miro/specs/documents/[item_id].md`
+- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- **MUST write** content to `.miro/specs/documents/<board item ID>.md`
 - Extract title from content if available
 - Update `index.json` with this item
 
 **Diagram items:**
-- Call `context_get` with the item URL → Returns AI-generated description
-- **MUST write** content to `.miro/specs/diagrams/[item_id].md`
+- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- **MUST write** content to `.miro/specs/diagrams/<board item ID>.md`
 - Update `index.json` with this item
 
 **Prototype container items:**
-- Call `context_get` with the item URL → Returns AI-generated summary with navigation map
-- **MUST write** to `.miro/specs/prototypes/[item_id]-container.md`
+- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- **MUST write** to `.miro/specs/prototypes/<board item ID>-container.md`
 - Update `index.json` with this item
 
 **Prototype screen items (MANDATORY 3-task workflow via subagent):**
 
 ⚠️ **EACH PROTOTYPE SCREEN REQUIRES A SUBAGENT WITH 3 SEPARATE TASKS**
 
-**Why subagent:** `context_get` returns large HTML that bloats the main agent's context. A subagent keeps this contained — the large HTML never enters the main conversation.
+**Why subagent:** the Miro MCP context tool returns large HTML for prototype screens, which bloats the main agent's context. A subagent keeps this contained — the large HTML never enters the main conversation.
 
 For each prototype screen, launch a **single subagent** (with `subagent_type: "general-purpose"`) that performs all 3 steps sequentially. Pass the subagent all necessary context:
 
@@ -173,19 +172,13 @@ For each prototype screen, launch a **single subagent** (with `subagent_type: "g
 Extract prototype screen and its images from Miro board.
 
 Context:
-- board_id: [board_id]
-- item_id: [item_id]
-- item_url: [item_url]
-- title: [title]
-- parent_url: [parent_url or "none"]
-- output_dir: .miro/specs
-- index_file: .miro/specs/index.json
+- Miro board URL targeting the prototype screen: [url]
 
 Execute these 3 tasks in order:
 
 Task 1: Get and save HTML
-- Call `context_get` with the item URL
-- Save the returned raw HTML to .miro/specs/prototypes/[item_id]-screen.html
+- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- Save the returned raw HTML to .miro/specs/prototypes/<board item ID>-screen.html
 - Read index.json, add this item to items array, Write updated index.json
 
 Task 2: Extract images
@@ -193,16 +186,16 @@ Task 2: Extract images
 - Parse HTML for ALL image URLs in `src` attributes
 - For EACH image URL found:
   1. Extract resource ID from URL path
-  2. Call `image_get_url` with board_id and the full image URL as item_id
+  2. Call the appropriate Miro MCP image tool to obtain a download URL for the image
   3. Take the download URL from response
-  4. Download: `curl -sL -o .miro/specs/images/[resource_id].png "[download_url]"`
+  4. Download: `curl -sL -o .miro/specs/images/<image resource ID>.png "[download_url]"`
   5. Read index.json, add image entry to images array, Write updated index.json:
-     {"id": "[resource_id]", "path": "images/[resource_id].png", "referenced_by": ["[item_id]"]}
+     {"id": "<image resource ID>", "path": "images/<image resource ID>.png", "referenced_by": ["prototypes/<board item ID>-screen.html"]}
 - If any download fails: log warning, continue with others
 
 Task 3: Update image URLs in HTML
-- Read the HTML file from .miro/specs/prototypes/[item_id]-screen.html
-- Replace ALL original image URLs with relative paths: src="../images/[resource_id].png"
+- Read the HTML file from .miro/specs/prototypes/<board item ID>-screen.html
+- Replace ALL original image URLs with relative paths: src="../images/<image resource ID>.png"
 - Save the updated HTML
 - Verify all image src attributes now point to ../images/
 
@@ -216,27 +209,27 @@ Report back: number of images found, downloaded, and any failures.
 4. Move to next screen
 
 **⚠️ CRITICAL REQUIREMENTS FOR PROTOTYPE SCREENS:**
-- ✗ DO NOT call `context_get` for screens from the main agent (context bloat)
+- ✗ DO NOT call the Miro MCP context tool for screens from the main agent (context bloat)
 - ✓ ALWAYS use a subagent for each prototype screen
 - ✓ CREATE 3 tasks per prototype screen (for visibility)
 - ✓ Subagent completes all 3 tasks: HTML → Images → URLs
-- ✓ Use `image_get_url` with the full image URL as item_id, then curl to download
+- ✓ Use the Miro MCP image tool to obtain a download URL, then curl to download
 - ✓ ALL image URLs must be replaced with local paths before moving on
 
 **Frame items:**
-- Call `context_get` with the item URL → Returns AI-generated summary
-- **MUST write** content to `.miro/specs/frames/[item_id].md`
+- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- **MUST write** content to `.miro/specs/frames/<board item ID>.md`
 - Update `index.json` with this item
 
 **Table items:**
-- Call `table_list_rows` with `board_id` and `item_id` → Returns structured data
-- **MUST write** JSON content to `.miro/specs/tables/[item_id].json`
+- Call the appropriate Miro MCP table-retrieval tool for the table item
+- **MUST write** JSON content to `.miro/specs/tables/<board item ID>.json`
 - Include column definitions and all row data in JSON
 - Update `index.json` with this item
 
 **Unknown/Other item types** (e.g., slides, or any new types):
-- Call `context_get` with the item URL → Returns content (assume Markdown)
-- **MUST write** content to `.miro/specs/other/[item_id].md`
+- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- **MUST write** content to `.miro/specs/other/<board item ID>.md`
 - Preserve original type name in metadata for reference
 - Update `index.json` with this item
 
@@ -302,8 +295,8 @@ Update `index.json` with the calculated summary:
    - ✓ Correct: Create 3 tasks (HTML, Images, URLs) and use a subagent
    - Result: Images are never extracted
 
-3. **CALLING context_get FOR SCREENS FROM MAIN AGENT**
-   - ✗ Wrong: Call `context_get` for prototype screens directly (large HTML bloats context)
+3. **CALLING THE MCP CONTEXT TOOL FOR SCREENS FROM MAIN AGENT**
+   - ✗ Wrong: Call the Miro MCP context tool for prototype screens directly from the main agent (large HTML bloats context)
    - ✓ Correct: Launch a subagent for each screen — HTML stays in subagent context
    - Result: Main agent context overflows, extraction fails
 
@@ -332,7 +325,7 @@ Update `index.json` with the calculated summary:
 - If Miro MCP is not available → inform user they need to install it
 - If URL is invalid → ask user to provide valid Miro URL
 - If board/item not found → show error and ask for valid URL
-- If `context_get` fails for an item → log warning, continue with other items
+- If the context fetch fails for an item → log warning, continue with other items
 - If image download fails → log warning, update HTML with relative path anyway (so you can see it failed)
 
 ## Implementation Notes
@@ -354,7 +347,7 @@ Update `index.json` with the calculated summary:
 **Prototype Screens:**
 - ⚠️ **Always use a subagent** for prototype screens to avoid context bloat
 - Subagent performs all 3 tasks: Get HTML → Extract images → Update URLs
-- Use `image_get_url` to get download URL, then curl to save image to disk
+- Use the Miro MCP image tool to get a download URL, then curl to save image to disk
 - If image download fails for a specific image, log warning but continue with others
 
 **Priority:**
@@ -396,7 +389,7 @@ Use it when you need to:
 
 1. Plugin scans prototype screen HTML content
 2. Finds Miro image URLs in `src` attributes
-3. Extracts `board_id` and `item_id` from URLs
+3. Looks up each image via Miro MCP using the URL
 4. Downloads each image via Miro MCP
 5. Replaces original URLs with relative paths
 
