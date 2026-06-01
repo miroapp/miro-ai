@@ -80,63 +80,14 @@ git diff $DEFAULT_BRANCH...HEAD
 
 #### Determine the source-link base URL
 
-Capture once and reuse for every file reference in §5 (table cells, document bullets, diagram labels). Pin links to the head SHA so they survive force-pushes.
+Capture once and reuse for every file reference in §5 (table cells, document bullets, diagram labels). Pin links to the head SHA so they survive force-pushes. Record:
 
-Record:
+- `LINK_HOST`, `LINK_OWNER`/`LINK_REPO` (or `LINK_GROUP`/`LINK_PROJECT`) — from §1
+- `LINK_SHA` — PR/MR head commit SHA (fall back to `git rev-parse HEAD` for local/branch sources)
+- `LINK_BASE_SHA` — base commit SHA (PR/MR target tip, or `git merge-base` for branch comparisons); required by §5 "Showing change". If unreachable, skip "before" diagrams and announce once in chat.
+- `LINK_TEMPLATE` — host-shaped blob URL with a `{path}` placeholder and optional `#L<start>-L<end>` anchor. For **no-remote sources** (`local changes` or a branch with no remote/PR) set it to `""` and render plain paths — never invent URLs.
 
-- `LINK_HOST` — host from §1 (e.g. `github.com`, `gitlab.com`, self-hosted)
-- `LINK_OWNER` / `LINK_REPO` (GitHub-style) **or** `LINK_GROUP` / `LINK_PROJECT` (GitLab-style)
-- `LINK_SHA` — PR/MR head commit SHA, fetched per platform:
-
-```bash
-# GitHub
-LINK_SHA=$(gh pr view $PR_NUMBER --json headRefOid -q .headRefOid)
-# external repo: add --repo $OWNER/$REPO
-
-# GitLab
-LINK_SHA=$(glab mr view $MR_NUMBER -F json | jq -r '.diff_refs.head_sha // .sha')
-# external project: add -R $GROUP/$PROJECT
-
-# Local diff or branch comparison
-LINK_SHA=$(git rev-parse HEAD)
-```
-
-REST fallback: read `head.sha` (GitHub) or `diff_refs.head_sha` (GitLab) from the same JSON payload already fetched above — no extra round-trip needed.
-
-- `LINK_BASE_SHA` — base commit SHA (the PR/MR target tip, or the merge-base for branch comparisons). Required by §5 "Showing change" to render before/after diagrams and to hyperlink "before" nodes to the prior revision:
-
-```bash
-# GitHub
-LINK_BASE_SHA=$(gh pr view $PR_NUMBER --json baseRefOid -q .baseRefOid)
-# external repo: add --repo $OWNER/$REPO
-
-# GitLab
-LINK_BASE_SHA=$(glab mr view $MR_NUMBER -F json | jq -r '.diff_refs.base_sha // .target_branch')
-# external project: add -R $GROUP/$PROJECT
-
-# Local diff (uncommitted): base is the current HEAD itself
-LINK_BASE_SHA=$(git rev-parse HEAD)
-
-# Branch comparison
-LINK_BASE_SHA=$(git merge-base origin/$DEFAULT_BRANCH HEAD)
-```
-
-To extract the pre-change content of a single file (needed when the unified diff alone doesn't carry enough surrounding structure, e.g. class hierarchies):
-
-```bash
-git show $LINK_BASE_SHA:path/to/file
-```
-
-If the base SHA is unreachable (shallow clone, history pruned, target branch not fetched), skip "before" diagrams and announce once in chat: `"base revision unavailable — only 'after' diagrams created"`.
-
-- `LINK_TEMPLATE` — pick by host shape; substitute `{path}` per reference, append `#L<start>-L<end>` line anchors when calling out a specific hunk:
-  - GitHub-style: `https://{host}/{owner}/{repo}/blob/{sha}/{path}` (anchor: `#L{a}-L{b}`)
-  - GitLab-style: `https://{host}/{group}/{project}/-/blob/{sha}/{path}` (anchor: `#L{a}-{b}`)
-  - Bitbucket-style (example pattern, not exhaustive): `https://{host}/{workspace}/{repo}/src/{sha}/{path}`
-
-**No-remote sources** (`local changes`, or a branch with no pushed remote / no PR): set `LINK_TEMPLATE=""` and announce in chat once: `"No remote URL available — file references shown as plain paths."` Do not invent URLs.
-
-State the chosen template in chat before creating artifacts, e.g.: `Source links: https://github.com/acme/api/blob/<sha>/{path}`.
+State the chosen template in chat before creating artifacts. See `references/source-links.md` for the per-platform SHA-fetch commands, URL templates by forge, and the no-remote / unreachable-base handling.
 
 ### 3. Analyze Changes
 
@@ -257,117 +208,15 @@ For very large PRs (30+ files), create separate tables:
 
 #### Documents
 
-**Document 1: Main Summary**
+**Document 1: Main Summary** — create when the §4.5 value gate for the summary doc passes. Skip if the PR description already covers the same ground.
 
-Create when the §4.5 value gate for the summary doc passes. Skip if the PR description already covers the same ground.
+**Document 2: Architecture Analysis** — create only when the §4.5 architecture-doc value gate passes (the diff introduces new modules, modifies public interfaces, changes dependencies, or adds breaking changes). Skip otherwise, even on Medium/Large PRs.
 
-```markdown
-# Code Review: [PR Title]
+**Document 3: Security Analysis** — create only when security-sensitive paths are touched (auth, crypto, config, migrations, input handling). Never create as a checklist-only artifact on a PR with no security-relevant diff.
 
-**Author:** [author]
-**Files Changed:** [count]
-**Lines:** +[additions] / -[deletions]
+**Additional Documents** — for Very Large PRs, create per-subsystem documents in the same row ("API Changes Analysis", "Database Migration Review", "UI/Frontend Changes", etc.).
 
----
-
-## Overview
-[2-3 sentences describing what this change does]
-
-## Key Changes
-- [Bullet points of significant changes]
-
-## High-Risk Areas
-- [path/to/file.ts:42-58](url#L42-L58) — [reason this file is high-risk]
-
-## Review Checklist
-- [ ] Logic correctness verified
-- [ ] Edge cases handled
-- [ ] Error handling appropriate
-- [ ] No security concerns
-- [ ] Tests adequate
-
-## Questions for Author
-- [Clarifying questions based on the diff]
-```
-
-**Document 2: Architecture Analysis**
-
-Create only when the §4.5 architecture-doc value gate passes — i.e. the diff introduces new modules, modifies public interfaces, changes dependencies, or adds breaking changes. Skip otherwise, even on Medium/Large PRs.
-
-```markdown
-# Architecture Analysis
-
-## Structural Changes
-
-### New Components
-- [path/to/new_module.ts](url) — [purpose / role]
-
-### Modified Interfaces
-- [path/to/api.ts:120-180](url#L120-L180) — [API change / contract modification]
-
-### Dependency Changes
-- [package.json](url) — [added/removed/updated dependency]
-
-## Design Patterns
-- [Patterns introduced or modified]
-- [Anti-patterns identified]
-
-## Breaking Changes
-- [Changes requiring consumer updates]
-- [Migration requirements]
-
-## Architecture Concerns
-- [Coupling/cohesion issues]
-- [Layer violations]
-- [Scalability implications]
-```
-
-**Document 3: Security Analysis**
-
-Create only when security-sensitive paths are touched (auth, crypto, config, migrations, input handling). Never create as a checklist-only artifact on a PR with no security-relevant diff.
-
-```markdown
-# Security Analysis
-
-**Risk Score:** [Critical/High/Medium/Low]
-
-## Security-Sensitive Changes
-- [path/to/auth.ts:30-95](url#L30-L95) — [auth/authz modification]
-- [path/to/handler.ts:10-40](url#L10-L40) — [data handling change]
-- [path/to/route.ts:200-220](url#L200-L220) — [API exposure change]
-
-## Vulnerability Assessment
-
-### Input Validation
-- [Validation present/missing]
-
-### Data Protection
-- [Sensitive data handling]
-- [Encryption usage]
-
-### Access Control
-- [Authorization checks]
-
-## Security Checklist
-- [ ] Input validation present
-- [ ] Output encoding applied
-- [ ] Authentication verified
-- [ ] Authorization checks in place
-- [ ] Sensitive data protected
-- [ ] No hardcoded secrets
-- [ ] Dependencies secure
-
-## Recommendations
-- [Security improvements needed]
-```
-
-**Additional Documents**
-
-For Very Large PRs, create per-subsystem documents in the same row:
-- "API Changes Analysis"
-- "Database Migration Review"
-- "UI/Frontend Changes"
-- etc.
+See `references/document-templates.md` for the full markdown template of each document.
 
 ---
 
@@ -388,25 +237,9 @@ Every diagram must make the *delta* visible at a glance, not just the post-chang
 
 ##### Marking convention
 
-Primary signal is the **label prefix**, because per-element styling is not guaranteed by the Miro Mermaid renderer:
+Primary signal is the **label prefix** (per-element styling is not guaranteed by the Miro Mermaid renderer): `[ADDED]` (after diagram only), `[REMOVED]` (before diagram only), `[UPDATED]` (both diagrams, prefix in the after only); unmarked elements are unchanged context. Prefixes alone must be self-sufficient. Additionally emit Mermaid `classDef` directives as a best-effort colour layer.
 
-- `[ADDED] <name>` — element introduced in this change. In an *after* diagram only (omitted from before).
-- `[REMOVED] <name>` — element deleted in this change. In a *before* diagram only (omitted from after).
-- `[UPDATED] <name>` — element kept but with a meaningful change to signature, body, or relationships. Present in both diagrams; prefix appears in the *after* only.
-- Unmarked elements are unchanged context.
-
-Also emit Mermaid `classDef` directives as a best-effort visual layer — a renderer that honours them produces colour:
-
-```mermaid
-classDef added    fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
-classDef removed  fill:#fee2e2,stroke:#dc2626,stroke-width:2px,stroke-dasharray:5 5;
-classDef updated  fill:#fef3c7,stroke:#d97706,stroke-width:2px;
-class A,B added
-class C removed
-class D updated
-```
-
-Prefixes alone must be self-sufficient: if Miro drops the classDef block, the reviewer still sees what changed from the label text.
+See `references/diagram-conventions.md` for the full prefix semantics and the `classDef` block to emit.
 
 **Diagram Selection Guide:**
 
@@ -450,55 +283,9 @@ Once the artifacts are created, surface the link from the PR/MR itself so review
 
 In those cases the link is reported only in chat output (see §Output below).
 
-#### Block format
+Append a delimited block (reusing the same `<!-- miro-pr-docs:start -->` … `<!-- miro-pr-docs:end -->` markers each run) to the existing description, replacing it in place if already present and never overwriting the user-authored portion. Use the same CLI selection from §1 to read, splice, and write the body back; if editing fails for lack of permission, post the block as a PR/MR comment instead and note it in chat.
 
-Append a delimited block to the existing PR/MR description. Reuse the same delimiters on every run so the block can be replaced cleanly:
-
-```
-<!-- miro-pr-docs:start -->
-## PR documentation
-
-PR details on Miro: <link>
-
-- <X> documents, <Y> diagrams, <Z> table rows
-- High-risk files: <count>
-- Security findings: <count>
-<!-- miro-pr-docs:end -->
-```
-
-**Link rules:**
-- If the original Miro URL contained `moveToWidget=<frameId>`, reuse that exact URL — clicking opens straight to the frame
-- Otherwise use the plain board URL
-
-**Idempotency:**
-- If the description already contains the `<!-- miro-pr-docs:start -->` … `<!-- miro-pr-docs:end -->` markers, replace the contents in place
-- Otherwise append the block at the end of the existing description, preserving everything else verbatim
-- Never overwrite the user-authored portion of the description
-
-#### Update the description
-
-Use the same CLI selection from §1. Read the current body, splice the new block, write it back.
-
-**GitHub example (`gh`):**
-```bash
-# Read current body
-BODY=$(gh pr view $PR_NUMBER --json body -q .body)
-# (splice: replace existing block or append) → produce $NEW_BODY
-gh pr edit $PR_NUMBER --body "$NEW_BODY"
-```
-
-**GitLab example (`glab`):**
-```bash
-BODY=$(glab mr view $MR_NUMBER -F json | jq -r .description)
-# (splice) → $NEW_BODY
-glab mr update $MR_NUMBER --description "$NEW_BODY"
-```
-
-**REST fallback:** read and PATCH the PR/MR body via the platform's REST API with the user's token.
-
-#### Permission failure fallback
-
-If editing the description fails because the user lacks permission (for example, when reviewing someone else's PR), post the same block as a single PR/MR comment instead. Mention this fallback in the chat output so the user knows the description was not changed.
+See `references/pr-linking.md` for the exact block format, link rules, idempotency rules, and per-platform (`gh`/`glab`/REST) commands.
 
 ## Output
 
@@ -512,53 +299,12 @@ Otherwise, after completion provide:
 5. Security findings (if any critical/high)
 6. Architecture concerns (if any breaking changes)
 
-## Background
-
-### Review Philosophy
-
-Effective code reviews focus on:
-1. **Correctness** - Does the code do what it's supposed to?
-2. **Security** - Are there vulnerabilities or data exposures?
-3. **Maintainability** - Can others understand and modify this code?
-4. **Performance** - Are there efficiency concerns?
-5. **Consistency** - Does it follow project conventions?
-
-### Visual Review Benefits
-
-Creating visual artifacts helps:
-- **Async collaboration** - Reviewers can engage at their own pace
-- **Context preservation** - Related docs and diagrams in one place
-- **Discussion tracking** - Comments attached to specific items
-- **Knowledge sharing** - Junior devs learn from visual explanations
-
-### Visualization Patterns
-
-When to use each artifact type:
-
-| Artifact | Best For |
-|----------|----------|
-| **Table** | File lists, structured comparisons, status tracking |
-| **Document** | Summaries, detailed analysis, checklists |
-| **Flowchart** | Process flows, decision trees, bug fix context |
-| **Class Diagram** | Structural changes, refactoring, OOP patterns |
-| **Sequence Diagram** | API interactions, message flows, integrations |
-| **ER Diagram** | Database changes, data model updates |
-
-### Layout Reference
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    MIRO BOARD LAYOUT                     │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ┌─────────┐      ┌─────────┐      ┌─────────┐          │
-│  │  Table  │  →   │   Docs  │  →   │ Diagrams│          │
-│  │ (files) │      │         │      │         │          │
-│  └─────────┘      └─────────┘      └─────────┘          │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
-
 ## References
 
-See `references/risk-assessment.md` for detailed scoring criteria and `references/review-patterns.md` for review patterns.
+- `references/risk-assessment.md` — detailed scoring criteria
+- `references/review-patterns.md` — review patterns
+- `references/source-links.md` — per-platform SHA-fetch commands and blob-URL templates for §2
+- `references/diagram-conventions.md` — diagram change-marking prefixes and the Mermaid `classDef` block (§5)
+- `references/document-templates.md` — full markdown templates for the summary, architecture, and security documents (§5)
+- `references/pr-linking.md` — block format, link/idempotency rules, and per-platform commands for posting the link back to the PR/MR (§6)
+- `references/background.md` — review philosophy, visual-review benefits, the artifact-selection table, and the board layout reference
