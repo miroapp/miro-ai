@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import { validateFrontmatter } from "./frontmatter-validator";
+import { validateSkillLimits, SKILL_CHAR_LIMIT } from "./skill-limits-validator";
 import { validateBashScripts } from "./bash-validator";
 import { validateClaudePlugins } from "./claude-validator";
 import { validateCodexPlugins } from "./codex-validator";
@@ -12,6 +13,7 @@ const args = process.argv.slice(2);
 
 // Parse flags
 const frontmatterOnly = args.includes("--frontmatter-only");
+const skillLimitsOnly = args.includes("--skill-limits-only");
 const bashOnly = args.includes("--bash-only");
 const claudeOnly = args.includes("--claude-only");
 const codexOnly = args.includes("--codex-only");
@@ -20,6 +22,7 @@ const copilotCoworkOnly = args.includes("--copilot-cowork-only");
 const versionOnly = args.includes("--version-only");
 const runAll =
   !frontmatterOnly &&
+  !skillLimitsOnly &&
   !bashOnly &&
   !claudeOnly &&
   !codexOnly &&
@@ -95,6 +98,31 @@ async function main() {
     }
     if (fmResults.results.length === 0) {
       console.log(dim("│ No frontmatter files found"));
+    }
+    printFooter();
+  }
+
+  // Skill Character Limits
+  if (runAll || skillLimitsOnly) {
+    printHeader("Skill Character Limits");
+    const limitResults = await validateSkillLimits(ROOT);
+
+    for (const result of limitResults.results) {
+      const relPath = result.file.replace(ROOT + "/", "");
+      if (result.valid) {
+        console.log(
+          `│ ${green("✓")} ${relPath} ${dim(`(${result.charCount}/${SKILL_CHAR_LIMIT})`)}`
+        );
+      } else {
+        console.log(`│ ${red("✗")} ${relPath}`);
+        for (const error of result.errors) {
+          console.log(`│   └─ ${error}`);
+        }
+        totalErrors++;
+      }
+    }
+    if (limitResults.results.length === 0) {
+      console.log(dim("│ No SKILL.md files found"));
     }
     printFooter();
   }
