@@ -117,7 +117,7 @@ miro-ai/
 │   └── skills/             # Repo-local helper skills for Codex/agent workflows
 ├── claude-plugins/           # Claude Code plugins (source of truth)
 │   └── miro/                # Core MCP integration with bundled skills
-│       └── skills/          # browse, code-review, code-spec, diagram, doc, table
+│       └── skills/          # browse, code-review, code-spec, code-explain-on-board, diagram, doc, table
 ├── gemini-extension.json     # Gemini CLI extension manifest at repo root (auto-generated)
 ├── codex-plugins/            # Codex plugins (auto-generated)
 │   └── miro/
@@ -377,7 +377,7 @@ Per Gemini CLI's [extension model](https://geminicli.com/docs/extensions/referen
 ```
 miro-ai/                     # Repo root = Gemini extension root
 ├── gemini-extension.json    # Manifest with MCP config (auto-generated)
-└── skills/                  # 6 skills, byte-identical to source
+└── skills/                  # 7 skills, byte-identical to source
 ```
 
 ### Validation Checklist

@@ -11,13 +11,13 @@ Core Miro MCP integration for Claude Code. Create diagrams, documents, and table
 
 ## Features
 
-- 6 task-focused skills (auto-loaded by relevance — no slash commands to memorize)
+- 7 task-focused skills (auto-loaded by relevance — no slash commands to memorize)
 - Automatic OAuth configuration
 - HTTP MCP server connection to `https://mcp.miro.com/`
 
 ## Skills
 
-The plugin ships six skills. Each one teaches Claude how to handle a specific kind of task on a Miro board, including which MCP tool to call, what to ask the user for, and how to format the result.
+The plugin ships seven skills. Each one teaches Claude how to handle a specific kind of task on a Miro board, including which MCP tool to call, what to ask the user for, and how to format the result.
 
 ### miro-browse
 
@@ -65,6 +65,22 @@ extract specs from https://miro.com/app/board/abc=
 download the design doc at https://miro.com/app/board/abc=/?moveToWidget=345...
 
 pull all PRD content from https://miro.com/app/board/abc= into .miro/specs/
+```
+
+### miro-code-explain-on-board
+
+**Activates when:** the user wants to explain or visualize a codebase on a Miro board.
+
+Produces a minimal, notation-correct set of diagrams (flowchart, UML class, UML sequence, ERD) that each answer one question at one abstraction level, plus a short companion document. Diagrams are grounded in real repo artifacts — no invented symbols — and rendered via the MCP Mermaid tools.
+
+**Example prompts:**
+
+```
+explain this codebase on https://miro.com/app/board/abc=
+
+diagram the architecture of the payments service on https://miro.com/app/board/abc=
+
+visualize how a request flows through this repo on https://miro.com/app/board/abc=
 ```
 
 ### miro-diagram

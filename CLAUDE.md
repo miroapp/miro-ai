@@ -19,7 +19,7 @@ miro-ai/
 ├── .agents/
 │   └── skills/             # Repo-local helper skills for agent workflows
 ├── claude-plugins/           # Claude Code plugins
-│   └── miro/                # Core MCP integration with bundled skills (browse, code-review, code-spec, diagram, doc, table)
+│   └── miro/                # Core MCP integration with bundled skills (browse, code-review, code-spec, code-explain-on-board, diagram, doc, table)
 ├── codex-plugins/            # Codex plugins (auto-generated)
 ├── copilot-cowork-plugins/   # GitHub Copilot Cowork packages (auto-generated)
 ├── cursor-plugins/           # Cursor plugins (auto-generated)

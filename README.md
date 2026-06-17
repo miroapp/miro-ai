@@ -51,7 +51,7 @@ Select your AI tool below and follow the installation steps.
 /plugin install miro@miro-ai
 ```
 
-The `miro` plugin bundles all skills (browse, code-review, code-spec, diagram, doc, table) and the Miro MCP server.
+The `miro` plugin bundles all skills (browse, code-review, code-spec, code-explain-on-board, diagram, doc, table) and the Miro MCP server.
 
 **Restart Claude Code** after installation. If you previously configured Miro MCP manually, [remove the duplicate](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) to avoid conflicts — the plugin already manages the MCP connection for you.
 
@@ -66,7 +66,7 @@ See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 gemini extensions install https://github.com/miroapp/miro-ai
 ```
 
-Gemini CLI installs the repo as an extension, registers the Miro MCP server from `gemini-extension.json`, and auto-discovers the 6 bundled skills from `skills/`. Restart Gemini CLI and authenticate when prompted.
+Gemini CLI installs the repo as an extension, registers the Miro MCP server from `gemini-extension.json`, and auto-discovers the 7 bundled skills from `skills/`. Restart Gemini CLI and authenticate when prompted.
 
 See [Gemini CLI Extension](docs/gemini-cli/overview.md) | [Official Docs](https://geminicli.com/docs/extensions/)
 
@@ -203,7 +203,7 @@ Skills auto-activate when you describe what you want naturally. No slash command
 
 | Plugin | Description |
 |--------|-------------|
-| [miro](docs/claude-code/miro.md) | Core MCP integration with 6 bundled skills (browse, code-review, code-spec, diagram, doc, table) |
+| [miro](docs/claude-code/miro.md) | Core MCP integration with 7 bundled skills (browse, code-review, code-spec, code-explain-on-board, diagram, doc, table) |
 
 ### Gemini CLI
 
