@@ -113,7 +113,7 @@ The `description` is the most important field — it determines whether a user's
 - Enumerate concrete trigger phrases / artifact types (frames, sticky notes, flowcharts, …)
 - Mention the board URL or other inputs the user is likely to include
 
-See `claude-plugins/miro/skills/miro-browse/SKILL.md` and `miro-diagram/SKILL.md` for canonical examples.
+See `claude-plugins/miro/skills/miro-browse/SKILL.md` for a canonical example.
 
 ## MCP Integration
 
@@ -183,7 +183,9 @@ The converter rewrites `X-AI-Source` per target (`cursor-plugin`, `gemini-extens
 
 ```
 "list frames on https://miro.com/app/board/abc="            # → miro-browse
-"create a flowchart on <board URL> showing <process>"        # → miro-diagram
+"list items on <board URL>"                                  # → miro-browse
+"review PR 123 on <board URL>"                               # → miro-code-review
+"explain this codebase on <board URL>"                       # → miro-code-explain-on-board
 "extract the specs from https://miro.com/app/board/abc="    # → miro-code-spec
 ```
 

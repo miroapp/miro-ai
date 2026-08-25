@@ -492,7 +492,7 @@ Plugins are auto-generated from Claude plugins as part of the bulk `bun run conv
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/skills/miro-diagram/SKILL.md
+   vim claude-plugins/miro/skills/miro-browse/SKILL.md
    ```
 
 2. **Regenerate all targets (bulk):**

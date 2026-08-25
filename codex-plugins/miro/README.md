@@ -17,9 +17,6 @@ Skills:
 - `$miro:miro-code-explain-on-board`
 - `$miro:miro-code-review`
 - `$miro:miro-code-spec`
-- `$miro:miro-diagram`
-- `$miro:miro-doc`
-- `$miro:miro-table`
 
 ## Related
 

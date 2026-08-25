@@ -66,7 +66,7 @@ See [Claude Code Plugins](docs/claude-code/overview.md) for full documentation.
 gemini extensions install https://github.com/miroapp/miro-ai
 ```
 
-Gemini CLI installs the repo as an extension, registers the Miro MCP server from `gemini-extension.json`, and auto-discovers the 7 bundled skills from `skills/`. Restart Gemini CLI and authenticate when prompted.
+Gemini CLI installs the repo as an extension, registers the Miro MCP server from `gemini-extension.json`, and auto-discovers the 4 bundled skills from `skills/`. Restart Gemini CLI and authenticate when prompted.
 
 See [Gemini CLI Extension](docs/gemini-cli/overview.md) | [Official Docs](https://geminicli.com/docs/extensions/)
 
@@ -96,7 +96,7 @@ npx skills add miroapp/miro-ai --list                # List available skills
 npx skills add miroapp/miro-ai --skill=miro-browse   # Install specific skill
 ```
 
-Available skills: **miro-browse**, **miro-code-review**, **miro-code-spec**, **miro-diagram**, **miro-doc**, **miro-table**
+Available skills: **miro-browse**, **miro-code-review**, **miro-code-spec**, **miro-code-explain-on-board**
 
 See [Agent Skills Overview](docs/agent-skills/overview.md) | [agentskills.io](https://agentskills.io)
 
@@ -182,9 +182,7 @@ Skills auto-activate when you describe what you want naturally. No slash command
 | `miro-browse` | "List the frames on …", "What's on this board …" |
 | `miro-code-review` | "Review PR 123 on …", "Visual review of this branch on …" |
 | `miro-code-spec` | "Extract specs from …", "Pull the design docs at …" |
-| `miro-diagram` | "Create a flowchart on …", "Add a sequence diagram to …" |
-| `miro-doc` | "Add a markdown doc to …", "Write a sprint plan on …" |
-| `miro-table` | "Make a task tracker table on …", "Sync these rows to …" |
+| `miro-code-explain-on-board` | "Explain this codebase on …", "Diagram the architecture on …" |
 
 ### Capabilities (All Platforms)
 
@@ -203,7 +201,7 @@ Skills auto-activate when you describe what you want naturally. No slash command
 
 | Plugin | Description |
 |--------|-------------|
-| [miro](docs/claude-code/miro.md) | Core MCP integration with 7 bundled skills (browse, code-review, code-spec, code-explain-on-board, diagram, doc, table) |
+| [miro](docs/claude-code/miro.md) | Core MCP integration with 4 bundled skills (browse, code-review, code-spec, code-explain-on-board) |
 
 ### Gemini CLI
 
@@ -224,9 +222,7 @@ Skills auto-activate when you describe what you want naturally. No slash command
 | miro-browse | List, filter, summarize items on a Miro board |
 | miro-code-review | Visual code review from PRs, local changes, or branch comparisons |
 | miro-code-spec | Extract Miro specs (docs, diagrams, prototypes, tables, images) to `.miro/specs/` |
-| miro-diagram | Create diagrams (flowchart, mindmap, UML, ER) from text or Mermaid |
-| miro-doc | Create and edit markdown documents on a Miro board |
-| miro-table | Create, populate, and sync structured tables on a Miro board |
+| miro-code-explain-on-board | Explain a codebase on a Miro board as diagrams plus a companion doc |
 
 ### Kiro
 

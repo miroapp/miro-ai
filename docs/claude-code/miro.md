@@ -1,6 +1,6 @@
 # miro Plugin
 
-Core Miro MCP integration for Claude Code. Create diagrams, documents, and tables on Miro boards, and explore board contents — all driven by natural-language prompts that auto-activate the right skill.
+Core Miro MCP integration for Claude Code. Explore boards, run visual code reviews, extract specs, and explain codebases on Miro — driven by natural-language prompts that auto-activate the right skill. Diagrams, docs, and tables are created via Miro MCP / board Gen.
 
 ## Installation
 
@@ -11,13 +11,13 @@ Core Miro MCP integration for Claude Code. Create diagrams, documents, and table
 
 ## Features
 
-- 7 task-focused skills (auto-loaded by relevance — no slash commands to memorize)
+- 4 task-focused skills (auto-loaded by relevance — no slash commands to memorize)
 - Automatic OAuth configuration
 - HTTP MCP server connection to `https://mcp.miro.com/`
 
 ## Skills
 
-The plugin ships seven skills. Each one teaches Claude how to handle a specific kind of task on a Miro board, including which MCP tool to call, what to ask the user for, and how to format the result.
+The plugin ships four skills. Each one teaches Claude how to handle a specific kind of task on a Miro board, including which MCP tool to call, what to ask the user for, and how to format the result.
 
 ### miro-browse
 
@@ -83,51 +83,6 @@ diagram the architecture of the payments service on https://miro.com/app/board/a
 visualize how a request flows through this repo on https://miro.com/app/board/abc=
 ```
 
-### miro-diagram
-
-**Activates when:** the user wants to create a diagram from a text description.
-
-**Supported diagram kinds:** flowcharts (processes, workflows, decision trees), mind maps (hierarchical ideas, brainstorming), UML class diagrams (OOP relationships), UML sequence diagrams (interactions), and entity-relationship diagrams (database schemas).
-
-The diagram kind is auto-detected from the description, or you can specify it explicitly. For precise control, the skill understands Mermaid notation and the diagram DSL exposed by the MCP server.
-
-**Example prompts:**
-
-```
-create a flowchart for user login authentication on https://miro.com/app/board/abc=
-
-add an ER diagram of users, products, orders, reviews to https://miro.com/app/board/abc=
-
-draw a class diagram for the payment processing system on https://miro.com/app/board/abc=
-```
-
-### miro-doc
-
-**Activates when:** the user wants to create or edit a Google-Docs-style markdown document on a board.
-
-**Supported markdown:** headings (H1–H6), bold, italic, unordered/ordered lists, links.
-**Not supported:** code blocks, tables (use `miro-table` instead), images, horizontal rules.
-
-The skill also supports find-and-replace edits to existing documents.
-
-**Example prompt:**
-
-```
-create a sprint planning doc with goals and team assignments on https://miro.com/app/board/abc=
-```
-
-### miro-table
-
-**Activates when:** the user wants to create a table with typed columns (text, or color-coded select dropdowns).
-
-Built-in templates for task trackers, decision logs, and risk registers. The skill also supports idempotent row updates keyed by a stable identifier column, and reading rows back for downstream workflows.
-
-**Example prompt:**
-
-```
-create a task tracker on https://miro.com/app/board/abc= with columns: Task, Assignee, Status (To Do/In Progress/Done), Priority (Low/Medium/High)
-```
-
 ## MCP Configuration
 
 The plugin automatically configures the Miro MCP server:
@@ -146,22 +101,9 @@ The plugin automatically configures the Miro MCP server:
 
 ## Tips
 
-### For Better Diagrams
-- Be specific about elements and relationships
-- Mention flow direction (top-down, left-right)
-- Include decision points and conditions
-- Use Mermaid notation for precise control
-
-### For Tables
-- Use select columns for status/priority fields
-- Define distinct colors for each option
-- Use meaningful column names
-- Use a stable identifier column when syncing rows from external data
-
-### For Documents
-- Structure with clear headings
-- Use lists for multiple items
-- Keep content scannable
+- Include a Miro board URL in your prompt so the right skill can activate
+- For diagrams/docs/tables, ask naturally — Miro MCP / board Gen handles generation without dedicated format skills
+- Be specific about scope (frame, PR number, branch) when exploring or reviewing
 
 ## Related
 

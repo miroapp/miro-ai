@@ -40,7 +40,7 @@ On first use, you'll be prompted to authenticate with Miro via OAuth.
 
 | Component | Files |
 |-----------|-------|
-| Skills | `miro-browse`, `miro-code-review`, `miro-code-spec`, `miro-diagram`, `miro-doc`, `miro-table` |
+| Skills | `miro-browse`, `miro-code-review`, `miro-code-spec`, `miro-code-explain-on-board` |
 | MCP | Miro MCP server (`https://mcp.miro.com/`) |
 
 ## Differences from the Claude source
