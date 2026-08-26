@@ -50,7 +50,7 @@ review PR 123 on https://miro.com/app/board/abc=
 explain this codebase on https://miro.com/app/board/abc=
 ```
 
-Diagrams, docs, and tables are created via Miro MCP / board Gen (no dedicated format skills).
+Diagrams, docs, and tables are created through Canvas Composer (no dedicated format skills).
 ## Authentication
 
 On first use, you'll be prompted to authenticate with Miro via OAuth. Select the team containing your target boards.

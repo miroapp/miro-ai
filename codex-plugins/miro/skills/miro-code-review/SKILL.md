@@ -158,6 +158,15 @@ This makes the triage visible and lets the user redirect before any board conten
 
 **Scale content *up to* these caps based on PR size, and apply the §4.5 value gates — fewer artifacts is fine.**
 
+#### Canvas authoring protocol
+
+Use Canvas Composer for all artifacts; never use legacy `layout_*`, `diagram_*`, `doc_*`, or `table_*` authoring tools.
+
+1. Call `canvas_get_canvas_composer_skill` once (`invocation_source: "skill"`, `is_repository: true`).
+2. Call `canvas_load_format_skill` once per selected diagram notation with the same invocation metadata.
+3. Put every artifact that passed the value gate in one left-to-right SVG composition; split only at the Canvas payload limit.
+4. Call `canvas_create_from_svg`, then keep and edit its `result_svg` for any `canvas_update_from_svg` iteration. Never recreate successful widgets or invent `data-miro-id` values.
+
 #### Linking conventions
 
 Every file reference produced in §5 must be a clickable hyperlink to the source platform when a base URL is available. Use the `LINK_TEMPLATE` and `LINK_SHA` captured in §2.
@@ -171,34 +180,20 @@ Per-artifact rules:
 - **Documents**: use markdown links — `[path/to/file.ts](url)` for whole-file references and `[path/to/file.ts:42-58](url#L42-L58)` for hunk references. Apply this in *every* file mention (Overview, Key Changes, High-Risk Areas, Architecture > New Components / Modified Interfaces, Security > Security-Sensitive Changes, etc.).
 - **Diagrams**: keep node labels as plain paths — the Miro diagram tool does not document clickable nodes. When a node corresponds to a single source file, append the URL as a second line in the node label so a reader can copy it.
 
-**Positioning:**
-
-Prefer laying artifacts out in a single row so the reviewer can scan them left-to-right. Pass placement to the Miro MCP tools per their schemas.
-
-#### Scaling Guidelines
-
-| PR Size | Files | LOC (±) | Documents | Diagrams |
-|---------|-------|---------|-----------|----------|
-| Trivial | 1–2 | < 20 | none (bail out per §4.5) | none |
-| Small | 1–5 | < 100 | 0–1 summary | 0–1 flow |
-| Medium | 6–15 | < 500 | 1–2 (summary + deep-dive if needed) | 1–3 |
-| Large | 16–30 | < 1500 | 2–3 (summary + architecture + security if applicable) | 2–4 |
-| Very Large | 30+ | ≥ 1500 | 3+ (by subsystem) | 3+ |
-
-> A side-by-side before/after pair counts as **one** diagram for the budgets above — the column limits conceptual artifacts, not raw board widgets.
+**Positioning:** Prefer a single left-to-right row. A side-by-side before/after pair counts as one conceptual diagram when applying the §4.5 value gates.
 
 ---
 
 #### File Changes Table
 
-Create first (appears at board center). Using the Miro MCP table tool, create a table with four columns in this order:
+Create first (appears at board center). In the Canvas SVG, add a structured table widget with four columns in this order:
 
 1. **Status** — a fixed-set column with values *Added*, *Modified*, *Deleted*, color-coded green / orange / red respectively.
 2. **File** — a text column containing the full source URL built per §5 "Linking conventions" (Miro renders URLs in text cells as clickable). Use the plain path when no remote URL is available.
 3. **Change** — a text column with a brief summary of changes and key review points.
 4. **Risk** — a fixed-set column with values *Low*, *Medium*, *High*, color-coded green / orange / red respectively.
 
-Pick the column types and option shape from the table tool's live schema.
+Pick the column types and option shape from the Canvas Composer guidance.
 
 For very large PRs (30+ files), create separate tables:
 - High-risk changes table
@@ -216,13 +211,13 @@ For very large PRs (30+ files), create separate tables:
 
 **Additional Documents** — for Very Large PRs, create per-subsystem documents in the same row ("API Changes Analysis", "Database Migration Review", "UI/Frontend Changes", etc.).
 
-See `references/document-templates.md` for the full markdown template of each document.
+Render each selected template as a structured document widget in the Canvas SVG. See `references/document-templates.md` for the full markdown template of each document.
 
 ---
 
 #### Diagrams
 
-Create diagrams based on the type of changes. Position after the last document (continue x increments of 800).
+Create diagrams as structured Mermaid widgets in the Canvas SVG, following the loaded notation guidance. Position them after the last document (continue x increments of 800).
 
 ##### Showing change: before/after vs. annotated
 
@@ -255,7 +250,7 @@ See `references/diagram-conventions.md` for the full prefix semantics and the `c
 
 **Diagram Positions:**
 
-Place a side-by-side pair adjacent to each other so the delta is visible at a glance. Otherwise let the row layout from §5 "Positioning" carry — pass placement to the Miro MCP diagram tool per its schema.
+Place a side-by-side pair adjacent to each other in the SVG so the delta is visible at a glance. Otherwise let the row layout from §5 "Positioning" carry.
 
 | Diagram (or pair) | When to create |
 |-------------------|----------------|

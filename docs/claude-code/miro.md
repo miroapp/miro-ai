@@ -1,6 +1,6 @@
 # miro Plugin
 
-Core Miro MCP integration for Claude Code. Explore boards, run visual code reviews, extract specs, and explain codebases on Miro — driven by natural-language prompts that auto-activate the right skill. Diagrams, docs, and tables are created via Miro MCP / board Gen.
+Core Miro MCP integration for Claude Code. Explore boards, run visual code reviews, extract specs, and explain codebases on Miro — driven by natural-language prompts that auto-activate the right skill. Diagrams, docs, and tables are created through Canvas Composer.
 
 ## Installation
 
@@ -102,7 +102,7 @@ The plugin automatically configures the Miro MCP server:
 ## Tips
 
 - Include a Miro board URL in your prompt so the right skill can activate
-- For diagrams/docs/tables, ask naturally — Miro MCP / board Gen handles generation without dedicated format skills
+- For diagrams/docs/tables, ask naturally — Canvas Composer handles generation without dedicated format skills
 - Be specific about scope (frame, PR number, branch) when exploring or reviewing
 
 ## Related

@@ -51,7 +51,7 @@ Select your AI tool below and follow the installation steps.
 /plugin install miro@miro-ai
 ```
 
-The `miro` plugin bundles all skills (browse, code-review, code-spec, code-explain-on-board, diagram, doc, table) and the Miro MCP server.
+The `miro` plugin bundles four skills (browse, code-review, code-spec, and code-explain-on-board) and the Miro MCP server.
 
 **Restart Claude Code** after installation. If you previously configured Miro MCP manually, [remove the duplicate](https://developers.miro.com/docs/miro-mcp-server-faq-and-troubleshooting#-duplicate-mcp-servers) to avoid conflicts — the plugin already manages the MCP connection for you.
 

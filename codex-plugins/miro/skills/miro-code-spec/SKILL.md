@@ -35,6 +35,7 @@ MCP as-is — MCP handles the URL.
 - Create the directory structure if needed:
   ```
   .miro/specs/
+  ├── board.svg       # Spatial source snapshot from Canvas Composer
   ├── documents/      # Markdown documents
   ├── diagrams/       # Diagram descriptions
   ├── prototypes/     # Containers (Markdown) and screens (HTML)
@@ -47,12 +48,21 @@ MCP as-is — MCP handles the URL.
 ### 4. Discover Items to Extract
 
 **For Board URLs:**
-- Use the Miro MCP board-overview tool with the board URL.
-- Each returned item includes its type, URL (with `moveToWidget` parameter), and title.
-- Collect all items with their types, URLs, and titles for extraction.
+- Call `canvas_read_as_svg` once (`invocation_source: "skill"`, `is_repository`
+  set for the workspace) and save its
+  `svg` verbatim to `.miro/specs/board.svg`.
+- Discover items, spatial structure, connectors, and hydrated docs/tables from
+  SVG elements and `data-miro-id`; create item URLs with
+  `?moveToWidget=<data-miro-id>` without displaying raw IDs as labels.
+- If truncated, page `board_list_items` only until the inventory is complete.
+  If `skipped_count` is non-zero, use `context_explore` for unsupported formats.
+- Do not call whole-board `context_get` after SVG; it duplicates work and uses
+  Miro AI credits.
 
 **For Item URLs:**
-- Create a single-item URL list.
+- Create a single-item URL list. Use `context_get` for the targeted item's
+  semantic content unless the user specifically requested its surrounding
+  spatial board context, in which case read the board SVG once as above.
 
 ### 5. Create Tasks for Extraction (MANDATORY)
 
@@ -61,7 +71,7 @@ MCP as-is — MCP handles the URL.
 Create an internal checklist item for EVERY item discovered so nothing is missed.
 
 **Task structure:**
-- **Subject:** "Extract [type]: [title]" (use title if available from the board-overview tool, otherwise use id)
+- **Subject:** "Extract [type]: [title]" (use the title from the SVG/context result when available, otherwise use id)
 - **Description:** Include item type, id, URL, and target file path
 - **activeForm:** "Extracting [type]: [title]" (use title if available, otherwise use id)
 
@@ -97,14 +107,10 @@ Create tasks according to this exact breakdown:
 **Critical:** Prototype screens are NOT 1 task, they are 3 tasks. If you create only 1 task per screen, images will be missed.
 
 **Naming Convention:**
-- Use titles from the board-overview tool for readability
+- Use titles from the SVG or item context for readability
 - Use item IDs in file paths for uniqueness and filesystem safety
 
-**This task creation step ensures:**
-✓ All items are tracked
-✓ Nothing gets skipped
-✓ Progress is visible
-✓ Extraction workflow is structured
+This checklist keeps every item and extraction step visible and tracked.
 
 ### 6. Initialize Metadata Index
 
@@ -133,7 +139,7 @@ This file will be updated progressively as each item is extracted.
 
 **For most items (documents, diagrams, containers, frames, tables, other):**
 1. Update your internal checklist to mark the item's entry as `in_progress`
-2. Call the appropriate MCP tool to get content
+2. Reuse content already present in `board.svg`; call an additional MCP read tool only when the SVG does not contain the required detail
 3. **IMMEDIATELY** write the content to disk
 4. Read current `index.json`, add this item to the items array, then write the updated `index.json`
 5. Update your internal checklist to mark the item's entry as `completed`
@@ -144,13 +150,13 @@ This file will be updated progressively as each item is extracted.
 - Large HTML content stays in subagent context, never enters main context
 
 **Document items:**
-- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- Extract hydrated document content from `board.svg`; if it is absent, call `context_get` with the item URL
 - **MUST write** content to `.miro/specs/documents/<board item ID>.md`
 - Extract title from content if available
 - Update `index.json` with this item
 
 **Diagram items:**
-- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- Extract the structured diagram/Mermaid body from `board.svg`; if it is absent or represented as a foreign item, call `context_get` with the item URL
 - **MUST write** content to `.miro/specs/diagrams/<board item ID>.md`
 - Update `index.json` with this item
 
@@ -217,18 +223,18 @@ Report back: number of images found, downloaded, and any failures.
 - ✓ ALL image URLs must be replaced with local paths before moving on
 
 **Frame items:**
-- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- Use the frame and its contained SVG elements as the grounded structure. Call `context_get` with the frame URL only when a semantic summary is required
 - **MUST write** content to `.miro/specs/frames/<board item ID>.md`
 - Update `index.json` with this item
 
 **Table items:**
-- Call the appropriate Miro MCP table-retrieval tool for the table item
+- Extract the table's current columns and rows from `board.svg`; use `context_get` only if the SVG omitted the table content
 - **MUST write** JSON content to `.miro/specs/tables/<board item ID>.json`
 - Include column definitions and all row data in JSON
 - Update `index.json` with this item
 
 **Unknown/Other item types** (e.g., slides, or any new types):
-- Call the appropriate Miro MCP item-retrieval tool with the item URL
+- Call `context_get` or an available format-specific read tool identified by the MCP tool descriptions
 - **MUST write** content to `.miro/specs/other/<board item ID>.md`
 - Preserve original type name in metadata for reference
 - Update `index.json` with this item

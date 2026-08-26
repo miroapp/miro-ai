@@ -23,7 +23,7 @@ Ask Claude in natural language with a Miro board URL — the relevant skill load
 - *"Extract specs from `https://miro.com/app/board/...`"* → `miro-code-spec`
 - *"Explain this codebase on `https://miro.com/app/board/...`"* → `miro-code-explain-on-board`
 
-Diagrams, docs, and tables are created via Miro MCP / board Gen — no dedicated format skills.
+Diagrams, docs, and tables are created through Canvas Composer — no dedicated format skills.
 
 ## License
 
