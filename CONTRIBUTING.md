@@ -377,7 +377,7 @@ Per Gemini CLI's [extension model](https://geminicli.com/docs/extensions/referen
 ```
 miro-ai/                     # Repo root = Gemini extension root
 ├── gemini-extension.json    # Manifest with MCP config (auto-generated)
-└── skills/                  # 7 skills, byte-identical to source
+└── skills/                  # 4 skills, byte-identical to source
 ```
 
 ### Validation Checklist
@@ -492,7 +492,7 @@ Plugins are auto-generated from Claude plugins as part of the bulk `bun run conv
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/skills/miro-diagram/SKILL.md
+   vim claude-plugins/miro/skills/miro-browse/SKILL.md
    ```
 
 2. **Regenerate all targets (bulk):**

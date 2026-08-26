@@ -94,4 +94,4 @@ The original workflow targeted a strict DSL; with Mermaid the same intent maps a
 - **Final shape audit.** After compiling each architecture/system flowchart, re-scan the Mermaid; replace any non-rectangle shape syntax with `id[Label]`, labels unchanged.
 - **Containment** → Mermaid `subgraph` clusters or a note, never a "contains" edge.
 - **Import graphs** → unlabeled `-->` edges + a legend note; object-level labels only where they add meaning.
-- **Color** → follow the conventions returned by `diagram_get_mermaid_instructions` for the chosen notation; use color to support the 5-second scan, not decoration.
+- **Color** → follow the conventions returned by `canvas_load_format_skill` for the chosen notation; use color to support the 5-second scan, not decoration.

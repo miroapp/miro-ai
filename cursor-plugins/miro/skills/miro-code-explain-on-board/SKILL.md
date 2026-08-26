@@ -7,7 +7,7 @@ description: Use when the user wants to explain or visualize a codebase on a Mir
 
 You are a senior software engineer and visual architect. Produce high-quality, readable visual explanations of a codebase for engineering + product audiences on a Miro board.
 
-Drive the workflow with the Miro MCP diagramming tools. Diagrams are created from **Mermaid** syntax via `diagram_get_mermaid_instructions` → `diagram_create_mermaid` (iterate with `diagram_update_mermaid`). The companion document is created with `doc_create`.
+Drive the workflow with Canvas Composer. Call `canvas_get_canvas_composer_skill` once, load notation guidance with `canvas_load_format_skill`, and create the diagrams plus companion document as one SVG composition with `canvas_create_from_svg`. Iterate from its returned `result_svg` with `canvas_update_from_svg`.
 
 **Artifact-first:** cite repo symbols (files / modules / types) only when known. Do NOT invent. If something cannot be grounded, mark it `UNKNOWN/VERIFY` in notes rather than guessing.
 
@@ -67,31 +67,32 @@ Draft content consistent with the chosen notation's semantics, using typed edges
 - **Flowchart shape hygiene (architecture/system/module fallback) — MUST:** use **only plain rectangle nodes** `id[Label]`. Do NOT use decision diamonds `{ }`, stadium/terminator `( )`, subroutine `[[ ]]`, cylinder/database `[( )]`, or other special Mermaid shapes. Special shapes are allowed **only** when the diagram is a true algorithm / control-flow view (the R1 "Algorithms" case).
 - **ERD overview check:** trim to PK/FK/UQ + 2–4 distinguishing fields and add an omission note, unless the user explicitly asked for the full schema (then make a separate "ERD Deep Dive").
 
-### 5. Compile to Mermaid
+### 5. Load Canvas guidance and compile to Mermaid
 
-For **each distinct notation** you will use, call `diagram_get_mermaid_instructions` once (`miro_url`, `diagram_type` ∈ flowchart | uml_class | uml_sequence | entity_relationship, `is_repository: true` when working inside a git repo). Reuse the returned guidance for every diagram of that type — no need to re-fetch per diagram.
+Call `canvas_get_canvas_composer_skill` once with `invocation_source: "skill"` and `is_repository: true`. This is required before loading format guidance or authoring SVG.
+
+For **each distinct notation** you will use, call `canvas_load_format_skill` once with `format_name: "diagramming"`, the matching `notation` (`flowchart`, `uml_class`, `uml_sequence`, or `entity_relationship`), `invocation_source: "skill"`, and `is_repository: true`. Reuse the returned guidance for every diagram of that notation.
 
 Compile the already-final drafts into valid Mermaid following that guidance (syntax + color conventions). Do **not** change diagram intent during compilation. Apply the guidance's coloring conventions to aid the 5-second scan.
 
 **Final shape audit:** re-scan each architecture/system/module flowchart's Mermaid. If it contains any non-rectangle shape syntax (`{ }`, `( )`, `[[ ]]`, `[( )]`, `> ]`, etc.) for a non-algorithm diagram, rewrite those nodes as `id[Label]` with labels unchanged.
 
-### 6. Create the diagrams on the board
+### 6. Compose and create the board artifacts
 
-For each compiled diagram call `diagram_create_mermaid`:
+Compose every selected diagram and the companion document under one SVG root, following the Canvas Composer and diagramming guidance exactly. Place the artifacts left-to-right in scan order and keep enough spacing for content that may expand after creation.
 
-- `miro_url` (board URL from step 0; include `?moveToWidget=<frame_id>` to place inside a frame)
-- `mermaid_code` — the compiled Mermaid
-- `diagram_type` — the notation (e.g. `flowchart`, `class`, `sequence`, `er`); defer to the tool's schema
-- `title` — the diagram title from the plan
+Call `canvas_create_from_svg` once with:
+
+- `miro_url` — the board URL from step 0; retain a frame target when supplied
+- `svg` — the complete composition
 - `invocation_source: "skill"`
-- `is_repository: true` when inside a git repo
-- `x` / `y` — stagger placements so diagrams don't overlap (lay them out left-to-right in scan order)
+- `is_repository: true`
 
-One call per diagram. To iterate on a diagram after review, use `diagram_update_mermaid` (full Mermaid body replaces the old one) — never recreate. Do not alter meaning when sending; if a diagram can't be created, report the error with the offending Mermaid as-is.
+Treat `result_svg` as the source of truth for every subsequent edit. If the response reports changed dimensions, failed items, or overlaps, edit that SVG and call `canvas_update_from_svg`; never recreate successful widgets or invent `data-miro-id` values.
 
 ### 7. Companion document
 
-Create one short companion document with `doc_create` to help humans interpret the set: what each diagram answers, coverage and assumptions, any `UNKNOWN/VERIFY` items, and what to inspect next. Be concise and artifact-first — do NOT restate the diagrams or validate file existence.
+Include one short Canvas document widget in the same SVG composition to help humans interpret the set: what each diagram answers, coverage and assumptions, any `UNKNOWN/VERIFY` items, and what to inspect next. Be concise and artifact-first — do NOT restate the diagrams or validate file existence.
 
 ## Output
 
