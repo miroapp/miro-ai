@@ -377,7 +377,7 @@ Per Gemini CLI's [extension model](https://geminicli.com/docs/extensions/referen
 ```
 miro-ai/                     # Repo root = Gemini extension root
 ├── gemini-extension.json    # Manifest with MCP config (auto-generated)
-└── skills/                  # 7 skills, byte-identical to source
+└── skills/                  # 8 skills, byte-identical to source
 ```
 
 ### Validation Checklist
