@@ -117,7 +117,7 @@ miro-ai/
 │   └── skills/             # Repo-local helper skills for Codex/agent workflows
 ├── claude-plugins/           # Claude Code plugins (source of truth)
 │   └── miro/                # Core MCP integration with bundled skills
-│       └── skills/          # browse, code-review, code-spec, code-explain-on-board, diagram, doc, table
+│       └── skills/          # browse, code-review, code-spec, code-explain-on-board, diagram, doc, format, table
 ├── gemini-extension.json     # Gemini CLI extension manifest at repo root (auto-generated)
 ├── codex-plugins/            # Codex plugins (auto-generated)
 │   └── miro/
