@@ -33,6 +33,7 @@ npx skills add miroapp/miro-ai -y               # Skip confirmation prompts
 | miro-code-explain-on-board | Explain a codebase on a Miro board as a minimal set of notation-correct diagrams plus a companion doc |
 | miro-diagram | Creating diagrams (flowchart, mindmap, UML, ER) from text or Mermaid |
 | miro-doc | Creating and editing markdown documents on a Miro board |
+| miro-format | Creating a brand-new, standalone Miro item (document, table, diagram, timeline, kanban, and more) as its own content, not added onto an existing board |
 | miro-table | Creating, populating, and syncing structured tables on a Miro board |
 
 ## How Skills Work

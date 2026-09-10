@@ -19,6 +19,7 @@ Skills:
 - `$miro:miro-code-spec`
 - `$miro:miro-diagram`
 - `$miro:miro-doc`
+- `$miro:miro-format`
 - `$miro:miro-table`
 
 ## Related

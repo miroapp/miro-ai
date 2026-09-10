@@ -12,6 +12,7 @@ The Miro MCP server groups its tools into a few broad capabilities:
 - **Diagram creation** — generate diagrams (flowcharts, mind maps, UML class and sequence, ER) from a DSL or Mermaid-style description.
 - **Document creation and editing** — create Google-Docs-style markdown documents on a board, and update existing ones via find-and-replace.
 - **Table creation and sync** — create structured tables with typed columns and idempotently sync rows from external data.
+- **Standalone format creation** — create a document, table, diagram, timeline, kanban board, and other typed formats as their own content item, rather than as a widget added onto an existing board.
 - **Image retrieval** — fetch image content or download URLs for image items on a board.
 
 ## Board URLs
