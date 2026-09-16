@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import type { ClaudePlugin, ConversionResult, ConversionWarning } from "./types";
+import { pruneStaleSkills } from "./utils";
 
 /**
  * Write Agent Skills (agentskills.io format) from a Claude plugin.
@@ -43,6 +44,12 @@ export async function writeAgentSkills(
         await copyOut(ref, `${skillName}/references/${refFileName}`);
       }
     }
+
+    await pruneStaleSkills(
+      outputDir,
+      plugin.skills.map((s) => s.name),
+      dryRun
+    );
   } catch (e) {
     errors.push(`Failed to write agent skills: ${(e as Error).message}`);
   }
