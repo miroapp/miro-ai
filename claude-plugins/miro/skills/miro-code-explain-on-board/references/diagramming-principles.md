@@ -88,10 +88,10 @@ Do NOT mix these in one diagram; split:
 
 ## Mermaid compilation guardrails
 
-The original workflow targeted a strict DSL; with Mermaid the same intent maps as follows:
+These constrain the Mermaid you compile in step 5. Syntax, escaping, and the color palette are not defined here — they come from the diagramming guidance loaded at that step. These rules narrow it for codebase explanation:
 
-- **Flowchart shape hygiene (architecture/system/module fallback) — MUST.** Use only plain rectangle nodes `id[Label]`. Do NOT decorate nodes with special shapes (`{ }` decision, `( )` stadium/terminator, `[[ ]]` subroutine, `[( )]` cylinder/database, `> ]` flag, etc.) even when they seem semantically fitting — it breaks layout consistency and is invalid output. Special shapes are allowed ONLY for true algorithm/control-flow diagrams (the R1 "Algorithms" view).
+- **Flowchart shape hygiene (architecture/system/module fallback) — MUST.** Use only plain rectangle nodes `id[Label]`. Do NOT decorate nodes with special shapes (`{ }` decision, `( )` stadium/terminator, `[[ ]]` subroutine, `[( )]` cylinder/database, `> ]` flag, etc.) even when they seem semantically fitting — it breaks layout consistency across the set. This is deliberately stricter than the loaded guidance's worked example, which shows a general-purpose flowchart using those shapes. Special shapes are allowed ONLY for true algorithm/control-flow diagrams (the R1 "Algorithms" view).
 - **Final shape audit.** After compiling each architecture/system flowchart, re-scan the Mermaid; replace any non-rectangle shape syntax with `id[Label]`, labels unchanged.
 - **Containment** → Mermaid `subgraph` clusters or a note, never a "contains" edge.
 - **Import graphs** → unlabeled `-->` edges + a legend note; object-level labels only where they add meaning.
-- **Color** → follow the conventions returned by `diagram_get_mermaid_instructions` for the chosen notation; use color to support the 5-second scan, not decoration.
+- **Color** → use the palette and fill/border pairings from the loaded diagramming guidance, and spend color on supporting the 5-second scan rather than decoration.
