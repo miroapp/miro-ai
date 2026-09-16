@@ -93,10 +93,10 @@ Portable knowledge skills that work across AI coding tools (Claude Code, Cursor,
 ```bash
 npx skills add miroapp/miro-ai                       # Interactive install
 npx skills add miroapp/miro-ai --list                # List available skills
-npx skills add miroapp/miro-ai --skill=miro-browse   # Install specific skill
+npx skills add miroapp/miro-ai --skill=miro-code-review   # Install specific skill
 ```
 
-Available skills: **miro-browse**, **miro-code-review**, **miro-code-spec**, **miro-diagram**, **miro-doc**, **miro-format**, **miro-table**
+Available skills: **miro-code-explain-on-board**, **miro-code-review**, **miro-code-spec**
 
 See [Agent Skills Overview](docs/agent-skills/overview.md) | [agentskills.io](https://agentskills.io)
 
@@ -179,13 +179,11 @@ Skills auto-activate when you describe what you want naturally. No slash command
 
 | Skill | Triggers On |
 |-------|-------------|
-| `miro-browse` | "List the frames on …", "What's on this board …" |
+| `miro-code-explain-on-board` | "Explain this codebase on …", "Visualize the architecture on …" |
 | `miro-code-review` | "Review PR 123 on …", "Visual review of this branch on …" |
 | `miro-code-spec` | "Extract specs from …", "Pull the design docs at …" |
-| `miro-diagram` | "Create a flowchart on …", "Add a sequence diagram to …" |
-| `miro-doc` | "Add a markdown doc to …", "Write a sprint plan on …" |
-| `miro-format` | "Create a doc in Miro about …", "Make me a standalone Miro table for …" |
-| `miro-table` | "Make a task tracker table on …", "Sync these rows to …" |
+
+Creating content on a board — diagrams, documents, tables, stickies, standalone formats — needs no skill. Ask for it directly; the Miro MCP server's own tools cover it and load their authoring guidance on demand.
 
 ### Capabilities (All Platforms)
 
@@ -204,7 +202,7 @@ Skills auto-activate when you describe what you want naturally. No slash command
 
 | Plugin | Description |
 |--------|-------------|
-| [miro](docs/claude-code/miro.md) | Core MCP integration with 8 bundled skills (browse, code-review, code-spec, code-explain-on-board, diagram, doc, format, table) |
+| [miro](docs/claude-code/miro.md) | Core MCP integration with 3 bundled skills (code-explain-on-board, code-review, code-spec) |
 
 ### Gemini CLI
 
@@ -222,13 +220,9 @@ Skills auto-activate when you describe what you want naturally. No slash command
 
 | Skill | Description |
 |-------|-------------|
-| miro-browse | List, filter, summarize items on a Miro board |
+| miro-code-explain-on-board | Explain a codebase on a board as a minimal, notation-correct diagram set plus a companion doc |
 | miro-code-review | Visual code review from PRs, local changes, or branch comparisons |
 | miro-code-spec | Extract Miro specs (docs, diagrams, prototypes, tables, images) to `.miro/specs/` |
-| miro-diagram | Create diagrams (flowchart, mindmap, UML, ER) from text or Mermaid |
-| miro-doc | Create and edit markdown documents on a Miro board |
-| miro-format | Create a brand-new, standalone Miro item (document, table, diagram, and more), not added onto an existing board |
-| miro-table | Create, populate, and sync structured tables on a Miro board |
 
 ### Kiro
 

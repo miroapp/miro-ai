@@ -13,14 +13,9 @@ Secure access to Miro boards. Enables AI to read board context, create diagrams,
 
 Skills:
 
-- `$miro:miro-browse`
 - `$miro:miro-code-explain-on-board`
 - `$miro:miro-code-review`
 - `$miro:miro-code-spec`
-- `$miro:miro-diagram`
-- `$miro:miro-doc`
-- `$miro:miro-format`
-- `$miro:miro-table`
 
 ## Related
 

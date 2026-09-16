@@ -1,6 +1,8 @@
 # miro Plugin
 
-Core Miro MCP integration for Claude Code. Create diagrams, documents, and tables on Miro boards, and explore board contents — all driven by natural-language prompts that auto-activate the right skill.
+Core Miro MCP integration for Claude Code, plus three skills for codebase-oriented workflows that span the repo and the board.
+
+Creating and exploring board content — diagrams, documents, tables, stickies, standalone formats — is handled by the Miro MCP server's own tools and needs no skill. Ask for it in natural language.
 
 ## Installation
 
@@ -11,29 +13,14 @@ Core Miro MCP integration for Claude Code. Create diagrams, documents, and table
 
 ## Features
 
-- 8 task-focused skills (auto-loaded by relevance — no slash commands to memorize)
+- 3 task-focused skills (auto-loaded by relevance — no slash commands to memorize)
 - Automatic OAuth configuration
 - HTTP MCP server connection to `https://mcp.miro.com/`
 
 ## Skills
 
-The plugin ships eight skills. Each one teaches Claude how to handle a specific kind of task on a Miro board, including which MCP tool to call, what to ask the user for, and how to format the result.
+The plugin ships three skills. Each one carries a multi-step workflow that the MCP tools alone don't describe: reading a pull request from a forge, writing spec files into the repo, or deciding what a codebase's diagram set should contain.
 
-### miro-browse
-
-**Activates when:** the user wants to list, explore, or filter items on a Miro board, or asks "what's on this board?".
-
-Lists, filters, and summarizes board items, and retrieves the content of a specific item. Understands URLs with `moveToWidget` or `focusWidget` that scope the operation to a single frame or item.
-
-**Example prompts:**
-
-```
-list items on https://miro.com/app/board/uXjVK123abc=/
-
-show me only the frames on https://miro.com/app/board/uXjVK123abc=/
-
-summarize what's on https://miro.com/app/board/uXjVK123abc=/
-```
 
 ### miro-code-review
 
@@ -71,7 +58,7 @@ pull all PRD content from https://miro.com/app/board/abc= into .miro/specs/
 
 **Activates when:** the user wants to explain or visualize a codebase on a Miro board.
 
-Produces a minimal, notation-correct set of diagrams (flowchart, UML class, UML sequence, ERD) that each answer one question at one abstraction level, plus a short companion document. Diagrams are grounded in real repo artifacts — no invented symbols — and rendered via the MCP Mermaid tools.
+Produces a minimal, notation-correct set of diagrams (flowchart, UML class, UML sequence, ERD) that each answer one question at one abstraction level, plus a short companion document. Diagrams are grounded in real repo artifacts — no invented symbols — and written to the board as Mermaid diagram widgets through the MCP canvas tools.
 
 **Example prompts:**
 
@@ -83,66 +70,9 @@ diagram the architecture of the payments service on https://miro.com/app/board/a
 visualize how a request flows through this repo on https://miro.com/app/board/abc=
 ```
 
-### miro-format
 
-**Activates when:** the user wants a brand-new, standalone Miro item — a document, table, diagram, timeline, kanban board, slide deck, prototyping container, activities board, or embed — created as its own content, not added onto a board they're already working on.
 
-This is the counterpart to `miro-diagram`, `miro-doc`, and `miro-table`: those add a widget to an existing board, while `miro-format` creates the item as its own standalone piece of content (optionally nested inside a space).
 
-**Example prompts:**
-
-```
-create a doc in Miro about our Q3 roadmap
-
-make me a standalone Miro table for tracking vendor contracts
-
-set up a new kanban board in Miro for the design team
-```
-
-### miro-diagram
-
-**Activates when:** the user wants to create a diagram from a text description, as a widget on a board they're already working on.
-
-**Supported diagram kinds:** flowcharts (processes, workflows, decision trees), mind maps (hierarchical ideas, brainstorming), UML class diagrams (OOP relationships), UML sequence diagrams (interactions), and entity-relationship diagrams (database schemas).
-
-The diagram kind is auto-detected from the description, or you can specify it explicitly. For precise control, the skill understands Mermaid notation and the diagram DSL exposed by the MCP server.
-
-**Example prompts:**
-
-```
-create a flowchart for user login authentication on https://miro.com/app/board/abc=
-
-add an ER diagram of users, products, orders, reviews to https://miro.com/app/board/abc=
-
-draw a class diagram for the payment processing system on https://miro.com/app/board/abc=
-```
-
-### miro-doc
-
-**Activates when:** the user wants to create or edit a Google-Docs-style markdown document as a widget on a board they're already working on.
-
-**Supported markdown:** headings (H1–H6), bold, italic, unordered/ordered lists, links.
-**Not supported:** code blocks, tables (use `miro-table` instead), images, horizontal rules.
-
-The skill also supports find-and-replace edits to existing documents.
-
-**Example prompt:**
-
-```
-create a sprint planning doc with goals and team assignments on https://miro.com/app/board/abc=
-```
-
-### miro-table
-
-**Activates when:** the user wants to create a table with typed columns (text, or color-coded select dropdowns) as a widget on a board they're already working on.
-
-Built-in templates for task trackers, decision logs, and risk registers. The skill also supports idempotent row updates keyed by a stable identifier column, and reading rows back for downstream workflows.
-
-**Example prompt:**
-
-```
-create a task tracker on https://miro.com/app/board/abc= with columns: Task, Assignee, Status (To Do/In Progress/Done), Priority (Low/Medium/High)
-```
 
 ## MCP Configuration
 
@@ -161,6 +91,8 @@ The plugin automatically configures the Miro MCP server:
 ```
 
 ## Tips
+
+These apply to prompts you send straight to the MCP tools, with or without a skill in play.
 
 ### For Better Diagrams
 - Be specific about elements and relationships

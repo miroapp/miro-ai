@@ -41,14 +41,14 @@ The converters under `validation/src/converters/` only handle skills, MCP, and t
 
 ### Why this scope
 
-- **Skills auto-activate** from natural language using their `description` field. They cover the same surface as slash commands without forcing users to memorize syntax (`/miro:browse <url>` becomes `list items on <url>`).
+- **Skills auto-activate** from natural language using their `description` field. They cover the same surface as slash commands without forcing users to memorize syntax (`/miro:review 123 <url>` becomes `review PR 123 on <url>`).
 - **MCP** gives the model direct tool access. Hooks and scripts mostly existed to bridge gaps that MCP now fills.
 - **One source of truth.** Vendors implement these primitives differently (Cursor flattens hook structure, Gemini converts commands to TOML, Codex omits commands entirely). Sticking to skills + MCP gives every target byte-identical content for the same source.
 - **Smaller blast radius.** Less converter code to maintain, fewer cross-platform edge cases, no platform-specific text adaptation — source skills are authored in platform-neutral phrasing and copied verbatim to every target.
 
 ### If you need command-like behavior
 
-Author it as a skill with a clear trigger description. The skill body can prompt for a board URL or other inputs the way a slash command would. See `claude-plugins/miro/skills/miro-browse/SKILL.md` for the canonical pattern.
+Author it as a skill with a clear trigger description. The skill body can prompt for a board URL or other inputs the way a slash command would. See `claude-plugins/miro/skills/miro-code-review/SKILL.md` for the canonical pattern.
 
 If you have a use case that genuinely cannot be expressed as a skill + MCP, open a discussion before adding new component types — re-introducing commands/agents/hooks is a deliberate scope expansion, not a one-off feature add.
 
@@ -117,7 +117,7 @@ miro-ai/
 │   └── skills/             # Repo-local helper skills for Codex/agent workflows
 ├── claude-plugins/           # Claude Code plugins (source of truth)
 │   └── miro/                # Core MCP integration with bundled skills
-│       └── skills/          # browse, code-review, code-spec, code-explain-on-board, diagram, doc, format, table
+│       └── skills/          # code-explain-on-board, code-review, code-spec
 ├── gemini-extension.json     # Gemini CLI extension manifest at repo root (auto-generated)
 ├── codex-plugins/            # Codex plugins (auto-generated)
 │   └── miro/
@@ -348,7 +348,7 @@ Per Gemini CLI's [extension model](https://geminicli.com/docs/extensions/referen
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/skills/miro-browse/SKILL.md
+   vim claude-plugins/miro/skills/miro-code-review/SKILL.md
    ```
 
 2. **Regenerate all targets (bulk):**
@@ -377,7 +377,7 @@ Per Gemini CLI's [extension model](https://geminicli.com/docs/extensions/referen
 ```
 miro-ai/                     # Repo root = Gemini extension root
 ├── gemini-extension.json    # Manifest with MCP config (auto-generated)
-└── skills/                  # 8 skills, byte-identical to source
+└── skills/                  # 3 skills, byte-identical to source
 ```
 
 ### Validation Checklist
@@ -406,7 +406,7 @@ Skills are auto-generated from Claude plugin skills as part of the bulk `bun run
 
 1. **Edit the source Claude plugin skill:**
    ```bash
-   vim claude-plugins/miro/skills/miro-browse/SKILL.md
+   vim claude-plugins/miro/skills/miro-code-review/SKILL.md
    ```
 
 2. **Regenerate all targets (bulk):**
@@ -439,7 +439,7 @@ Plugins are auto-generated from Claude plugins as part of the bulk `bun run conv
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/skills/miro-browse/SKILL.md
+   vim claude-plugins/miro/skills/miro-code-review/SKILL.md
    ```
 
 2. **Regenerate all targets (bulk):**
@@ -459,7 +459,7 @@ Plugins are auto-generated from Claude plugins as part of the bulk `bun run conv
 4. **Test in Codex:**
    - Open the repository in Codex so it can discover `.agents/plugins/marketplace.json`
    - Install the generated `miro` plugin from the `miro-ai` marketplace
-   - Verify plugin `$` skills appear for `$miro:miro-browse`
+   - Verify plugin `$` skills appear for `$miro:miro-code-review`
    - Verify the Codex slash menu still shows only built-in commands
 
 ### Plugin Structure
@@ -492,7 +492,7 @@ Plugins are auto-generated from Claude plugins as part of the bulk `bun run conv
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/skills/miro-diagram/SKILL.md
+   vim claude-plugins/miro/skills/miro-code-review/SKILL.md
    ```
 
 2. **Regenerate all targets (bulk):**
@@ -526,7 +526,7 @@ This section documents the developer workflow for generating, validating, and pa
 
 1. **Edit the source Claude plugin:**
    ```bash
-   vim claude-plugins/miro/skills/miro-browse/SKILL.md
+   vim claude-plugins/miro/skills/miro-code-review/SKILL.md
    ```
 
 2. **Keep the required Cowork icons in the package asset folder:**
