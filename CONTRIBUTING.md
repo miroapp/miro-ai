@@ -84,6 +84,7 @@ bun run validate
 |------------------|-----|
 | Claude plugin.json files | `claude plugin validate` CLI |
 | SKILL.md frontmatter | JSON schema (requires `description`) |
+| Skill content | No hardcoded MCP tool names (see below) |
 | Kiro POWER.md frontmatter | JSON schema (requires `name`, `displayName`, `description`, `keywords`) |
 | All JSON files | Syntax validation |
 | MCP configurations | URL consistency across platforms |
@@ -92,6 +93,14 @@ bun run validate
 | Copilot Cowork package | Manifest schema + identity + skills + connectors |
 
 Individual filters are not exposed as scripts — `bun run validate` and `bun run convert` are bulk operations. For ad-hoc debugging, call the CLI directly, e.g. `bun validation/src/index.ts --codex-only` or `bun validation/src/converters/index.ts --cursor --plugin=miro --dry-run`.
+
+#### Don't hardcode MCP tool names in skills
+
+Skills name tools by role — "the Miro MCP table tool", "the appropriate item-retrieval tool" — not by identifier. A skill that hardcodes `diagram_create_mermaid` keeps shipping after the tool is renamed or replaced, and the only symptom is an agent calling something that no longer exists. `bun run validate` fails on any `<family>_<verb>` token in a `SKILL.md` or its `references/`.
+
+The `ALLOWED` list in `validation/src/skill-tool-refs-validator.ts` holds parameter and field names only, and should stay that way. Call ordering is not a reason to name a tool: the MCP tools state their own prerequisites in their descriptions, so a skill that repeats them is duplicating the server and will drift from it.
+
+The check is best-effort. It matches against a list of known tool-name families, so a family the server adds later goes unnoticed until someone extends `TOOL_FAMILIES`. It fails open by design — a passing run means nothing known was hardcoded, not that nothing was.
 
 See [Validation Documentation](docs/validation/README.md) for detailed information on schemas, troubleshooting, and extending validators.
 
