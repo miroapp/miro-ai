@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import type { ClaudePlugin, ConversionResult, ConversionWarning } from "./types";
-import { toDisplayName } from "./utils";
+import { pruneStaleSkills, toDisplayName } from "./utils";
 
 /**
  * Build Cursor plugin.json manifest from Claude plugin.
@@ -97,6 +97,12 @@ export async function writeCursorPlugin(
         await writeOut(ref, refContent);
       }
     }
+
+    await pruneStaleSkills(
+      path.join(pluginDir, "skills"),
+      plugin.skills.map((s) => s.name),
+      dryRun
+    );
 
     try {
       const readme = await readFile(

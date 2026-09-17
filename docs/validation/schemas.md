@@ -34,7 +34,7 @@ Located in `validation/schemas/`:
 **Example:**
 ```yaml
 ---
-name: miro-browse
+name: miro-code-review
 description: Use when the user wants to explore, list, summarize, or inspect items on a Miro board.
 ---
 ```

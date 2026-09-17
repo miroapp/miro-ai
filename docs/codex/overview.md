@@ -19,13 +19,13 @@ No commands, agents (subagents), or hooks are emitted. Codex's plugin format doe
 |---------|------------|---------------|
 | Setup | Manual config | Repo-local marketplace |
 | Guidance | Generic tool use | Skills teach Miro-specific best practices |
-| Workflow patterns | Manual tool choice | Auto-activating skills (e.g. `$miro:miro-diagram`) |
+| Workflow patterns | Manual tool choice | Auto-activating skills (e.g. `$miro:miro-code-review`) |
 
 ## Available Plugins
 
 | Plugin | Description | Surface |
 |--------|-------------|---------|
-| `miro` | Core MCP integration | Skills `miro-browse`, `miro-code-review`, `miro-code-spec`, `miro-diagram`, `miro-doc`, `miro-table` plus the Miro MCP tools |
+| `miro` | Core MCP integration | Skills `miro-code-explain-on-board`, `miro-code-review`, `miro-code-spec` plus the Miro MCP tools |
 
 ## Skill content
 

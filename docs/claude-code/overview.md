@@ -6,7 +6,7 @@ Claude Code plugins extend Claude's capabilities with slash commands, skills, ag
 
 Plugins are packages that add specialized functionality to Claude Code:
 
-- **Skills** - Task-shaped knowledge that auto-loads based on the user's prompt (e.g. `miro-diagram` activates when the user asks to draw something on a board)
+- **Skills** - Task-shaped knowledge that auto-loads based on the user's prompt (e.g. `miro-code-review` activates when the user asks for a visual review of a pull request)
 - **MCP** - Bundled MCP server configuration so Claude can talk to Miro directly
 
 ## Why Use Plugins vs Direct MCP?
@@ -33,7 +33,7 @@ For local development, see [CONTRIBUTING.md](../../CONTRIBUTING.md#claude-code-p
 
 | Plugin | Description | Surface |
 |--------|-------------|---------|
-| [miro](miro.md) | Core MCP integration | Skills: `miro-browse`, `miro-code-review`, `miro-code-spec`, `miro-diagram`, `miro-doc`, `miro-table` |
+| [miro](miro.md) | Core MCP integration | Skills: `miro-code-explain-on-board`, `miro-code-review`, `miro-code-spec` |
 
 ## Quick Start
 
