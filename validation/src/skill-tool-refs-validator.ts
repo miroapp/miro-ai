@@ -6,27 +6,49 @@ import path from "path";
  * Tool-name families exposed by the Miro MCP server. A `<family>_<verb>` token
  * in skill prose is almost always a literal tool name rather than an ordinary
  * snake_case word.
+ *
+ * Mirrors the server names under `src/server_mcp/servers/` in the mcp-server
+ * repo, plus prefixes only visible on the live surface (`space_`, `section_`,
+ * `blog_post_`). Refresh it when the server adds a family.
+ *
+ * Retired families stay on the list on purpose. `diagram_`, `doc_`, `context_`,
+ * and `layout_` are the ones skills used to call; keeping them is what stops a
+ * future change from reintroducing `doc_create` unnoticed.
  */
 const TOOL_FAMILIES = [
+  "agentic_board",
   "blog_post",
   "board",
+  "boards",
   "canvas",
+  "claude_design",
+  "code_widget",
   "comment",
   "content_item",
+  "content_items",
+  "context",
   "diagram",
   "doc",
+  "entity_context_graph",
+  "feedback",
   "frame",
   "image",
   "item",
   "items",
+  "layout",
   "preview_resource",
   "prototype",
+  "roadmapping",
+  "role_assignments",
   "section",
+  "slide_templates",
   "slides",
   "space",
   "table",
+  "talktrack",
   "user",
   "widget",
+  "work_items",
 ];
 
 /**
