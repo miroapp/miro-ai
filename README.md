@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/miroapp-miro-ai-badge.png)](https://mseep.ai/app/miroapp-miro-ai)
+
 # Miro AI Developer Tools
 
 [![Documentation](https://img.shields.io/badge/docs-developers.miro.com-blue)](https://developers.miro.com/docs/mcp-intro)
